@@ -86,12 +86,6 @@ namespace ServerShared.Worker
             ChannelThread.Join();
         }
 
-        public void Abort()
-        {
-            GlobalThread.Abort();
-            ChannelThread.Abort();
-        }
-
         public void GlobalRun()
         {
             while (true)
