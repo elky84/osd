@@ -33,7 +33,7 @@ namespace ServerShared.Util
             container.Register<ChannelService>(new SingletoneLifetime());
             container.Register<SessionService>(new SingletoneLifetime());
             container.Register<ServerDispatcher>(new SingletoneLifetime());
-            container.Register<ServerHandler>(new SingletoneLifetime());
+            //container.Register<ServerHandler>(new SingletoneLifetime());
 
             PostConstruct();
             return true;
@@ -43,7 +43,7 @@ namespace ServerShared.Util
         {
             var serverDispatcher = GetInstance<ServerDispatcher>();
             var channelService = GetInstance<ChannelService>();
-            channelService.MessageWorker = serverDispatcher.MessageWorker;
+            //channelService.MessageWorker = serverDispatcher.MessageWorker;
         }
 
         public static TService GetInstance<TService>()

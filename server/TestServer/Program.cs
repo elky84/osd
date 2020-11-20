@@ -1,15 +1,42 @@
-﻿using System;
-using Microsoft.Extensions.Configuration;
-using ServerShared.Util;
-using ServerShared.DotNetty;
+﻿using FlatBuffers;
 using Serilog;
+using ServerShared.DotNetty;
+using ServerShared.Model;
+using ServerShared.NetworkHandler;
+using ServerShared.Util;
+using System;
 
 namespace TestServer
 {
+    class Session : BaseSession
+    { }
+
+    class GameHandler : BaseHandler<Session>
+    {
+        public GameHandler()
+        {
+        }
+
+        [FlatBufferEvent]
+        public bool OnPlayerInfo(Session session, PlayerInfo x)
+        {
+            return true;
+        }
+    }
+
     class Program
     {
         static void Main()
         {
+            var handler = new GameHandler();
+            
+            var builder = new FlatBufferBuilder(512);
+            var name = builder.CreateString("cshyeon");
+            var offset = PlayerInfo.CreatePlayerInfo(builder, name, 123);
+            PlayerInfo.FinishPlayerInfoBuffer(builder, offset);
+            handler.Call<PlayerInfo>(null, builder.DataBuffer.ToSizedArray());
+
+
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Information()
                 .WriteTo.Console()

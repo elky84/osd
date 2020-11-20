@@ -1,63 +1,62 @@
-﻿using ServerShared.Model;
-using System.Collections.Concurrent;
+﻿using Serilog;
+using ServerShared.Model;
 using ServerShared.Worker;
-using LightInject;
-using Serilog;
+using System.Collections.Concurrent;
 
 namespace ServerShared.Service
 {
     public class ChannelService
     {
-        private readonly ConcurrentDictionary<int, Channel> Channels = new ConcurrentDictionary<int, Channel>();
+        //private readonly ConcurrentDictionary<int, Channel> Channels = new ConcurrentDictionary<int, Channel>();
 
-        public MessageWorker MessageWorker { get; set; }
+        //public MessageWorker MessageWorker { get; set; }
 
-        public ChannelService()
-        {
+        //public ChannelService()
+        //{
 
-        }
+        //}
 
-        public Channel Get(int channelId)
-        {
-            if (!Channels.TryGetValue(channelId, out Channel channel))
-            {
-                Log.Logger.Information("Failed get Channel. {0}", channelId);
-                return null;
-            }
+        //public Channel Get(int channelId)
+        //{
+        //    if (!Channels.TryGetValue(channelId, out Channel channel))
+        //    {
+        //        Log.Logger.Information("Failed get Channel. {0}", channelId);
+        //        return null;
+        //    }
 
-            return channel;
-        }
+        //    return channel;
+        //}
 
-        public void BroadCast(Session session, NetworkShared.Protocols.Response.Header header)
-        {
-            Get(session.ChannelId)?.BroadCast(header);
-        }
+        //public void BroadCast(Session session, NetworkShared.Protocols.Response.Header header)
+        //{
+        //    Get(session.ChannelId)?.BroadCast(header);
+        //}
 
 
-        public bool Enter(Session session, NetworkShared.Protocols.Request.Enter enter, int channelId = 1)
-        {
-            if (!Channels.TryGetValue(channelId, out Channel channel))
-            {
-                channel = new Channel(channelId, this, MessageWorker);
-                Channels.TryAdd(channelId, channel);
-            }
+        //public bool Enter(Session session, NetworkShared.Protocols.Request.Enter enter, int channelId = 1)
+        //{
+        //    if (!Channels.TryGetValue(channelId, out Channel channel))
+        //    {
+        //        channel = new Channel(channelId, this, MessageWorker);
+        //        Channels.TryAdd(channelId, channel);
+        //    }
 
-            return channel.EnterNewUser(session, enter);
-        }
+        //    return channel.EnterNewUser(session, enter);
+        //}
 
-        public bool? Leave(Session session)
-        {
-            return Get(session.ChannelId)?.LeaveUser(session);
-        }
+        //public bool Leave(Session session)
+        //{
+        //    return Get(session.ChannelId)?.LeaveUser(session) ?? false;
+        //}
 
-        public bool? Disconnect(Session session)
-        {
-            return Get(session.ChannelId)?.Disconnect(session);
-        }
+        //public bool Disconnect(Session session)
+        //{
+        //    return Get(session.ChannelId)?.Disconnect(session) ?? false;
+        //}
 
-        public bool? Move(Session session, NetworkShared.Protocols.Request.Move move)
-        {
-            return Get(session.ChannelId)?.Move(session, move.Direction);
-        }
+        //public bool Move(Session session, Protocols.Request.Move move)
+        //{
+        //    return Get(session.ChannelId)?.Move(session, move.Direction) ?? false;
+        //}
     }
 }

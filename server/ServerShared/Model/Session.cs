@@ -19,14 +19,11 @@ namespace ServerShared.Model
 
         public int ChannelId { get; set; }
 
+        public string Id => ChannelContext.GetHashCode().ToString();
+
         public Session(IChannelHandlerContext context)
         {
             this.ChannelContext = context;
-        }
-
-        public string GetSessionId()
-        {
-            return ChannelContext.GetHashCode().ToString();
         }
 
         private async Task Send(IByteBuffer byteBuffer)

@@ -43,29 +43,29 @@ namespace ServerShared.Model
             return value;
         }
 
-        private Session GetSessionByIndex(int index)
-        {
-            return Sessions.Values.FirstOrDefault(x => x.Index == index);
-        }
+        //private Session GetSessionByIndex(int index)
+        //{
+        //    return Sessions.Values.FirstOrDefault(x => x.Index == index);
+        //}
 
-        private void Add(Session session)
-        {
-            Sessions.Add(session.GetSessionId(), session);
-            session.ChannelId = ChannelId;
-        }
+        //private void Add(Session session)
+        //{
+        //    Sessions.Add(session.Id, session);
+        //    session.ChannelId = ChannelId;
+        //}
 
-        private void Remove(Session session)
-        {
-            Sessions.Remove(session.GetSessionId());
-            BroadCast(new NetworkShared.Protocols.Response.Leave { UserIndex = session.Index });
-        }
+        //private void Remove(Session session)
+        //{
+        //    Sessions.Remove(session.Id);
+        //    BroadCast(new Protocols.Response.Leave { UserIndex = session.Index });
+        //}
 
-        public void BroadCast(NetworkShared.Protocols.Response.Header header)
-        {
-            foreach (var pair in Sessions)
-            {
-                _ = pair.Value.Send(header);
-            }
-        }
+        //public void BroadCast(NetworkShared.Protocols.Response.Header header)
+        //{
+        //    foreach (var pair in Sessions)
+        //    {
+        //        _ = pair.Value.Send(header);
+        //    }
+        //}
     }
 }

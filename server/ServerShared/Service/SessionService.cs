@@ -26,7 +26,7 @@ namespace ServerShared.Service
                 return;
             }
 
-            ChannelService.Disconnect(session);
+            //ChannelService.Disconnect(session);
             Sessions.Remove(context);
         }
 

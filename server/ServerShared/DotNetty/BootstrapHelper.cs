@@ -71,7 +71,7 @@ namespace ServerShared.DotNetty
                     pipeline.AddLast("framing-enc", new LengthFieldPrepender(4));
                     pipeline.AddLast("framing-dec", new LengthFieldBasedFrameDecoder(ushort.MaxValue, 0, 4, 0, 4));
 
-                    pipeline.AddLast("handler", new ServerHandler());
+                    //pipeline.AddLast("handler", new ServerHandler());
                 }));
 
             return bootstrap;
