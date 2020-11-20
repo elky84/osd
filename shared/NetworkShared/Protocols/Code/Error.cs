@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Protocols.Code
+namespace NetworkShared.Protocols.Code
 {
     public enum Error
     {

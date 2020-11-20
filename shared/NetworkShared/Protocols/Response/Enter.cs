@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Protocols.Response
+namespace NetworkShared.Protocols.Response
 {
     public class Enter : Header
     {

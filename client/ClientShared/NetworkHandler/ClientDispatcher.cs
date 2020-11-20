@@ -2,7 +2,7 @@
 using NetworkShared.Util;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Protocols.Types;
+using NetworkShared.Protocols.Types;
 using Serilog;
 using System;
 
@@ -14,15 +14,15 @@ namespace ClientShared.NetworkHandler
 
         protected int UserIndex { get; set; }
 
-        public bool Call(IChannelHandlerContext context, Protocols.Response.Header header)
+        public bool Call(IChannelHandlerContext context, NetworkShared.Protocols.Response.Header header)
         {
             switch (header.Id)
             {
-                case Protocols.Id.Response.Enter:
+                case NetworkShared.Protocols.Id.Response.Enter:
                     return OnEnter(context, header);
-                case Protocols.Id.Response.Leave:
+                case NetworkShared.Protocols.Id.Response.Leave:
                     return OnLeave(context, header);
-                case Protocols.Id.Response.Move:
+                case NetworkShared.Protocols.Id.Response.Move:
                     return OnMove(context, header);
                 default:
                     Log.Logger.Error($"Not Impleted Yet Packet: {header.Id}");
@@ -45,13 +45,13 @@ namespace ClientShared.NetworkHandler
         {
             Random rand = new Random();
             var direction = (DirectionType)(rand.Next() % 8);
-            context.WriteAsync(new Protocols.Request.Move { Direction = direction }.ToByteBuffer());
+            context.WriteAsync(new NetworkShared.Protocols.Request.Move { Direction = direction }.ToByteBuffer());
         }
 
-        protected abstract bool OnEnter(IChannelHandlerContext context, Protocols.Response.Header header);
+        protected abstract bool OnEnter(IChannelHandlerContext context, NetworkShared.Protocols.Response.Header header);
 
-        protected abstract bool OnLeave(IChannelHandlerContext context, Protocols.Response.Header header);
+        protected abstract bool OnLeave(IChannelHandlerContext context, NetworkShared.Protocols.Response.Header header);
 
-        protected abstract bool OnMove(IChannelHandlerContext context, Protocols.Response.Header header);
+        protected abstract bool OnMove(IChannelHandlerContext context, NetworkShared.Protocols.Response.Header header);
     }
 }

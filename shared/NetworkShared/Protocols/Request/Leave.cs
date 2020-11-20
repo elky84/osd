@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Protocols.Request
+namespace NetworkShared.Protocols.Request
 {
     public class Leave : Header
     {

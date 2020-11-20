@@ -6,7 +6,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\shared\NetworkShared\NetworkShared.csproj" />
-    <ProjectReference Include="..\..\shared\Protocols\Protocols.csproj" />
   </ItemGroup>
 
   <ItemGroup>

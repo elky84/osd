@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Protocols.Id
+namespace NetworkShared.Protocols.Id
 {
-    public enum Response
+    public enum Request
     {
         Enter,
         Leave,

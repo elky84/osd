@@ -48,12 +48,12 @@ namespace ServerShared.NetworkHandler
         {
             switch (message.Header.Id)
             {
-                case Protocols.Id.Request.Enter:
-                    return ChannelService.Enter(message.Session, PopulateFromExtensionData<Protocols.Request.Enter>(message.Header.ExtensionData));
-                case Protocols.Id.Request.Leave:
+                case NetworkShared.Protocols.Id.Request.Enter:
+                    return ChannelService.Enter(message.Session, PopulateFromExtensionData<NetworkShared.Protocols.Request.Enter>(message.Header.ExtensionData));
+                case NetworkShared.Protocols.Id.Request.Leave:
                     return ChannelService.Leave(message.Session);
-                case Protocols.Id.Request.Move:
-                    return ChannelService.Move(message.Session, PopulateFromExtensionData<Protocols.Request.Move>(message.Header.ExtensionData));
+                case NetworkShared.Protocols.Id.Request.Move:
+                    return ChannelService.Move(message.Session, PopulateFromExtensionData<NetworkShared.Protocols.Request.Move>(message.Header.ExtensionData));
                 default:
                     Log.Logger.Error($"Not Implemented Yet. Not Defined PacketHandler. {message.Header.Id}");
                     return false;

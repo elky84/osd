@@ -1,6 +1,6 @@
-﻿using Protocols.Types;
+﻿using NetworkShared.Protocols.Types;
 
-namespace Protocols.Request
+namespace NetworkShared.Protocols.Request
 {
     public class Move : Header
     {

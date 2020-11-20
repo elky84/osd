@@ -1,9 +1,9 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
-using Protocols.Code;
+using NetworkShared.Protocols.Code;
 
-namespace Protocols.Response
+namespace NetworkShared.Protocols.Response
 {
     public class Header
     {

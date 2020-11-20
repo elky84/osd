@@ -49,7 +49,7 @@ namespace ServerShared.NetworkHandler
 
             var message = new Message
             {
-                Header = JsonConvert.DeserializeObject<Protocols.Request.Header>(str),
+                Header = JsonConvert.DeserializeObject<NetworkShared.Protocols.Request.Header>(str),
                 Session = session
             };
 

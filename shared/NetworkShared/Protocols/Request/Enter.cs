@@ -1,4 +1,4 @@
-﻿namespace Protocols.Request
+﻿namespace NetworkShared.Protocols.Request
 {
     public class Enter : Header
     {

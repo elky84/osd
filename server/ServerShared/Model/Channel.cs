@@ -57,10 +57,10 @@ namespace ServerShared.Model
         private void Remove(Session session)
         {
             Sessions.Remove(session.GetSessionId());
-            BroadCast(new Protocols.Response.Leave { UserIndex = session.Index });
+            BroadCast(new NetworkShared.Protocols.Response.Leave { UserIndex = session.Index });
         }
 
-        public void BroadCast(Protocols.Response.Header header)
+        public void BroadCast(NetworkShared.Protocols.Response.Header header)
         {
             foreach (var pair in Sessions)
             {

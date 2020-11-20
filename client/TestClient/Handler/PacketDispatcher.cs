@@ -8,9 +8,9 @@ namespace TestClient.Handler
 {
     class PacketDispatcher : ClientDispatcher
     {
-        protected override bool OnEnter(IChannelHandlerContext context, Protocols.Response.Header header)
+        protected override bool OnEnter(IChannelHandlerContext context, NetworkShared.Protocols.Response.Header header)
         {
-            var enter = PopulateFromExtensionData<Protocols.Response.Enter>(header.ExtensionData);
+            var enter = PopulateFromExtensionData<NetworkShared.Protocols.Response.Enter>(header.ExtensionData);
             Log.Logger.Information($"User: {enter.Index} Position: {enter.X}, {enter.Y}");
 
             if (enter.Name == ClientSettings.UserName)
@@ -22,16 +22,16 @@ namespace TestClient.Handler
             return true;
         }
 
-        protected override bool OnLeave(IChannelHandlerContext context, Protocols.Response.Header header)
+        protected override bool OnLeave(IChannelHandlerContext context, NetworkShared.Protocols.Response.Header header)
         {
-            var leave = PopulateFromExtensionData<Protocols.Response.Leave>(header.ExtensionData);
+            var leave = PopulateFromExtensionData<NetworkShared.Protocols.Response.Leave>(header.ExtensionData);
             Log.Logger.Information($"User: {leave.UserIndex}");
             return true;
         }
 
-        protected override bool OnMove(IChannelHandlerContext context, Protocols.Response.Header header)
+        protected override bool OnMove(IChannelHandlerContext context, NetworkShared.Protocols.Response.Header header)
         {
-            var move = PopulateFromExtensionData<Protocols.Response.Move>(header.ExtensionData);
+            var move = PopulateFromExtensionData<NetworkShared.Protocols.Response.Move>(header.ExtensionData);
             Log.Logger.Information($"User: {move.PlayerIndex} Position: {move.X}, {move.Y}");
 
             // 패킷 핑퐁을 위한 테스트 코드. 

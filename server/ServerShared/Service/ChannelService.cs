@@ -28,13 +28,13 @@ namespace ServerShared.Service
             return channel;
         }
 
-        public void BroadCast(Session session, Protocols.Response.Header header)
+        public void BroadCast(Session session, NetworkShared.Protocols.Response.Header header)
         {
             Get(session.ChannelId)?.BroadCast(header);
         }
 
 
-        public bool Enter(Session session, Protocols.Request.Enter enter, int channelId = 1)
+        public bool Enter(Session session, NetworkShared.Protocols.Request.Enter enter, int channelId = 1)
         {
             if (!Channels.TryGetValue(channelId, out Channel channel))
             {
@@ -55,7 +55,7 @@ namespace ServerShared.Service
             return Get(session.ChannelId)?.Disconnect(session);
         }
 
-        public bool? Move(Session session, Protocols.Request.Move move)
+        public bool? Move(Session session, NetworkShared.Protocols.Request.Move move)
         {
             return Get(session.ChannelId)?.Move(session, move.Direction);
         }

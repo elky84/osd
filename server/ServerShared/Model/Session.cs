@@ -34,7 +34,7 @@ namespace ServerShared.Model
             await ChannelContext.WriteAndFlushAsync(byteBuffer);
         }
 
-        public async Task Send(Protocols.Response.Header packet)
+        public async Task Send(NetworkShared.Protocols.Response.Header packet)
         {
             await Send(packet.ToByteBuffer());
         }

@@ -22,7 +22,7 @@ namespace ClientShared.NetworkHandler
 
         public ClientHandler()
         {
-            this.initialMessage = new Protocols.Request.Enter { UserName = ClientSettings.UserName }.ToByteBuffer();
+            this.initialMessage = new NetworkShared.Protocols.Request.Enter { UserName = ClientSettings.UserName }.ToByteBuffer();
         }
 
         public override void ChannelActive(IChannelHandlerContext context) => context.WriteAndFlushAsync(this.initialMessage);
@@ -34,7 +34,7 @@ namespace ClientShared.NetworkHandler
             byte[] bytes = new byte[buffer.ReadableBytes];
             buffer.ReadBytes(bytes);
 
-            var header = JsonConvert.DeserializeObject<Protocols.Response.Header>(Encoding.UTF8.GetString(bytes, 0, bytes.Length));
+            var header = JsonConvert.DeserializeObject<NetworkShared.Protocols.Response.Header>(Encoding.UTF8.GetString(bytes, 0, bytes.Length));
 
             if (false == ClientDispatcher.Call(context, header))
             {

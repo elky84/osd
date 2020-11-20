@@ -1,4 +1,4 @@
-﻿using Protocols.Types;
+﻿using NetworkShared.Protocols.Types;
 using System;
 using Newtonsoft.Json.Linq;
 using Serilog;
@@ -9,7 +9,7 @@ namespace ServerShared.Model
     public partial class Channel
     {
 
-        public bool EnterNewUser(Session session, Protocols.Request.Enter enter)
+        public bool EnterNewUser(Session session, NetworkShared.Protocols.Request.Enter enter)
         {
             session.Index = AcquirePlayerIndex();
 
@@ -20,14 +20,14 @@ namespace ServerShared.Model
 
             Add(session);
 
-            BroadCast(new Protocols.Response.Enter { Index = session.Index, X = session.X, Y = session.Y, Name = enter.UserName });
+            BroadCast(new NetworkShared.Protocols.Response.Enter { Index = session.Index, X = session.X, Y = session.Y, Name = enter.UserName });
             return true;
         }
 
 
         public bool LeaveUser(Session session)
         {
-            _ = session.Send(new Protocols.Response.Leave { UserIndex = session.Index });
+            _ = session.Send(new NetworkShared.Protocols.Response.Leave { UserIndex = session.Index });
 
             Remove(session);
             return true;
@@ -58,7 +58,7 @@ namespace ServerShared.Model
                     break;
             }
 
-            BroadCast(new Protocols.Response.Move { PlayerIndex = session.Index, X = session.X, Y = session.Y, Direction = direction });
+            BroadCast(new NetworkShared.Protocols.Response.Move { PlayerIndex = session.Index, X = session.X, Y = session.Y, Direction = direction });
             return true;
         }
     }

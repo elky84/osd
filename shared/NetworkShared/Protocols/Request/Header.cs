@@ -2,7 +2,7 @@
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 
-namespace Protocols.Request
+namespace NetworkShared.Protocols.Request
 {
     public class Header
     {

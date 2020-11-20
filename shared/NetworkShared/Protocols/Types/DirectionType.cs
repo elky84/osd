@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Protocols.Types
+namespace NetworkShared.Protocols.Types
 {
     public enum DirectionType
     {
