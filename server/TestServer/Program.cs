@@ -1,13 +1,67 @@
 ﻿using FlatBuffers;
+using KeraLua;
 using Serilog;
 using ServerShared.DotNetty;
 using ServerShared.Model;
 using ServerShared.NetworkHandler;
 using ServerShared.Util;
 using System;
+using System.IO;
 
 namespace TestServer
 {
+    public class Monster : Life
+    {
+        public bool Attackable { get; set; } = true;
+
+        public static int BuiltInAttackable(IntPtr luaState)
+        {
+            var lua = Lua.FromIntPtr(luaState);
+            var mob = lua.ToLuable<Monster>(1);
+
+            lua.PushBoolean(mob.Attackable);
+            return 1;
+        }
+    }
+
+    public class Life : Luable
+    {
+        public int Hp { get; set; } = 50;
+
+        public static int BuiltinHP(IntPtr luaState)
+        {
+            var lua = Lua.FromIntPtr(luaState);
+            var life = lua.ToLuable<Life>(1);
+
+            lua.PushInteger(life.Hp);
+            return 1;
+        }
+    }
+
+    public class Character : Life
+    {
+        public int Damage { get; set; } = 30;
+
+        public static int BuiltinDamage(IntPtr luaState)
+        {
+            var lua = Lua.FromIntPtr(luaState);
+            var character = lua.ToLuable<Character>(1);
+            lua.PushInteger(character.Damage);
+            return 1;
+        }
+
+        public static int BuiltinYield(IntPtr luaState)
+        {
+            var lua = Lua.FromIntPtr(luaState);
+            var character = lua.ToLuable<Character>(1);
+            character.Damage = 10;
+            return lua.Yield(1);
+        }
+    }
+
+
+
+
     class Session : BaseSession
     { }
 
@@ -35,6 +89,17 @@ namespace TestServer
             var offset = PlayerInfo.CreatePlayerInfo(builder, name, 123);
             PlayerInfo.FinishPlayerInfoBuffer(builder, offset);
             handler.Call<PlayerInfo>(null, builder.DataBuffer.ToSizedArray());
+
+
+            var lua = Static.Main.NewThread();
+            lua.DoFile(Path.Join(Environment.CurrentDirectory, "..", "..", "..", "hello.lua"));
+            lua.GetGlobal("func");
+            var character = new Character { Damage = 100 };
+            lua.PushLuable(character);
+            var result = lua.Resume(1);
+            lua.PushInteger(5);
+            lua.Resume(1);
+
 
 
             Log.Logger = new LoggerConfiguration()
