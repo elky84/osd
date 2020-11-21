@@ -7,6 +7,7 @@ using ServerShared.NetworkHandler;
 using ServerShared.Util;
 using System;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace TestServer
 {
@@ -80,10 +81,10 @@ namespace TestServer
 
     class Program
     {
-        static void Main()
+        static async Task Main()
         {
             var handler = new GameHandler();
-            
+
             var builder = new FlatBufferBuilder(512);
             var name = builder.CreateString("cshyeon");
             var offset = PlayerInfo.CreatePlayerInfo(builder, name, 123);
@@ -100,8 +101,6 @@ namespace TestServer
             lua.PushInteger(5);
             lua.Resume(1);
 
-
-
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Information()
                 .WriteTo.Console()
@@ -113,12 +112,10 @@ namespace TestServer
                 ServerService.Register();
 
                 var bootstrap = bootstrapHelper.Create();
-                var listenTask = bootstrap.BindAsync(ServerShared.Config.ServerSettings.Port);
-                listenTask.Wait();
-                var channel = listenTask.Result;
+                var channel = await bootstrap.BindAsync(ServerShared.Config.ServerSettings.Port);
                 Log.Logger.Information("Server Started");
                 Console.ReadLine();
-                channel.CloseAsync().Wait();
+                await channel.CloseAsync();
             }
             catch (Exception ex)
             {
@@ -129,7 +126,7 @@ namespace TestServer
             finally
             {
                 // Ensure to flush and stop internal timers/threads before application-exit (Avoid segmentation fault on Linux)
-                bootstrapHelper.GracefulClose().Wait();
+                await bootstrapHelper.GracefulClose();
             }
         }
     }
