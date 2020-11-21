@@ -111,7 +111,7 @@ namespace TestServer
             {
                 ServerService.Register();
 
-                var bootstrap = bootstrapHelper.Create();
+                var bootstrap = bootstrapHelper.Create(handler);
                 var channel = await bootstrap.BindAsync(ServerShared.Config.ServerSettings.Port);
                 Log.Logger.Information("Server Started");
                 Console.ReadLine();

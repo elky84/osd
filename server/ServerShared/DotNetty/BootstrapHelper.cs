@@ -5,6 +5,7 @@ using DotNetty.Transport.Bootstrapping;
 using DotNetty.Transport.Channels;
 using DotNetty.Transport.Channels.Sockets;
 using DotNetty.Transport.Libuv;
+using ServerShared.Model;
 using ServerShared.NetworkHandler;
 using ServerShared.Util;
 using System;
@@ -25,7 +26,7 @@ namespace ServerShared.DotNetty
                 workerGroup.ShutdownGracefullyAsync(TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(1)));
         }
 
-        public ServerBootstrap Create()
+        public ServerBootstrap Create<SessionType>(BaseHandler<SessionType> handler) where SessionType : BaseSession, new()
         {
             if (Config.ServerSettings.UseLibuv)
             {
@@ -71,7 +72,7 @@ namespace ServerShared.DotNetty
                     pipeline.AddLast("framing-enc", new LengthFieldPrepender(4));
                     pipeline.AddLast("framing-dec", new LengthFieldBasedFrameDecoder(ushort.MaxValue, 0, 4, 0, 4));
 
-                    //pipeline.AddLast("handler", new ServerHandler());
+                    pipeline.AddLast("handler", handler);
                 }));
 
             return bootstrap;

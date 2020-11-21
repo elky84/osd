@@ -1,6 +1,6 @@
 ﻿namespace ServerShared.Model
 {
-    public abstract class BaseSession
+    public class BaseSession
     {
         protected BaseSession()
         {

@@ -16,7 +16,7 @@ namespace ServerShared.NetworkHandler
     public class FlatBufferEventAttribute : Attribute
     { }
 
-    public abstract class BaseHandler<SessionType> : ChannelHandlerAdapter where SessionType : BaseSession, new()
+    public class BaseHandler<SessionType> : ChannelHandlerAdapter where SessionType : BaseSession, new()
     {
         private Dictionary<Type, Delegate> _allocatorDict = new Dictionary<Type, Delegate>();
         private Dictionary<Type, Func<SessionType, IFlatbufferObject, bool>> _bindedEventDict = new Dictionary<Type, Func<SessionType, IFlatbufferObject, bool>>();
@@ -119,13 +119,13 @@ namespace ServerShared.NetworkHandler
         public override void ChannelInactive(IChannelHandlerContext context)
         {
             base.ChannelInactive(context);
-            if(_sessionDict.ContainsKey(context))
+            if (_sessionDict.ContainsKey(context))
                 _sessionDict.Remove(context);
         }
 
         public override void ChannelRead(IChannelHandlerContext context, object byteBuffer)
         {
-            if(_sessionDict.TryGetValue(context, out var session) == false)
+            if (_sessionDict.TryGetValue(context, out var session) == false)
             {
                 Log.Logger.Error("Session Get Failed() {0}", context);
                 return;
