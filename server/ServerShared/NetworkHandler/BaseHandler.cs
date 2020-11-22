@@ -3,7 +3,6 @@ using DotNetty.Transport.Channels;
 using FlatBuffers;
 using Serilog;
 using ServerShared.Model;
-using ServerShared.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -23,8 +22,6 @@ namespace ServerShared.NetworkHandler
         private Dictionary<string, Type> _flatBufferDict = new Dictionary<string, Type>();
         private Dictionary<Type, Func<SessionType, IFlatbufferObject, bool>> _bindedEventDict = new Dictionary<Type, Func<SessionType, IFlatbufferObject, bool>>();
         private Dictionary<IChannelHandlerContext, SessionType> _sessionDict = new Dictionary<IChannelHandlerContext, SessionType>();
-
-        public ServerDispatcher ServerDispatcher { get; set; }
 
         protected BaseHandler()
         {
@@ -113,8 +110,6 @@ namespace ServerShared.NetworkHandler
 
         public override void ChannelActive(IChannelHandlerContext context)
         {
-            this.ServerDispatcher = ServerService.GetInstance<ServerDispatcher>();
-
             base.ChannelActive(context);
             _sessionDict.Add(context, new SessionType());
         }
