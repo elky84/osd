@@ -20,6 +20,7 @@ namespace ServerShared.NetworkHandler
     public class BaseHandler<SessionType> : ChannelHandlerAdapter where SessionType : BaseSession, new()
     {
         private Dictionary<Type, Delegate> _allocatorDict = new Dictionary<Type, Delegate>();
+        private Dictionary<string, Type> _flatBufferDict = new Dictionary<string, Type>();
         private Dictionary<Type, Func<SessionType, IFlatbufferObject, bool>> _bindedEventDict = new Dictionary<Type, Func<SessionType, IFlatbufferObject, bool>>();
         private Dictionary<IChannelHandlerContext, SessionType> _sessionDict = new Dictionary<IChannelHandlerContext, SessionType>();
 
@@ -62,6 +63,7 @@ namespace ServerShared.NetworkHandler
 
                 var method = allocator.CreateDelegate(typeof(Func<,>).MakeGenericType(typeof(ByteBuffer), flatbType));
                 _allocatorDict.Add(flatbType, method);
+                _flatBufferDict.Add(flatbType.Name, flatbType);
             }
         }
 
@@ -135,7 +137,6 @@ namespace ServerShared.NetworkHandler
             var buffer = byteBuffer as IByteBuffer;
             var bytes = new byte[buffer.ReadableBytes];
             buffer.ReadBytes(bytes);
-            session.Buffer.AddRange(bytes);
 
             using (var memoryStream = new MemoryStream(bytes))
             using (var binaryReader = new BinaryReader(memoryStream))
@@ -144,7 +145,7 @@ namespace ServerShared.NetworkHandler
                 {
                     var size = binaryReader.ReadInt32();
                     var flatBufferName = binaryReader.ReadString();
-                    var flatBufferType = Type.GetType(flatBufferName) ??
+                    if(_flatBufferDict.TryGetValue(flatBufferName, out var flatBufferType) == false)
                         throw new Exception($"{flatBufferName} is not binded in event handler.");
 
                     var result = Call(session, flatBufferType, binaryReader.ReadBytes(size));
@@ -153,24 +154,12 @@ namespace ServerShared.NetworkHandler
                         _sessionDict.Remove(context);
                         context.CloseAsync();
                     }
-
-                    session.Buffer.RemoveRange(0, (int)binaryReader.BaseStream.Position);
                 }
                 catch (Exception e)
                 {
 
                 }
             }
-
-            //var str = Encoding.UTF8.GetString(bytes, 0, bytes.Length);
-
-            //var message = new Message
-            //{
-            //    Header = JsonConvert.DeserializeObject<NetworkShared.Protocols.Request.Header>(str),
-            //    Session = session
-            //};
-
-            //ServerDispatcher.Push(message);
         }
 
         public override void ChannelReadComplete(IChannelHandlerContext context) => context.Flush();
