@@ -26,7 +26,9 @@ namespace ServerShared.DotNetty
                 workerGroup.ShutdownGracefullyAsync(TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(1)));
         }
 
-        public ServerBootstrap Create<SessionType>(BaseHandler<SessionType> handler) where SessionType : BaseSession, new()
+        public ServerBootstrap Create<Handler, SessionType>()
+            where Handler : BaseHandler<SessionType>, new()
+            where SessionType : BaseSession, new()
         {
             if (Config.ServerSettings.UseLibuv)
             {
@@ -72,7 +74,7 @@ namespace ServerShared.DotNetty
                     pipeline.AddLast("framing-enc", new LengthFieldPrepender(4));
                     pipeline.AddLast("framing-dec", new LengthFieldBasedFrameDecoder(ushort.MaxValue, 0, 4, 0, 4));
 
-                    pipeline.AddLast("handler", handler);
+                    pipeline.AddLast("handler", new Handler());
                 }));
 
             return bootstrap;
