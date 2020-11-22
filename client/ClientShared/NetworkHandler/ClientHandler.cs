@@ -14,18 +14,16 @@ namespace ClientShared.NetworkHandler
 
     public class ClientHandler : ChannelHandlerAdapter
     {
-        readonly IByteBuffer initialMessage;
-
         public ClientDispatcher ClientDispatcher { get; set; }
-
-        private Random Random { get; set; } = new Random();
 
         public ClientHandler()
         {
-            this.initialMessage = new NetworkShared.Protocols.Request.Enter { UserName = ClientSettings.UserName }.ToByteBuffer();
         }
 
-        public override void ChannelActive(IChannelHandlerContext context) => context.WriteAndFlushAsync(this.initialMessage);
+        public override void ChannelActive(IChannelHandlerContext context)
+        {
+
+        }
 
         public override void ChannelRead(IChannelHandlerContext context, object message)
         {

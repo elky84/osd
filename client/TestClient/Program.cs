@@ -3,6 +3,7 @@ using System.IO;
 using System.Net;
 using ClientShared.Config;
 using ClientShared.DotNetty;
+using DotNetty.Buffers;
 using FlatBuffers;
 using Microsoft.Extensions.Configuration;
 using Serilog;
@@ -41,15 +42,18 @@ namespace TestClient
                 using (var memoryStream = new MemoryStream())
                 using (var binaryWriter = new BinaryWriter(memoryStream))
                 {
-                    binaryWriter.Write(nameof(PlayerInfo));
                     binaryWriter.Write(bytes.Length);
+                    binaryWriter.Write(nameof(PlayerInfo));
                     binaryWriter.Write(bytes);
                     binaryWriter.Flush();
 
                     var buffer = memoryStream.GetBuffer();
-                    channel.WriteAndFlushAsync(buffer);
+
+                    var msg = Unpooled.Buffer();
+                    msg.WriteBytes(buffer);
+
+                    channel.WriteAndFlushAsync(msg);
                 }
-                
 
                 Log.Logger.Information("Started Client");
                 Console.ReadLine();

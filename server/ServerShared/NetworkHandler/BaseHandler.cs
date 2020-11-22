@@ -137,16 +137,16 @@ namespace ServerShared.NetworkHandler
             buffer.ReadBytes(bytes);
             session.Buffer.AddRange(bytes);
 
-            using (var memoryStream = new MemoryStream(session.Buffer.ToArray()))
+            using (var memoryStream = new MemoryStream(bytes))
             using (var binaryReader = new BinaryReader(memoryStream))
             {
                 try
                 {
+                    var size = binaryReader.ReadInt32();
                     var flatBufferName = binaryReader.ReadString();
                     var flatBufferType = Type.GetType(flatBufferName) ??
                         throw new Exception($"{flatBufferName} is not binded in event handler.");
 
-                    var size = binaryReader.ReadInt32();
                     var result = Call(session, flatBufferType, binaryReader.ReadBytes(size));
                     if (result == false)
                     {
@@ -157,7 +157,7 @@ namespace ServerShared.NetworkHandler
                     session.Buffer.RemoveRange(0, (int)binaryReader.BaseStream.Position);
                 }
                 catch (Exception e)
-                { 
+                {
 
                 }
             }
