@@ -1,7 +1,9 @@
 ﻿using System;
+using System.IO;
 using System.Net;
 using ClientShared.Config;
 using ClientShared.DotNetty;
+using FlatBuffers;
 using Microsoft.Extensions.Configuration;
 using Serilog;
 using TestClient.Handler;
@@ -29,6 +31,26 @@ namespace TestClient
                 var connectTask = bootstrap.ConnectAsync(new IPEndPoint(ClientSettings.Host, ClientSettings.Port));
                 connectTask.Wait();
                 var channel = connectTask.Result;
+
+                var builder = new FlatBufferBuilder(512);
+                var name = builder.CreateString("cshyeon");
+                var offset = PlayerInfo.CreatePlayerInfo(builder, name, 123);
+                PlayerInfo.FinishPlayerInfoBuffer(builder, offset);
+                var bytes = builder.DataBuffer.ToSizedArray();
+
+                using (var memoryStream = new MemoryStream())
+                using (var binaryWriter = new BinaryWriter(memoryStream))
+                {
+                    binaryWriter.Write(nameof(PlayerInfo));
+                    binaryWriter.Write(bytes.Length);
+                    binaryWriter.Write(bytes);
+                    binaryWriter.Flush();
+
+                    var buffer = memoryStream.GetBuffer();
+                    channel.WriteAndFlushAsync(buffer);
+                }
+                
+
                 Log.Logger.Information("Started Client");
                 Console.ReadLine();
                 channel.CloseAsync().Wait();

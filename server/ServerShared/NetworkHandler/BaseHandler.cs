@@ -6,6 +6,7 @@ using ServerShared.Model;
 using ServerShared.Util;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -134,6 +135,32 @@ namespace ServerShared.NetworkHandler
             var buffer = byteBuffer as IByteBuffer;
             var bytes = new byte[buffer.ReadableBytes];
             buffer.ReadBytes(bytes);
+            session.Buffer.AddRange(bytes);
+
+            using (var memoryStream = new MemoryStream(session.Buffer.ToArray()))
+            using (var binaryReader = new BinaryReader(memoryStream))
+            {
+                try
+                {
+                    var flatBufferName = binaryReader.ReadString();
+                    var flatBufferType = Type.GetType(flatBufferName) ??
+                        throw new Exception($"{flatBufferName} is not binded in event handler.");
+
+                    var size = binaryReader.ReadInt32();
+                    var result = Call(session, flatBufferType, binaryReader.ReadBytes(size));
+                    if (result == false)
+                    {
+                        _sessionDict.Remove(context);
+                        context.CloseAsync();
+                    }
+
+                    session.Buffer.RemoveRange(0, (int)binaryReader.BaseStream.Position);
+                }
+                catch (Exception e)
+                { 
+
+                }
+            }
 
             //var str = Encoding.UTF8.GetString(bytes, 0, bytes.Length);
 
@@ -165,6 +192,24 @@ namespace ServerShared.NetworkHandler
                     return false;
 
                 return bindedEvent.Invoke(session, (FlatBufferType)allocator.DynamicInvoke(new ByteBuffer(bytes)));
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public bool Call(SessionType session, Type type, byte[] bytes)
+        {
+            try
+            {
+                if (_bindedEventDict.TryGetValue(type, out var bindedEvent) == false)
+                    return false;
+
+                if (_allocatorDict.TryGetValue(type, out var allocator) == false)
+                    return false;
+
+                return bindedEvent.Invoke(session, Convert.ChangeType(allocator.DynamicInvoke(new ByteBuffer(bytes)), type) as IFlatbufferObject);
             }
             catch (Exception)
             {
