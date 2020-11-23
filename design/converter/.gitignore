@@ -1,0 +1,10 @@
+/dist
+
+*.toc
+base_library.zip
+*.manifest
+*.pkg
+*.pyz
+warn-*.txt
+xref-*.html
+*.spec

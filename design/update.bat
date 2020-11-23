@@ -1,5 +1,5 @@
 PUSHD converter
-python excel_converter.py --dir=.. --out=output
+CALL excel_converter.exe --dir=.. --out=output
 
 RMDIR /s/q ..\..\client\ClientShared\Table
 ROBOCOPY output\class\client ..\..\client\ClientShared\Table
