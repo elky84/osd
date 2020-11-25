@@ -1,0 +1,6 @@
+[Table("Json/{{ sheetName }}.json")]
+public class {{ tableName }} : BaseDict<{{ keyType }}, {{ className }}>
+{
+    public {{ tableName }}()
+    { }
+}

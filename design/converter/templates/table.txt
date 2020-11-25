@@ -1,0 +1,6 @@
+using NetworkShared;
+
+namespace Table
+{
+{{ contents }}
+}

@@ -1,0 +1,6 @@
+[Table("Json/{{ sheetName }}.json")]
+public class {{ tableName }} : BaseList<{{ className }}>
+{
+    public {{ tableName }}()
+    { }
+}
