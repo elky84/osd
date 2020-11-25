@@ -8,6 +8,7 @@ using ServerShared.Util;
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using Table;
 
 namespace TestServer
 {
@@ -83,6 +84,10 @@ namespace TestServer
     {
         static async Task Main()
         {
+            NetworkShared.Table.Load("ServerShared");
+            var value1 = NetworkShared.Table.From<TableSheet1>()[0];
+            var value2 = NetworkShared.Table.From<TableSheet23>()["아이디1"];
+
             var handler = new GameHandler();
 
             var builder = new FlatBufferBuilder(512);
