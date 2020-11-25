@@ -1,6 +1,7 @@
 ﻿using FlatBuffers;
 using KeraLua;
 using NetworkShared;
+using NetworkShared.Table;
 using Serilog;
 using ServerShared.DotNetty;
 using ServerShared.Model;
@@ -9,7 +10,6 @@ using ServerShared.Util;
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using Table;
 
 namespace TestServer
 {
@@ -88,6 +88,7 @@ namespace TestServer
             MasterTable.Load("ServerShared");
             var value1 = MasterTable.From<TableSheet1>()[0];
             var value2 = MasterTable.From<TableSheet23>()["아이디1"];
+            var value3 = MasterTable.From<TableSheet1>().Cached["이름1"];
 
             var handler = new GameHandler();
 

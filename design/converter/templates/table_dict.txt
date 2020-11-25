@@ -1,6 +1,3 @@
 [Table("Json/{{ sheetName }}.json")]
-public class {{ tableName }} : BaseDict<{{ keyType }}, {{ className }}>
-{
-    public {{ tableName }}()
-    { }
-}
+public partial class {{ tableName }} : BaseDict<{{ keyType }}, {{ className }}>
+{ }

@@ -1,16 +1,10 @@
 namespace NetworkShared.Table
 {
     [Table("Json/sheet1.json")]
-    public class TableSheet1 : BaseList<Sheet1>
-    {
-        public TableSheet1()
-        { }
-    }
+    public partial class TableSheet1 : BaseList<Sheet1>
+    { }
     
     [Table("Json/sheet23.json")]
-    public class TableSheet23 : BaseDict<string, Sheet23>
-    {
-        public TableSheet23()
-        { }
-    }
+    public partial class TableSheet23 : BaseDict<string, Sheet23>
+    { }
 }
