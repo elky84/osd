@@ -1,6 +1,4 @@
-using NetworkShared;
-
-namespace Table
+namespace NetworkShared.Table
 {
     [Table("Json/sheet1.json")]
     public class TableSheet1 : BaseList<Sheet1>

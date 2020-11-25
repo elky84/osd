@@ -1,5 +1,6 @@
 ﻿using FlatBuffers;
 using KeraLua;
+using NetworkShared;
 using Serilog;
 using ServerShared.DotNetty;
 using ServerShared.Model;
@@ -84,9 +85,9 @@ namespace TestServer
     {
         static async Task Main()
         {
-            NetworkShared.Table.Load("ServerShared");
-            var value1 = NetworkShared.Table.From<TableSheet1>()[0];
-            var value2 = NetworkShared.Table.From<TableSheet23>()["아이디1"];
+            MasterTable.Load("ServerShared");
+            var value1 = MasterTable.From<TableSheet1>()[0];
+            var value2 = MasterTable.From<TableSheet23>()["아이디1"];
 
             var handler = new GameHandler();
 

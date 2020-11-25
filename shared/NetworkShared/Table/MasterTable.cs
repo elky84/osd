@@ -58,10 +58,7 @@ namespace NetworkShared
             _values = JsonConvert.DeserializeObject<List<T>>(File.ReadAllText(Path));
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            throw new NotImplementedException();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => _values.GetEnumerator();
     }
 
     public class BaseDict<K, T> : BaseTable, IReadOnlyDictionary<K, T> where T : class
@@ -99,17 +96,14 @@ namespace NetworkShared
                 .ToDictionary(x => (K)property.GetValue(x), x => x);
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            throw new NotImplementedException();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => _dictionary.GetEnumerator();
     }
 
-    public static class Table
+    public static class MasterTable
     {
         private static Dictionary<Type, BaseTable> _loadedTableDict = new Dictionary<Type, BaseTable>();
 
-        static Table()
+        static MasterTable()
         {
             //Load();
         }

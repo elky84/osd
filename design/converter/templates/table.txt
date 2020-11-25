@@ -1,6 +1,4 @@
-using NetworkShared;
-
-namespace Table
+namespace NetworkShared.Table
 {
 {{ contents }}
 }
