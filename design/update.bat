@@ -6,10 +6,10 @@ ROBOCOPY output\class\client ..\..\client\ClientShared\MasterDataType
 RMDIR /s/q ..\..\server\ServerShared\MasterDataType
 ROBOCOPY output\class\server ..\..\server\ServerShared\MasterDataType
 
-RMDIR /s/q ..\..\client\ClientShared\Table
-ROBOCOPY output\table\client ..\..\client\ClientShared\Table
-RMDIR /s/q ..\..\server\ServerShared\Table
-ROBOCOPY output\table\server ..\..\server\ServerShared\Table
+RMDIR /s/q ..\..\client\ClientShared\Table.cs
+ROBOCOPY output\table\client\Table.cs ..\..\client\ClientShared\Table\Table.cs
+RMDIR /s/q ..\..\server\ServerShared\Table.cs
+ROBOCOPY output\table\server\Table.cs ..\..\server\ServerShared\Table\Table.cs
 
 RMDIR /s/q ..\..\client\ClientShared\Json
 ROBOCOPY output\json\client ..\..\client\ClientShared\Json
