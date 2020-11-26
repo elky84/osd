@@ -79,6 +79,12 @@ namespace TestServer
         {
             return true;
         }
+
+        [FlatBufferEvent]
+        public bool OnMonsterZZZZ(Session session, MonsterInfo x)
+        {
+            return true;
+        }
     }
 
     class Program
@@ -91,12 +97,8 @@ namespace TestServer
             var value3 = MasterTable.From<TableSheet1>().Cached["이름1"];
 
             var handler = new GameHandler();
-
-            var builder = new FlatBufferBuilder(512);
-            var name = builder.CreateString("cshyeon");
-            var offset = PlayerInfo.CreatePlayerInfo(builder, name, 123);
-            PlayerInfo.FinishPlayerInfoBuffer(builder, offset);
-            handler.Call<PlayerInfo>(null, builder.DataBuffer.ToSizedArray());
+            handler.Call<PlayerInfo>(null, PlayerInfo.Bytes("cshyeon", "elky", 123));
+            handler.Call<MonsterInfo>(null, MonsterInfo.Bytes("monster", 123, 0.4));
 
 
             var lua = Static.Main.NewThread();

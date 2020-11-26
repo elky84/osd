@@ -1,6 +1,13 @@
 table PlayerInfo{
   name:string;
+  name2: string;
   level:int;
 }
- 
 root_type PlayerInfo;
+
+table MonsterInfo{
+  name:string;
+  level:int;
+  test:double;
+}
+root_type MonsterInfo;
