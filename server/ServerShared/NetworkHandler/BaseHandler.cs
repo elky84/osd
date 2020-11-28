@@ -130,30 +130,26 @@ namespace ServerShared.NetworkHandler
             }
 
             var buffer = byteBuffer as IByteBuffer;
-            var bytes = new byte[buffer.ReadableBytes];
-            buffer.ReadBytes(bytes);
-
-            using (var memoryStream = new MemoryStream(bytes))
-            using (var binaryReader = new BinaryReader(memoryStream))
+            try
             {
-                try
-                {
-                    var size = binaryReader.ReadInt32();
-                    var flatBufferName = binaryReader.ReadString();
-                    if(_flatBufferDict.TryGetValue(flatBufferName, out var flatBufferType) == false)
-                        throw new Exception($"{flatBufferName} is not binded in event handler.");
+                var size = buffer.ReadInt();
+                var strLength = buffer.ReadByte();
+                var flatBufferName = buffer.ReadString(strLength, System.Text.Encoding.Default);
+                if (_flatBufferDict.TryGetValue(flatBufferName, out var flatBufferType) == false)
+                    throw new Exception($"{flatBufferName} is not binded in event handler.");
 
-                    var result = Call(session, flatBufferType, binaryReader.ReadBytes(size));
-                    if (result == false)
-                    {
-                        _sessionDict.Remove(context);
-                        context.CloseAsync();
-                    }
-                }
-                catch (Exception e)
+                var bytes = new byte[size];
+                buffer.ReadBytes(bytes);
+                var result = Call(session, flatBufferType, bytes);
+                if (result == false)
                 {
-
+                    _sessionDict.Remove(context);
+                    context.CloseAsync();
                 }
+            }
+            catch (Exception e)
+            {
+                Log.Logger.Error($"{e}");
             }
         }
 

@@ -32,13 +32,11 @@ namespace ClientShared.NetworkHandler
             byte[] bytes = new byte[buffer.ReadableBytes];
             buffer.ReadBytes(bytes);
 
-            var header = JsonConvert.DeserializeObject<NetworkShared.Protocols.Response.Header>(Encoding.UTF8.GetString(bytes, 0, bytes.Length));
-
-            if (false == ClientDispatcher.Call(context, header))
-            {
-                Log.Logger.Information($"clientDispatcher.Call() failed. {context}]");
-                return;
-            }
+            //if (false == ClientDispatcher.Call(context, header))
+            //{
+            //    Log.Logger.Information($"clientDispatcher.Call() failed. {context}]");
+            //    return;
+            //}
         }
 
         public override void ChannelReadComplete(IChannelHandlerContext context) => context.Flush();

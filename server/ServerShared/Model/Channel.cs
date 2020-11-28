@@ -11,8 +11,6 @@ namespace ServerShared.Model
     {
         public int ChannelId { get; }
 
-        private int PlayerIndexCounter;
-
         private readonly Dictionary<string, Session> Sessions = new Dictionary<string, Session>();
 
         private MessageWorker MessageWorker { get; set; }
@@ -27,45 +25,5 @@ namespace ServerShared.Model
             this.MessageWorker = messageWorker;
             this.ChannelService = channelService;
         }
-
-        private int AcquirePlayerIndex()
-        {
-            return ++PlayerIndexCounter;
-        }
-
-        static private T PopulateFromExtensionData<T>(JObject extensionData) where T : new()
-        {
-            var value = new T();
-            if (extensionData != null)
-            {
-                JsonSerializer.Populate(extensionData.CreateReader(), value);
-            }
-            return value;
-        }
-
-        //private Session GetSessionByIndex(int index)
-        //{
-        //    return Sessions.Values.FirstOrDefault(x => x.Index == index);
-        //}
-
-        //private void Add(Session session)
-        //{
-        //    Sessions.Add(session.Id, session);
-        //    session.ChannelId = ChannelId;
-        //}
-
-        //private void Remove(Session session)
-        //{
-        //    Sessions.Remove(session.Id);
-        //    BroadCast(new Protocols.Response.Leave { UserIndex = session.Index });
-        //}
-
-        //public void BroadCast(NetworkShared.Protocols.Response.Header header)
-        //{
-        //    foreach (var pair in Sessions)
-        //    {
-        //        _ = pair.Value.Send(header);
-        //    }
-        //}
     }
 }

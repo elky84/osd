@@ -10,8 +10,6 @@ namespace ServerShared.Worker
     public class Message
     {
         public Session Session { get; set; }
-
-        public NetworkShared.Protocols.Request.Header Header { get; set; }
     }
 
     public class MessageWorker
@@ -52,27 +50,27 @@ namespace ServerShared.Worker
             channelQueue.Enqueue(message);
         }
 
-        public void DoAsync<T>(int channelId, T t) where T : NetworkShared.Protocols.Request.Header
-        {
-            var obj = JsonConvert.SerializeObject(t);
-            Push(channelId, new Message { Header = JsonConvert.DeserializeObject<NetworkShared.Protocols.Request.Header>(obj) });
-        }
+        //public void DoAsync<T>(int channelId, T t) where T : NetworkShared.Protocols.Request.Header
+        //{
+        //    var obj = JsonConvert.SerializeObject(t);
+        //    Push(channelId, new Message { Header = JsonConvert.DeserializeObject<NetworkShared.Protocols.Request.Header>(obj) });
+        //}
 
-        public void DoTimer<T>(int millisedons, int channelId, T t) where T : NetworkShared.Protocols.Request.Header
-        {
-            Task.Run(async delegate
-            {
-                await Task.Delay(TimeSpan.FromMilliseconds(millisedons));
-                var obj = JsonConvert.SerializeObject(t);
-                Push(channelId, new Message { Header = JsonConvert.DeserializeObject<NetworkShared.Protocols.Request.Header>(obj) });
-            });
-        }
+        //public void DoTimer<T>(int millisedons, int channelId, T t) where T : NetworkShared.Protocols.Request.Header
+        //{
+        //    Task.Run(async delegate
+        //    {
+        //        await Task.Delay(TimeSpan.FromMilliseconds(millisedons));
+        //        var obj = JsonConvert.SerializeObject(t);
+        //        Push(channelId, new Message { Header = JsonConvert.DeserializeObject<NetworkShared.Protocols.Request.Header>(obj) });
+        //    });
+        //}
 
-        public void Push(int channelId, NetworkShared.Protocols.Request.Header header)
-        {
-            var obj = JsonConvert.SerializeObject(header);
-            Push(channelId, new Message { Header = JsonConvert.DeserializeObject<NetworkShared.Protocols.Request.Header>(obj) });
-        }
+        //public void Push(int channelId, NetworkShared.Protocols.Request.Header header)
+        //{
+        //    var obj = JsonConvert.SerializeObject(header);
+        //    Push(channelId, new Message { Header = JsonConvert.DeserializeObject<NetworkShared.Protocols.Request.Header>(obj) });
+        //}
 
         public void Start()
         {

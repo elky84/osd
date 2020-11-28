@@ -25,9 +25,6 @@ public class NettyClient
     private string ip;
     private int port;
 
-    public string AuthKey;
-    public long SN = 0;
-
     public NettyClient()
     {
         InitNetty();
@@ -85,12 +82,17 @@ public class NettyClient
         }
     }
 
-    //public void Send(Protocols.Request.Header header)
-    //{
-    //    var msg = Unpooled.Buffer();
-    //    msg.WriteBytes(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(header)));
-    //    Send(msg);
-    //}
+    public void Send<T>(byte[] bytes)
+    {
+        var msg = Unpooled.Buffer();
+        msg.WriteInt(bytes.Length);
+
+        var name = typeof(T).Name;
+        msg.WriteByte(name.Length);
+        msg.WriteString(name, Encoding.Default);
+        msg.WriteBytes(bytes);
+        Send(msg);
+    }
 
     private void Send(IByteBuffer data)
     {

@@ -21,6 +21,9 @@ public class LoginUI : MonoBehaviour
         if (!string.IsNullOrEmpty(IDInput.text) && !string.IsNullOrEmpty(PasswordInput.text))
         {
             GlobalData.UserName = IDInput.text;
+
+            var bytes = PlayerInfo.Bytes("cshyeon", GlobalData.UserName, 123);
+            NettyClient.Instance.Send<PlayerInfo>(bytes);
         }
     }
 

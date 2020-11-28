@@ -95,7 +95,7 @@ namespace DotNetty.Transport.Channels
                 return null;
             }
             // Use size of 4 as most people only use one extra EventExecutor.
-            Dictionary<IEventExecutorGroup, IEventExecutor> executorMap = this.childExecutors 
+            Dictionary<IEventExecutorGroup, IEventExecutor> executorMap = this.childExecutors
                 ?? (this.childExecutors = new Dictionary<IEventExecutorGroup, IEventExecutor>(4, ReferenceEqualityComparer.Default));
 
             // Pin one of the child executors once and remember it so that the same child executor
@@ -326,7 +326,7 @@ namespace DotNetty.Transport.Channels
             if (this.Context0(name) != null)
             {
                 string baseName = name.Substring(0, name.Length - 1); // Strip the trailing '0'.
-                for (int i = 1;; i++)
+                for (int i = 1; ; i++)
                 {
                     string newName = baseName + i;
                     if (this.Context0(newName) == null)
@@ -986,7 +986,9 @@ namespace DotNetty.Transport.Channels
         sealed class TailContext : AbstractChannelHandlerContext, IChannelHandler
         {
             static readonly string TailName = GenerateName0(typeof(TailContext));
+#pragma warning disable CS0108 // Member hides inherited member; missing new keyword
             static readonly SkipFlags SkipFlags = CalculateSkipPropagationFlags(typeof(TailContext));
+#pragma warning restore CS0108 // Member hides inherited member; missing new keyword
 
             public TailContext(DefaultChannelPipeline pipeline)
                 : base(pipeline, null, TailName, SkipFlags)
@@ -1064,7 +1066,9 @@ namespace DotNetty.Transport.Channels
         sealed class HeadContext : AbstractChannelHandlerContext, IChannelHandler
         {
             static readonly string HeadName = GenerateName0(typeof(HeadContext));
+#pragma warning disable CS0108 // Member hides inherited member; missing new keyword
             static readonly SkipFlags SkipFlags = CalculateSkipPropagationFlags(typeof(HeadContext));
+#pragma warning restore CS0108 // Member hides inherited member; missing new keyword
 
             readonly IChannelUnsafe channelUnsafe;
             bool firstRegistration = true;

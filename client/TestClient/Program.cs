@@ -32,28 +32,15 @@ namespace TestClient
                 var connectTask = bootstrap.ConnectAsync(new IPEndPoint(ClientSettings.Host, ClientSettings.Port));
                 connectTask.Wait();
                 var channel = connectTask.Result;
+                var bytes = PlayerInfo.Bytes("cshyeon", "elky", 123);
 
-                var builder = new FlatBufferBuilder(512);
-                var name = builder.CreateString("cshyeon");
-                var offset = PlayerInfo.CreatePlayerInfo(builder, name, 123);
-                PlayerInfo.FinishPlayerInfoBuffer(builder, offset);
-                var bytes = builder.DataBuffer.ToSizedArray();
+                var msg = Unpooled.Buffer();
+                msg.WriteInt(bytes.Length);
+                msg.WriteByte(nameof(PlayerInfo).Length);
+                msg.WriteString(nameof(PlayerInfo), System.Text.Encoding.Default);
+                msg.WriteBytes(bytes);
 
-                using (var memoryStream = new MemoryStream())
-                using (var binaryWriter = new BinaryWriter(memoryStream))
-                {
-                    binaryWriter.Write(bytes.Length);
-                    binaryWriter.Write(nameof(PlayerInfo));
-                    binaryWriter.Write(bytes);
-                    binaryWriter.Flush();
-
-                    var buffer = memoryStream.GetBuffer();
-
-                    var msg = Unpooled.Buffer();
-                    msg.WriteBytes(buffer);
-
-                    channel.WriteAndFlushAsync(msg);
-                }
+                channel.WriteAndFlushAsync(msg);
 
                 Log.Logger.Information("Started Client");
                 Console.ReadLine();
