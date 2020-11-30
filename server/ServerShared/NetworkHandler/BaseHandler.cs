@@ -15,13 +15,16 @@ namespace ServerShared.NetworkHandler
     public class FlatBufferEventAttribute : Attribute
     { }
 
-    public class BaseHandler<DataType> : ChannelHandlerAdapter where DataType : class, new()
+    public class BaseHandler<DataType> : ChannelHandlerAdapter, IEnumerable<Session<DataType>>
+        where DataType : class, new()
     {
         private Dictionary<Type, Delegate> _allocatorDict = new Dictionary<Type, Delegate>();
         private Dictionary<string, Type> _flatBufferDict = new Dictionary<string, Type>();
         private Dictionary<Type, Func<Session<DataType>, IFlatbufferObject, bool>> _bindedEventDict = new Dictionary<Type, Func<Session<DataType>, IFlatbufferObject, bool>>();
         private Dictionary<IChannelHandlerContext, Session<DataType>> _sessionDict = new Dictionary<IChannelHandlerContext, Session<DataType>>();
 
+        public List<Session<DataType>> Sessions => _sessionDict.Values.ToList();
+        
         protected BaseHandler()
         {
             BindFlatBufferAllocator("NetworkShared");
@@ -195,5 +198,9 @@ namespace ServerShared.NetworkHandler
                 return false;
             }
         }
+
+        public IEnumerator<Session<DataType>> GetEnumerator() => Sessions.GetEnumerator();
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => Sessions.GetEnumerator();
     }
 }

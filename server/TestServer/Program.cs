@@ -37,6 +37,8 @@ namespace TestServer
                 Console.WriteLine($"Client is moving now. ({x.X}, {x.Y})");
 
                 //session.WriteAndFlushAsync(...);
+                //foreach (var s in this)
+                //    s.WriteAndFlushAsync(...);
                 return true;
             }
             catch (Exception e)
@@ -66,6 +68,8 @@ namespace TestServer
                    
                 Console.WriteLine("valid");
                 //session.WriteAndFlushAsync(...);
+                //foreach (var s in this)
+                //    s.WriteAndFlushAsync(...);
                 return true;
             }
             catch (Exception e)
