@@ -48,8 +48,7 @@ if __name__ == '__main__':
         parser.add_argument('--dir', default='../Protocols')
         args = parser.parse_args()
 
-        if not os.path.isdir(args.dir):
-            raise Exception(f'cannot find directory : {args.dir}')
+        os.makedirs(args.dir, exist_ok=True)
 
         for file in [os.path.join(args.dir, f) for f in os.listdir(args.dir) if os.path.isfile(os.path.join(args.dir, f)) and f.endswith('.cs')]:
 

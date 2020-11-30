@@ -1,13 +1,14 @@
-table PlayerInfo{
-  name:string;
-  name2: string;
-  level:int;
+table Move {
+	x: int;
+	y: int;
+	now: long;
+	direction: int;
 }
-root_type PlayerInfo;
+root_type Move;
 
-table MonsterInfo{
-  name:string;
-  level:int;
-  test:double;
+table Stop {
+	x: int;
+	y: int;
+	now: long;
 }
-root_type MonsterInfo;
+root_type Stop;
