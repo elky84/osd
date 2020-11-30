@@ -5,7 +5,6 @@ using DotNetty.Transport.Bootstrapping;
 using DotNetty.Transport.Channels;
 using DotNetty.Transport.Channels.Sockets;
 using DotNetty.Transport.Libuv;
-using ServerShared.Model;
 using ServerShared.NetworkHandler;
 using ServerShared.Util;
 using System;
@@ -28,7 +27,7 @@ namespace ServerShared.DotNetty
 
         public ServerBootstrap Create<Handler, SessionType>()
             where Handler : BaseHandler<SessionType>, new()
-            where SessionType : BaseSession, new()
+            where SessionType : class, new()
         {
             if (Config.ServerSettings.UseLibuv)
             {

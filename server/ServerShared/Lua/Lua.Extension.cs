@@ -6,11 +6,8 @@ using System.Runtime.InteropServices;
 
 namespace KeraLua
 {
-    public abstract class Luable
-    {
-        protected Luable()
-        { }
-    }
+    public interface ILuable
+    { }
 
     public static class Static
     {
@@ -47,7 +44,7 @@ namespace KeraLua
             return result;
         }
 
-        public static T ToLuable<T>(this Lua lua, int offset) where T : Luable
+        public static T ToLuable<T>(this Lua lua, int offset) where T : class, ILuable
         {
             try
             {
@@ -63,7 +60,7 @@ namespace KeraLua
             }
         }
 
-        public static bool PushLuable<T>(this Lua lua, T luable) where T : Luable
+        public static bool PushLuable<T>(this Lua lua, T luable) where T : ILuable
         {
             try
             {
@@ -90,7 +87,7 @@ namespace KeraLua
                 Assembly.GetEntryAssembly() : 
                 AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(x => x.GetName().Name == assemblyName);
 
-            var luableTypes = assembly.GetTypes().Where(x => x.IsSubclassOf(typeof(Luable))).ToList();   // 모든 루아 오브젝트
+            var luableTypes = assembly.GetTypes().Where(x => typeof(ILuable).IsAssignableFrom(x)).ToList();   // 모든 루아 오브젝트
             var sortedLuableTypes = luableTypes.OrderByDescending(x => luableTypes.Count(luableType => luableType.IsSubclassOf(x))).ToList();   // 상속순으로 정렬된 루아 오브젝트
             foreach (var luableType in sortedLuableTypes)
             {
@@ -129,7 +126,7 @@ namespace KeraLua
 
 
                 lua.NewMetaTable(luableType.Name);
-                if (luableType.BaseType != typeof(Luable)) // 상속
+                if (luableType.BaseType != typeof(ILuable)) // 상속
                 {
                     lua.GetMetaTable(luableType.BaseType.Name);
                     lua.SetMetaTable(-2);

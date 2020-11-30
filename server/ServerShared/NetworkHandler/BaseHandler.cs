@@ -5,7 +5,6 @@ using Serilog;
 using ServerShared.Model;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -16,12 +15,12 @@ namespace ServerShared.NetworkHandler
     public class FlatBufferEventAttribute : Attribute
     { }
 
-    public class BaseHandler<SessionType> : ChannelHandlerAdapter where SessionType : BaseSession, new()
+    public class BaseHandler<DataType> : ChannelHandlerAdapter where DataType : class, new()
     {
         private Dictionary<Type, Delegate> _allocatorDict = new Dictionary<Type, Delegate>();
         private Dictionary<string, Type> _flatBufferDict = new Dictionary<string, Type>();
-        private Dictionary<Type, Func<SessionType, IFlatbufferObject, bool>> _bindedEventDict = new Dictionary<Type, Func<SessionType, IFlatbufferObject, bool>>();
-        private Dictionary<IChannelHandlerContext, SessionType> _sessionDict = new Dictionary<IChannelHandlerContext, SessionType>();
+        private Dictionary<Type, Func<Session<DataType>, IFlatbufferObject, bool>> _bindedEventDict = new Dictionary<Type, Func<Session<DataType>, IFlatbufferObject, bool>>();
+        private Dictionary<IChannelHandlerContext, Session<DataType>> _sessionDict = new Dictionary<IChannelHandlerContext, Session<DataType>>();
 
         protected BaseHandler()
         {
@@ -78,7 +77,7 @@ namespace ServerShared.NetworkHandler
                 if (parameters.Length != 2)
                     return false;
 
-                if (parameters[0].ParameterType != typeof(SessionType))
+                if (parameters[0].ParameterType != typeof(Session<DataType>))
                     return false;
 
                 if (parameters[1].ParameterType.GetInterface(nameof(IFlatbufferObject)) == null)
@@ -96,7 +95,7 @@ namespace ServerShared.NetworkHandler
                     var flatBufferType = parameters[1].ParameterType;
                     var delegateType = Expression.GetDelegateType(parameters.Select(x => x.ParameterType).Concat(new[] { method.ReturnType }).ToArray());
                     var createdDelegate = method.CreateDelegate(delegateType, this);
-                    _bindedEventDict.Add(flatBufferType, new Func<SessionType, IFlatbufferObject, bool>((session, protocol) =>
+                    _bindedEventDict.Add(flatBufferType, new Func<Session<DataType>, IFlatbufferObject, bool>((session, protocol) =>
                     {
                         return (bool)createdDelegate.DynamicInvoke(session, Convert.ChangeType(protocol, flatBufferType));
                     }));
@@ -111,7 +110,7 @@ namespace ServerShared.NetworkHandler
         public override void ChannelActive(IChannelHandlerContext context)
         {
             base.ChannelActive(context);
-            _sessionDict.Add(context, new SessionType());
+            _sessionDict.Add(context, new Session<DataType>(context));
         }
 
         public override void ChannelInactive(IChannelHandlerContext context)
@@ -161,7 +160,7 @@ namespace ServerShared.NetworkHandler
             context.CloseAsync();
         }
 
-        public bool Call<FlatBufferType>(SessionType session, byte[] bytes) where FlatBufferType : struct, IFlatbufferObject
+        public bool Call<FlatBufferType>(Session<DataType> session, byte[] bytes) where FlatBufferType : struct, IFlatbufferObject
         {
             try
             {
@@ -179,7 +178,7 @@ namespace ServerShared.NetworkHandler
             }
         }
 
-        public bool Call(SessionType session, Type type, byte[] bytes)
+        public bool Call(Session<DataType> session, Type type, byte[] bytes)
         {
             try
             {

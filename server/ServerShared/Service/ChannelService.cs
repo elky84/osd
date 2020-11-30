@@ -1,9 +1,4 @@
-﻿using Serilog;
-using ServerShared.Model;
-using ServerShared.Worker;
-using System.Collections.Concurrent;
-
-namespace ServerShared.Service
+﻿namespace ServerShared.Service
 {
     public class ChannelService
     {
