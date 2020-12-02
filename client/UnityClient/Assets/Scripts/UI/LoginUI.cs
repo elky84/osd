@@ -22,8 +22,10 @@ public class LoginUI : MonoBehaviour
         {
             GlobalData.UserName = IDInput.text;
 
-            var bytes = PlayerInfo.Bytes("cshyeon", GlobalData.UserName, 123);
-            NettyClient.Instance.Send<PlayerInfo>(bytes);
+            //var bytes = PlayerInfo.Bytes("cshyeon", GlobalData.UserName, 123);
+            //NettyClient.Instance.Send<PlayerInfo>(bytes);
+
+            NettyClient.Instance.Connect("127.0.0.1", 18008);
         }
     }
 

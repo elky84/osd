@@ -40,7 +40,7 @@ namespace TestServer.Model
                     break;
 
                 case Direction.Top:
-                    Position = new Point(Position.X, Position.Y - moved);
+                    Position = new Point(Position.X, Position.Y + moved);
                     break;
 
                 case Direction.Right:
@@ -48,7 +48,7 @@ namespace TestServer.Model
                     break;
 
                 case Direction.Bottom:
-                    Position = new Point(Position.X, Position.Y + moved);
+                    Position = new Point(Position.X, Position.Y - moved);
                     break;
 
                 default:

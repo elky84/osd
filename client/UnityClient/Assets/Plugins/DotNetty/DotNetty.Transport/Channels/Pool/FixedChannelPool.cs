@@ -286,11 +286,11 @@ namespace DotNetty.Transport.Channels.Pool
         }
 
         ValueTask<IChannel> DoAcquireAsync() => base.AcquireAsync();
-        
+
         public override async ValueTask<bool> ReleaseAsync(IChannel channel)
         {
             Contract.Requires(channel != null);
-            
+
             if (this.executor.InEventLoop)
             {
                 return await this.DoReleaseAsync(channel);
@@ -298,7 +298,9 @@ namespace DotNetty.Transport.Channels.Pool
             else
             {
                 var promise = new TaskCompletionSource<bool>();
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
                 this.executor.Schedule(this.Release0, channel, promise, TimeSpan.Zero);
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
                 return await promise.Task;
             }
         }
@@ -320,12 +322,12 @@ namespace DotNetty.Transport.Channels.Pool
         async ValueTask<bool> DoReleaseAsync(IChannel channel)
         {
             Contract.Assert(this.executor.InEventLoop);
-            
+
             try
             {
                 await base.ReleaseAsync(channel);
                 FailIfClosed(channel);
-                
+
                 this.DecrementAndRunTaskQueue();
                 return true;
             }
@@ -349,7 +351,7 @@ namespace DotNetty.Transport.Channels.Pool
                 }
             }
         }
-        
+
 
         void DecrementAndRunTaskQueue()
         {
@@ -397,8 +399,8 @@ namespace DotNetty.Transport.Channels.Pool
             }
 
             this.closed = true;
-            
-            while(this.pendingAcquireQueue.TryDequeue(out AcquireTask task))
+
+            while (this.pendingAcquireQueue.TryDequeue(out AcquireTask task))
             {
                 task.TimeoutTask?.Cancel();
                 task.Promise.TrySetException(new ClosedChannelException());
@@ -445,11 +447,11 @@ namespace DotNetty.Transport.Channels.Pool
         class AcquireTask
         {
             readonly FixedChannelPool pool;
-            
+
             public readonly TaskCompletionSource<IChannel> Promise;
             public readonly PreciseTimeSpan ExpireTime;
             public IScheduledTask TimeoutTask;
-            
+
             bool acquired;
 
             public AcquireTask(FixedChannelPool pool, TaskCompletionSource<IChannel> promise)
@@ -458,13 +460,13 @@ namespace DotNetty.Transport.Channels.Pool
                 this.Promise = promise;
                 this.ExpireTime = PreciseTimeSpan.FromTicks(Stopwatch.GetTimestamp()) + pool.acquireTimeout;
             }
-            
+
             // Increment the acquire count and delegate to super to actually acquire a Channel which will
             // create a new connection.
             public ValueTask<IChannel> AcquireAsync()
             {
                 var promise = this.Promise;
-                
+
                 if (this.pool.closed)
                 {
                     if (promise != null)
@@ -479,9 +481,9 @@ namespace DotNetty.Transport.Channels.Pool
                 }
 
                 this.Acquired();
-                
+
                 ValueTask<IChannel> future;
-                
+
                 try
                 {
                     future = this.pool.DoAcquireAsync();
@@ -496,7 +498,7 @@ namespace DotNetty.Transport.Channels.Pool
                         }
                         else
                         {
-                            return future;    
+                            return future;
                         }
                     }
                 }
@@ -523,9 +525,9 @@ namespace DotNetty.Transport.Channels.Pool
                     {
                         Contract.Assert(this.pool.executor.InEventLoop);
 
-                        if (this.pool.closed) 
+                        if (this.pool.closed)
                         {
-                            if (t.Status == TaskStatus.RanToCompletion) 
+                            if (t.Status == TaskStatus.RanToCompletion)
                             {
                                 // Since the pool is closed, we have no choice but to close the channel
                                 t.Result.CloseAsync();
@@ -536,7 +538,7 @@ namespace DotNetty.Transport.Channels.Pool
                         {
                             promise.TrySetResult(future.Result);
                         }
-                        else 
+                        else
                         {
                             ResumeQueue();
                             promise.TrySetException(t.Exception);
@@ -544,7 +546,7 @@ namespace DotNetty.Transport.Channels.Pool
                     });
 
                 return new ValueTask<IChannel>(promise.Task);
-                
+
                 void ResumeQueue()
                 {
                     if (this.acquired)
@@ -557,7 +559,7 @@ namespace DotNetty.Transport.Channels.Pool
                     }
                 }
             }
-            
+
             void Acquired()
             {
                 if (this.acquired)

@@ -81,6 +81,13 @@ public class MapTool : MonoBehaviour
         ApplyDataToTile();
     }
 
+    public void LoadMapFromJsonText(string json)
+    {
+        MakeNewMap();
+        JsonUtility.FromJsonOverwrite(json, this);
+        ApplyDataToTile();
+    }
+
     public void clear()
     {
         this.StageFileName = "";
