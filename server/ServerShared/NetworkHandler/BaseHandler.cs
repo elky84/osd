@@ -15,7 +15,7 @@ namespace ServerShared.NetworkHandler
     public class FlatBufferEventAttribute : Attribute
     { }
 
-    public class BaseHandler<DataType> : ChannelHandlerAdapter, IEnumerable<Session<DataType>>
+    public abstract class BaseHandler<DataType> : ChannelHandlerAdapter, IEnumerable<Session<DataType>>
         where DataType : class, new()
     {
         private Dictionary<Type, Delegate> _allocatorDict = new Dictionary<Type, Delegate>();
@@ -202,5 +202,9 @@ namespace ServerShared.NetworkHandler
         public IEnumerator<Session<DataType>> GetEnumerator() => Sessions.GetEnumerator();
 
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => Sessions.GetEnumerator();
+
+        protected abstract void OnConnected(Session<DataType> session);
+
+        protected abstract void OnDisconnected(Session<DataType> session);
     }
 }
