@@ -12,3 +12,24 @@ table Stop {
 	now: long;
 }
 root_type Stop;
+
+table ShowDialog {
+	message: string;
+	icon: string;
+	next: bool;
+	quit: bool;
+}
+root_type ShowDialog;
+
+table ShowListDialog {
+	message: string;
+	icon: string;
+	list: [string];
+}
+root_type ShowListDialog;
+
+table ShowConfirmDialog {
+	message: string;
+	icon: string;
+}
+root_type ShowConfirmDialog;

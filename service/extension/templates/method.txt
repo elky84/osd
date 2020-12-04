@@ -1,6 +1,6 @@
 public static byte[] Bytes({{ parameters }}) {
   var builder = new FlatBufferBuilder(512);
-{{ stringCodes }}
+{{ offsets }}
   var offset = {{ flatbName }}.Create{{ flatbName }}(builder, {{ arguments }});
   builder.Finish(offset.Value);
   return builder.DataBuffer.ToSizedArray();
