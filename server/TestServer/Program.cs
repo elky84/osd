@@ -14,7 +14,7 @@ using TestServer.Model;
 
 namespace TestServer
 {
-    class GameHandler : BaseHandler<Character>
+    public class GameHandler : BaseHandler<Character>
     {
         public List<Session<Character>> _movingSessions = new List<Session<Character>>();
 
@@ -99,8 +99,37 @@ namespace TestServer
             }
         }
 
+        [FlatBufferEvent]
+        public bool OnClick(Session<Character> session, Click x)
+        {
+            var character = session.Data;
+            character.DialogThread = Static.Main.NewThread();
+            character.DialogThread.DoFile(Path.Join(Environment.CurrentDirectory, "..", "..", "..", "hello.lua"));
+            character.DialogThread.GetGlobal("func");
+
+            character.DialogThread.PushLuable(character);
+            character.DialogThread.Resume(1);
+            return true;
+        }
+
+        [FlatBufferEvent]
+        public bool OnSelectListDialog(Session<Character> session, SelectListDialog x)
+        {
+            var character = session.Data;
+            if (character.DialogThread == null)
+                return false;
+
+            character.DialogThread.PushInteger(x.Index);
+            character.DialogThread.Resume(1);
+            return true;
+        }
+
         protected override void OnConnected(Session<Character> session)
-        { }
+        {
+            session.Data.Context = session;
+            var map = new Map("map name", new Size(1024, 768));
+            map.Add(session.Data, new Point(1023, 767));
+        }
 
         protected override void OnDisconnected(Session<Character> session)
         {
@@ -113,20 +142,6 @@ namespace TestServer
         static async Task Main()
         {
             MasterTable.Load("ServerShared");
-
-            var lua = Static.Main.NewThread();
-            lua.DoFile(Path.Join(Environment.CurrentDirectory, "..", "..", "..", "hello.lua"));
-            lua.GetGlobal("func");
-            var map = new Map("map1", new Size(1024, 768));
-            
-            var character = new Character { Damage = 100, Position = new Point(1023, 767) };
-            var sector = map.Add(character);
-            Console.WriteLine(sector.Id);
-
-            lua.PushLuable(character);
-            var result = lua.Resume(1);
-            lua.PushInteger(5);
-            lua.Resume(1);
 
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Information()

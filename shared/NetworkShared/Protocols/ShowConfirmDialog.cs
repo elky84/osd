@@ -48,8 +48,6 @@ public struct ShowConfirmDialog : IFlatbufferObject
     int o = builder.EndTable();
     return new Offset<ShowConfirmDialog>(o);
   }
-  public static void FinishShowConfirmDialogBuffer(FlatBufferBuilder builder, Offset<ShowConfirmDialog> offset) { builder.Finish(offset.Value); }
-  public static void FinishSizePrefixedShowConfirmDialogBuffer(FlatBufferBuilder builder, Offset<ShowConfirmDialog> offset) { builder.FinishSizePrefixed(offset.Value); }
 
   public static byte[] Bytes(string message, string icon) {
     var builder = new FlatBufferBuilder(512);

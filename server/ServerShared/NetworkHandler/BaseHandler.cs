@@ -114,13 +114,18 @@ namespace ServerShared.NetworkHandler
         {
             base.ChannelActive(context);
             _sessionDict.Add(context, new Session<DataType>(context));
+            
+            OnConnected(_sessionDict[context]);
         }
 
         public override void ChannelInactive(IChannelHandlerContext context)
         {
             base.ChannelInactive(context);
             if (_sessionDict.ContainsKey(context))
+            {
+                OnDisconnected(_sessionDict[context]);
                 _sessionDict.Remove(context);
+            }
         }
 
         public override void ChannelRead(IChannelHandlerContext context, object byteBuffer)

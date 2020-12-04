@@ -1,4 +1,7 @@
 function func(c)
+	local selection = c:dialog_list('hello', 'icon', {'1', '2', '3', 'zz'})
+	print(string.format('selection : %s', selection))
+
 	local map = c:map()
 	print(string.format('map name : %s', map:name()))
 	local width, height = map:size()

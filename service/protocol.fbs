@@ -33,3 +33,13 @@ table ShowConfirmDialog {
 	icon: string;
 }
 root_type ShowConfirmDialog;
+
+table SelectListDialog {
+	index: int;
+}
+root_type SelectListDialog;
+
+table Click {
+	sequence: int;
+}
+root_type Click;

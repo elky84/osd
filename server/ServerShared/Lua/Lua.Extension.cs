@@ -60,6 +60,20 @@ namespace KeraLua
             }
         }
 
+        public static List<string> ToStringList(this Lua lua, int offset)
+        {
+            var size = lua.RawLen(offset);
+
+            var list = new List<string>();
+            for (int i = 0; i < size; i++)
+            {
+                lua.RawGetInteger(offset, i + 1);
+                list.Add(lua.ToString(-1));
+            }
+
+            return list;
+        }
+
         public static bool PushLuable<T>(this Lua lua, T luable) where T : ILuable
         {
             try

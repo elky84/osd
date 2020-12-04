@@ -36,12 +36,33 @@ namespace TestClient
                 connectTask.Wait();
                 var channel = connectTask.Result;
 
+                var msg = Unpooled.Buffer();
+                var bytes = Click.Bytes(0);
+                msg.WriteInt(bytes.Length);
+                var name = nameof(Click);
+                msg.WriteByte(name.Length);
+                msg.WriteString(name, Encoding.Default);
+                msg.WriteBytes(bytes);
+                channel.WriteAndFlushAsync(msg);
+
+
+                bytes = SelectListDialog.Bytes(3);
+                msg = Unpooled.Buffer();
+                msg.WriteInt(bytes.Length);
+                name = nameof(SelectListDialog);
+                msg.WriteByte(name.Length);
+                msg.WriteString(name, Encoding.Default);
+                msg.WriteBytes(bytes);
+                channel.WriteAndFlushAsync(msg);
+
+
+
                 var position = new Point();
                 var begin = DateTime.Now;
-                var bytes = Move.Bytes(position.X, position.Y, begin.Ticks, 2);
-                var msg = Unpooled.Buffer();
+                bytes = Move.Bytes(position.X, position.Y, begin.Ticks, 2);
+                msg = Unpooled.Buffer();
                 msg.WriteInt(bytes.Length);
-                var name = nameof(Move);
+                name = nameof(Move);
                 msg.WriteByte(name.Length);
                 msg.WriteString(name, Encoding.Default);
                 msg.WriteBytes(bytes);

@@ -67,6 +67,12 @@ namespace TestServer.Model
             return Sectors.Add(obj);
         }
 
+        public Sector Add(Object obj, Point position)
+        {
+            obj.Position = position;
+            return Add(obj);
+        }
+
         public Sector Remove(Object obj)
         {
             obj.Map = null;
