@@ -31,7 +31,7 @@ namespace TestServer.Model
             return Math.Abs(X - p.X) + Math.Abs(p.Y - p.Y);
         }
 
-        public double Delta(global::Position p)
+        public double Delta(FlatBuffers.Protocol.Position p)
         {
             return Delta(new Position(p.X, p.Y));
         }

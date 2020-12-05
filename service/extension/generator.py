@@ -14,7 +14,7 @@ def constructor(name, type, param, method_dict):
 
     if type in method_dict:
         arguments = ', '.join([f"{name}.{x['name'].capitalize()}" for x in method_dict[type]])
-        return f'global::{type}.Create{type}(builder, {arguments})'
+        return f'FlatBuffers.Protocol.{type}.Create{type}(builder, {arguments})'
 
     return None
 
@@ -23,7 +23,7 @@ def property_str(parameters, method_dict):
     for x in parameters:
         type = x['type']
         if type in method_dict:
-            type = f'global::{type}.Model'
+            type = f'FlatBuffers.Protocol.{type}.Model'
 
         name = x['name'].lower()
         if name != 'offset' and name.endswith('offset'):
@@ -47,7 +47,7 @@ def binding_str(parameters):
 def parameter_str(parameters, method_dict):
     result = []
     for x in parameters:
-        type = f"global::{x['type']}.Model" if x['type'] in method_dict else x['type']
+        type = f"FlatBuffers.Protocol.{x['type']}.Model" if x['type'] in method_dict else x['type']
         result.append(f"{type} {x['pure name']}")
     return ', '.join(result)
 

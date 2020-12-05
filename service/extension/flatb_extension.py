@@ -73,6 +73,7 @@ if __name__ == '__main__':
             model_code = model(parameters)
             method_code = method(name, parameters)
             data = f"{data[:-3]}\n\n{model_code}\n\n{method_code}{data[-3:]}"
+            data = '\n'.join([f'  {x}' for x in data.split('\n')])
 
             with open(file, 'w', encoding='utf8') as f:
                 f.write(flatbuffer_template.render({'code': data}))

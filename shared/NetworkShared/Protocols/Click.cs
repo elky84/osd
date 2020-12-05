@@ -7,47 +7,50 @@ using global::System.Collections.Generic;
 using global::FlatBuffers;
 using System.Linq;
 
-public struct Click : IFlatbufferObject
+namespace FlatBuffers.Protocol
 {
-  private Table __p;
-  public ByteBuffer ByteBuffer { get { return __p.bb; } }
-  public static void ValidateVersion() { FlatBufferConstants.FLATBUFFERS_1_12_0(); }
-  public static Click GetRootAsClick(ByteBuffer _bb) { return GetRootAsClick(_bb, new Click()); }
-  public static Click GetRootAsClick(ByteBuffer _bb, Click obj) { return (obj.__assign(_bb.GetInt(_bb.Position) + _bb.Position, _bb)); }
-  public void __init(int _i, ByteBuffer _bb) { __p = new Table(_i, _bb); }
-  public Click __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
-
-  public int Sequence { get { int o = __p.__offset(4); return o != 0 ? __p.bb.GetInt(o + __p.bb_pos) : (int)0; } }
-
-  public static Offset<Click> CreateClick(FlatBufferBuilder builder,
-      int sequence = 0) {
-    builder.StartTable(1);
-    Click.AddSequence(builder, sequence);
-    return Click.EndClick(builder);
-  }
-
-  public static void StartClick(FlatBufferBuilder builder) { builder.StartTable(1); }
-  public static void AddSequence(FlatBufferBuilder builder, int sequence) { builder.AddInt(0, sequence, 0); }
-  public static Offset<Click> EndClick(FlatBufferBuilder builder) {
-    int o = builder.EndTable();
-    return new Offset<Click>(o);
-  }
-
-  public struct Model
+  public struct Click : IFlatbufferObject
   {
-    public int Sequence { get; set; }
+    private Table __p;
+    public ByteBuffer ByteBuffer { get { return __p.bb; } }
+    public static void ValidateVersion() { FlatBufferConstants.FLATBUFFERS_1_12_0(); }
+    public static Click GetRootAsClick(ByteBuffer _bb) { return GetRootAsClick(_bb, new Click()); }
+    public static Click GetRootAsClick(ByteBuffer _bb, Click obj) { return (obj.__assign(_bb.GetInt(_bb.Position) + _bb.Position, _bb)); }
+    public void __init(int _i, ByteBuffer _bb) { __p = new Table(_i, _bb); }
+    public Click __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
   
-    public Model(int sequence)
-    {
-      Sequence = sequence;
+    public int Sequence { get { int o = __p.__offset(4); return o != 0 ? __p.bb.GetInt(o + __p.bb_pos) : (int)0; } }
+  
+    public static Offset<Click> CreateClick(FlatBufferBuilder builder,
+        int sequence = 0) {
+      builder.StartTable(1);
+      Click.AddSequence(builder, sequence);
+      return Click.EndClick(builder);
     }
-  }
-
-  public static byte[] Bytes(int sequence) {
-    var builder = new FlatBufferBuilder(512);
   
-    var offset = Click.CreateClick(builder, sequence);
-    builder.Finish(offset.Value);
-    return builder.DataBuffer.ToSizedArray();
-  }
-};
+    public static void StartClick(FlatBufferBuilder builder) { builder.StartTable(1); }
+    public static void AddSequence(FlatBufferBuilder builder, int sequence) { builder.AddInt(0, sequence, 0); }
+    public static Offset<Click> EndClick(FlatBufferBuilder builder) {
+      int o = builder.EndTable();
+      return new Offset<Click>(o);
+    }
+  
+    public struct Model
+    {
+      public int Sequence { get; set; }
+    
+      public Model(int sequence)
+      {
+        Sequence = sequence;
+      }
+    }
+  
+    public static byte[] Bytes(int sequence) {
+      var builder = new FlatBufferBuilder(512);
+    
+      var offset = Click.CreateClick(builder, sequence);
+      builder.Finish(offset.Value);
+      return builder.DataBuffer.ToSizedArray();
+    }
+  };
+}

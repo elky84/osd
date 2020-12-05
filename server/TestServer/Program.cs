@@ -1,4 +1,5 @@
-﻿using KeraLua;
+﻿using FlatBuffers.Protocol;
+using KeraLua;
 using NetworkShared;
 using Serilog;
 using ServerShared.DotNetty;

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FlatBuffers.Protocol;
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
@@ -124,7 +125,7 @@ public class Character : SpriteObject
         StopMove();
 
         MoveDt = DateTime.Now;
-        NettyClient.Instance.Send<Move>(Move.Bytes(CurrentPosition.X, CurrentPosition.Y, MoveDt.Ticks, (int)direction));
+        NettyClient.Instance.Send<Move>(Move.Bytes(new FlatBuffers.Protocol.Position.Model(CurrentPosition.X, CurrentPosition.Y), MoveDt.Ticks, (int)direction));
 
         MoveStart();
     }
@@ -144,6 +145,6 @@ public class Character : SpriteObject
     {
         StopMove();
         var end = DateTime.Now;
-        NettyClient.Instance.Send<Stop>(Stop.Bytes(CurrentPosition.X, CurrentPosition.Y, end.Ticks));
+        NettyClient.Instance.Send<Stop>(Stop.Bytes(new FlatBuffers.Protocol.Position.Model(CurrentPosition.X, CurrentPosition.Y), end.Ticks));
     }
 }
