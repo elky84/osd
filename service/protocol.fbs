@@ -1,14 +1,14 @@
 table Move {
-	x: int;
-	y: int;
+	x: double;
+	y: double;
 	now: long;
 	direction: int;
 }
 root_type Move;
 
 table Stop {
-	x: int;
-	y: int;
+	x: double;
+	y: double;
 	now: long;
 }
 root_type Stop;

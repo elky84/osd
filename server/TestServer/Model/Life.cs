@@ -25,30 +25,30 @@ namespace TestServer.Model
             return 1;
         }
 
-        public Point UpdatePosition(DateTime time)
+        public Position UpdatePosition(DateTime time)
         {
             if (Time == null)
                 return Position;
 
             var diff = time - Time.Value;
-            var moved = (int)(diff.TotalMilliseconds * (Speed / 1000.0));
+            var moved = diff.TotalMilliseconds * (Speed / 1000.0);
 
             switch (Direction)
             {
                 case Direction.Left:
-                    Position = new Point(Position.X - moved, Position.Y);
+                    Position.X -= moved;
                     break;
 
                 case Direction.Top:
-                    Position = new Point(Position.X, Position.Y + moved);
+                    Position.Y += moved;
                     break;
 
                 case Direction.Right:
-                    Position = new Point(Position.X + moved, Position.Y);
+                    Position.X += moved;
                     break;
 
                 case Direction.Bottom:
-                    Position = new Point(Position.X, Position.Y - moved);
+                    Position.Y -= moved;
                     break;
 
                 default:

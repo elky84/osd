@@ -5,18 +5,16 @@ using UnityEngine.UI;
 
 public class Position
 {
-    public bool IsEmpty { get; }
+    public double X { get; set; }
 
-    public float X { get; set; }
-
-    public float Y { get; set; }
+    public double Y { get; set; }
 
     public Position()
     {
 
     }
 
-    public Position(float x, float y)
+    public Position(double x, double y)
     {
         this.X = x;
         this.Y = y;
@@ -24,7 +22,7 @@ public class Position
 
     public Vector3 ToVector3()
     {
-        return new Vector3(X, Y);
+        return new Vector3((float)X, (float)Y);
     }
 }
 
@@ -126,7 +124,7 @@ public class Character : SpriteObject
         StopMove();
 
         MoveDt = DateTime.Now;
-        NettyClient.Instance.Send<Move>(Move.Bytes((int)CurrentPosition.X, (int)CurrentPosition.Y, MoveDt.Ticks, (int)direction));
+        NettyClient.Instance.Send<Move>(Move.Bytes(CurrentPosition.X, CurrentPosition.Y, MoveDt.Ticks, (int)direction));
 
         MoveStart();
     }
@@ -146,6 +144,6 @@ public class Character : SpriteObject
     {
         StopMove();
         var end = DateTime.Now;
-        NettyClient.Instance.Send<Stop>(Stop.Bytes((int)CurrentPosition.X, (int)CurrentPosition.Y, end.Ticks));
+        NettyClient.Instance.Send<Stop>(Stop.Bytes(CurrentPosition.X, CurrentPosition.Y, end.Ticks));
     }
 }

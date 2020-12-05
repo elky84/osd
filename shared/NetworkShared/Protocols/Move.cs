@@ -17,27 +17,27 @@ public struct Move : IFlatbufferObject
   public void __init(int _i, ByteBuffer _bb) { __p = new Table(_i, _bb); }
   public Move __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
-  public int X { get { int o = __p.__offset(4); return o != 0 ? __p.bb.GetInt(o + __p.bb_pos) : (int)0; } }
-  public int Y { get { int o = __p.__offset(6); return o != 0 ? __p.bb.GetInt(o + __p.bb_pos) : (int)0; } }
+  public double X { get { int o = __p.__offset(4); return o != 0 ? __p.bb.GetDouble(o + __p.bb_pos) : (double)0.0; } }
+  public double Y { get { int o = __p.__offset(6); return o != 0 ? __p.bb.GetDouble(o + __p.bb_pos) : (double)0.0; } }
   public long Now { get { int o = __p.__offset(8); return o != 0 ? __p.bb.GetLong(o + __p.bb_pos) : (long)0; } }
   public int Direction { get { int o = __p.__offset(10); return o != 0 ? __p.bb.GetInt(o + __p.bb_pos) : (int)0; } }
 
   public static Offset<Move> CreateMove(FlatBufferBuilder builder,
-      int x = 0,
-      int y = 0,
+      double x = 0.0,
+      double y = 0.0,
       long now = 0,
       int direction = 0) {
     builder.StartTable(4);
     Move.AddNow(builder, now);
-    Move.AddDirection(builder, direction);
     Move.AddY(builder, y);
     Move.AddX(builder, x);
+    Move.AddDirection(builder, direction);
     return Move.EndMove(builder);
   }
 
   public static void StartMove(FlatBufferBuilder builder) { builder.StartTable(4); }
-  public static void AddX(FlatBufferBuilder builder, int x) { builder.AddInt(0, x, 0); }
-  public static void AddY(FlatBufferBuilder builder, int y) { builder.AddInt(1, y, 0); }
+  public static void AddX(FlatBufferBuilder builder, double x) { builder.AddDouble(0, x, 0.0); }
+  public static void AddY(FlatBufferBuilder builder, double y) { builder.AddDouble(1, y, 0.0); }
   public static void AddNow(FlatBufferBuilder builder, long now) { builder.AddLong(2, now, 0); }
   public static void AddDirection(FlatBufferBuilder builder, int direction) { builder.AddInt(3, direction, 0); }
   public static Offset<Move> EndMove(FlatBufferBuilder builder) {
@@ -45,7 +45,7 @@ public struct Move : IFlatbufferObject
     return new Offset<Move>(o);
   }
 
-  public static byte[] Bytes(int x, int y, long now, int direction) {
+  public static byte[] Bytes(double x, double y, long now, int direction) {
     var builder = new FlatBufferBuilder(512);
   
     var offset = Move.CreateMove(builder, x, y, now, direction);

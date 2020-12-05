@@ -52,7 +52,7 @@ namespace TestServer.Model
 
             IEnumerator IEnumerable.GetEnumerator() => _sectors.GetEnumerator();
 
-            public Sector this[Point position] => this[Index(position)];
+            public Sector this[Position position] => this[Index(position.ToPoint())];
 
             public Sector this[uint index]
             {
@@ -85,7 +85,7 @@ namespace TestServer.Model
                 return sector;
             }
 
-            public List<Sector> Nears(Point position)
+            public List<Sector> Nears(Position position)
             {
                 try
                 {
@@ -95,8 +95,8 @@ namespace TestServer.Model
                     var sectors = new List<Sector>();
                     sectors.Add(pivot);
 
-                    var index = Index(position);
-                    
+                    var index = Index(position.ToPoint());
+
                     var isLeft = index % Columns == 0;
                     if (isLeft == false)
                     {
@@ -166,7 +166,7 @@ namespace TestServer.Model
                 }
             }
 
-            public List<T> Objects<T>(Point position) where T : Object
+            public List<T> Objects<T>(Position position) where T : Object
             {
                 var sectors = Nears(position);
                 return sectors.SelectMany(x => x.Objects).Select(x => x as T).Where(x => x != null).ToList();

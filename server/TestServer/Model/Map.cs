@@ -67,7 +67,7 @@ namespace TestServer.Model
             return Sectors.Add(obj);
         }
 
-        public Sector Add(Object obj, Point position)
+        public Sector Add(Object obj, Position position)
         {
             obj.Position = position;
             return Add(obj);
