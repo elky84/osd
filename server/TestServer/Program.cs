@@ -41,12 +41,12 @@ namespace TestServer
                 if (latency.TotalSeconds > 10)
                     throw new Exception("...");
 
-                if (character.Position.Delta(new Position(x.X, x.Y)) > 1)
+                if (character.Position.Delta(x.Position.Value) > 1)
                     throw new Exception("position is not matched.");
 
                 character.Time = new DateTime(x.Now);
                 character.Direction = (Direction)x.Direction;
-                Console.WriteLine($"Client is moving now. ({x.X}, {x.Y})");
+                Console.WriteLine($"Client is moving now. ({x.Position?.X}, {x.Position?.Y})");
 
                 _movingSessions.Add(session);
 
@@ -83,7 +83,7 @@ namespace TestServer
 
                 _movingSessions.Remove(session);
 
-                if (character.Position.Delta(new Position(x.X, x.Y)) > 1)
+                if (character.Position.Delta(x.Position.Value) > 1)
                     throw new Exception("invalid");
 
                 Console.WriteLine("valid");
@@ -128,7 +128,7 @@ namespace TestServer
         {
             session.Data.Context = session;
             var map = new Map("map name", new Size(1024, 768));
-            map.Add(session.Data, new Position(1023, 767));
+            map.Add(session.Data, new Model.Position(1023, 767));
         }
 
         protected override void OnDisconnected(Session<Character> session)

@@ -1,14 +1,17 @@
-table Move {
+table Position {
 	x: double;
 	y: double;
+}
+
+table Move {
+	position: Position;
 	now: long;
 	direction: int;
 }
 root_type Move;
 
 table Stop {
-	x: double;
-	y: double;
+	position: Position;
 	now: long;
 }
 root_type Stop;
@@ -43,3 +46,9 @@ table Click {
 	sequence: int;
 }
 root_type Click;
+
+table Show {
+	sequence: int;
+	position: Position;
+}
+root_type Show;

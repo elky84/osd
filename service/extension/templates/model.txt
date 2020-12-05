@@ -1,0 +1,9 @@
+public struct Model
+{
+{{ properties }}
+
+  public Model({{ parameters }})
+  {
+{{ binding }}
+  }
+}
