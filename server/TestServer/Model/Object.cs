@@ -1,6 +1,5 @@
 ﻿using KeraLua;
 using System;
-using System.Drawing;
 
 namespace TestServer.Model
 {
@@ -14,9 +13,8 @@ namespace TestServer.Model
             var lua = Lua.FromIntPtr(luaState);
             var obj = lua.ToLuable<Object>(1);
 
-            //TODO double, int 체크
-            lua.PushInteger((int)obj.Position.X);
-            lua.PushInteger((int)obj.Position.Y);
+            lua.PushNumber(obj.Position.X);
+            lua.PushNumber(obj.Position.Y);
             return 2;
         }
 
@@ -25,7 +23,7 @@ namespace TestServer.Model
             var lua = Lua.FromIntPtr(luaState);
             var obj = lua.ToLuable<Object>(1);
 
-            lua.PushLuable<Map>(obj.Map);
+            lua.PushLuable(obj.Map);
             return 1;
         }
     }

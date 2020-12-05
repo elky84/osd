@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Drawing;
 
 namespace TestServer.Model
 {
@@ -19,11 +18,6 @@ namespace TestServer.Model
         {
             this.X = x;
             this.Y = y;
-        }
-
-        public Point ToPoint()
-        {
-            return new Point((int)X, (int)Y);
         }
 
         public double Delta(Position p)

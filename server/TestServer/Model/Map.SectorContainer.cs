@@ -46,13 +46,13 @@ namespace TestServer.Model
                     ActivatedSectors.Remove(sector.Id);
             }
 
-            private uint Index(Point position) => (uint)(position.Y / _sectorSize.Height) * Columns + (uint)(position.X / _sectorSize.Width);
+            private uint Index(Position position) => (uint)(position.Y / _sectorSize.Height) * Columns + (uint)(position.X / _sectorSize.Width);
 
             public IEnumerator<Sector> GetEnumerator() => _sectors.GetEnumerator();
 
             IEnumerator IEnumerable.GetEnumerator() => _sectors.GetEnumerator();
 
-            public Sector this[Position position] => this[Index(position.ToPoint())];
+            public Sector this[Position position] => this[Index(position)];
 
             public Sector this[uint index]
             {
@@ -95,7 +95,7 @@ namespace TestServer.Model
                     var sectors = new List<Sector>();
                     sectors.Add(pivot);
 
-                    var index = Index(position.ToPoint());
+                    var index = Index(position);
 
                     var isLeft = index % Columns == 0;
                     if (isLeft == false)
