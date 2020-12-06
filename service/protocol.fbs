@@ -47,8 +47,23 @@ table Click {
 }
 root_type Click;
 
-table Show {
+table Object {
 	sequence: int;
 	position: Position;
 }
-root_type Show;
+root_type Object;
+
+table ShowList {
+	objects: [Object];
+}
+root_type ShowList;
+
+table Hide {
+	sequence: int;
+}
+root_type Hide;
+
+table HideList {
+	sequence: [int];
+}
+root_type HideList;

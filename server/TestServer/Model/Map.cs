@@ -8,10 +8,38 @@ namespace TestServer.Model
 {
     public partial class Map : ILuable
     {
+        private int _currentSequence = 0;
+
         public string Name { get; private set; }
         public Size Size { get; private set; }
         public SectorContainer Sectors { get; private set; }
-        public IEnumerable<Object> Objects => Sectors.SelectMany(x => x.Objects);
+        public Dictionary<int, Object> Objects { get; private set; } = new Dictionary<int, Object>();
+
+        public int? NextSequence
+        {
+            get
+            {
+                for (int i = _currentSequence; i < int.MaxValue; i++)
+                {
+                    if (Objects.ContainsKey(i))
+                        continue;
+
+                    _currentSequence = i + 1;
+                    return i;
+                }
+
+                for (int i = 0; i < _currentSequence; i++)
+                {
+                    if (Objects.ContainsKey(i))
+                        continue;
+
+                    _currentSequence = i + 1;
+                    return i;
+                }
+
+                return null;
+            }
+        }
 
         public static int BuiltinName(IntPtr luaState)
         {
@@ -40,7 +68,7 @@ namespace TestServer.Model
             lua.NewTable();
             foreach (var (obj, i) in map.Objects.Select((x, i) => (x, i)))
             {
-                lua.PushLuable(obj);
+                lua.PushLuable(obj.Value);
                 lua.RawSetInteger(-2, i + 1);
             }
 
@@ -63,7 +91,11 @@ namespace TestServer.Model
 
         public Sector Add(Object obj)
         {
+            var sequence = NextSequence ??
+                throw new Exception("cannot get next sequence.");
+
             obj.Map = this;
+            obj.Sequence = sequence;
             return Sectors.Add(obj);
         }
 

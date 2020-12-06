@@ -12,6 +12,7 @@ using System.Drawing;
 using System.IO;
 using System.Threading.Tasks;
 using TestServer.Model;
+using System.Linq;
 
 namespace TestServer
 {
@@ -42,6 +43,7 @@ namespace TestServer
                 if (latency.TotalSeconds > 10)
                     throw new Exception("...");
 
+                character.UpdatePosition(new DateTime(x.Now));
                 if (character.Position.Delta(x.Position.Value) > 1)
                     throw new Exception("position is not matched.");
 
@@ -129,7 +131,14 @@ namespace TestServer
         {
             session.Data.Context = session;
             var map = new Map("map name", new Size(1024, 768));
-            map.Add(session.Data, new Model.Position(1023, 767));
+            map.Add(session.Data);
+
+            // 현재 맵에 있는 모든 오브젝트
+            var objects = map.Objects
+                .Select(x => new FlatBuffers.Protocol.Object.Model(x.Key, new FlatBuffers.Protocol.Position.Model(x.Value.Position.X, x.Value.Position.Y)))
+                .ToList();
+
+            ShowList.Bytes(objects);
         }
 
         protected override void OnDisconnected(Session<Character> session)
