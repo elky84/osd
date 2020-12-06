@@ -7,7 +7,8 @@ namespace TestServer.Model
     {
         public Position Position { get; set; } = new Position();
         public Map Map { get; set; }
-        public int Sequence { get; set; }
+        public int? Sequence { get; set; }
+        public Map.Sector Sector { get; set; }
 
         public static int BuiltinPosition(IntPtr luaState)
         {

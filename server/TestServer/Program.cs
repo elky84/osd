@@ -13,6 +13,7 @@ using System.IO;
 using System.Threading.Tasks;
 using TestServer.Model;
 using System.Linq;
+using TestServer.Extension;
 
 namespace TestServer
 {
@@ -28,6 +29,11 @@ namespace TestServer
             base.ChannelInactive(context);
         }
 
+        private void Synchronize(DateTime now)
+        {
+            _movingSessions.ForEach(x => x.Data?.Synchronize(now));
+        }
+
         [FlatBufferEvent]
         public bool OnMove(Session<Character> session, Move x)
         {
@@ -35,15 +41,10 @@ namespace TestServer
 
             try
             {
-                var clientDateTime = new DateTime(x.Now);
-                if (clientDateTime > DateTime.Now)
-                    return false;
-
-                var latency = DateTime.Now - clientDateTime;
-                if (latency.TotalSeconds > 10)
+                if(x.Now.Validate() == false)
                     throw new Exception("...");
 
-                character.UpdatePosition(new DateTime(x.Now));
+                character.Synchronize(new DateTime(x.Now));
                 if (character.Position.Delta(x.Position.Value) > 1)
                     throw new Exception("position is not matched.");
 
@@ -72,15 +73,10 @@ namespace TestServer
 
             try
             {
-                var clientDateTime = new DateTime(x.Now);
-                if (clientDateTime > DateTime.Now)
-                    return false;
-
-                var latency = DateTime.Now - clientDateTime;
-                if (latency.TotalSeconds > 10)
+                if(x.Now.Validate() == false)
                     throw new Exception("...");
 
-                character.UpdatePosition(new DateTime(x.Now));
+                character.Synchronize(new DateTime(x.Now));
                 character.Time = null;
                 Console.WriteLine($"Stop position : {character.Position}");
 
@@ -131,6 +127,10 @@ namespace TestServer
         {
             session.Data.Context = session;
             var map = new Map("map name", new Size(1024, 768));
+            map.Sectors.OnSectorChanged = obj =>
+            {
+                Console.WriteLine($"Sector changed({obj.Sequence}, sector : {obj.Sector.Id})");
+            };
             map.Add(session.Data);
 
             // 현재 맵에 있는 모든 오브젝트

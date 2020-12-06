@@ -1,23 +1,26 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace TestServer.Model
 {
     public partial class Map
     {
-        public class Sector : IList<Object>
+        public class Sector : IDictionary<int, Object>
         {
-            private List<Object> _objects = new List<Object>();
+            private Dictionary<int, Object> _objects = new Dictionary<int, Object>();
             private bool _activated = false;
             private Action<Sector> _stateChangedEvent;
 
+            public Object this[int key] { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
             public uint Id { get; private set; }
 
-            public IEnumerable<Object> Objects => _objects;
+            public IEnumerable<Object> Objects => _objects.Values;
 
-            public IEnumerable<Character> Characters => _objects.Select(x => x as Character).Where(x => x != null);
+            public IEnumerable<Character> Characters => _objects.Select(x => x.Value as Character).Where(x => x != null);
 
             public bool Activated
             {
@@ -36,13 +39,28 @@ namespace TestServer.Model
 
             public bool IsReadOnly => false;
 
-            Object IList<Object>.this[int index]
+            public ICollection<int> Keys => _objects.Keys;
+
+            public ICollection<Object> Values => _objects.Values;
+
+            public void Add(int key, Object value)
             {
-                get => _objects[index];
-                set { }
+                _objects.Add(key, value);
+                if (value is Character)
+                    Activated = true;
             }
 
-            public Object this[int index] => _objects[index];
+            public void Add(KeyValuePair<int, Object> item) => _objects.Add(item.Key, item.Value);
+
+            public void Clear()
+            {
+                _objects.Clear();
+                Activated = false;
+            }
+
+            public bool Contains(KeyValuePair<int, Object> item) => _objects.ContainsKey(item.Key);
+
+            public bool ContainsKey(int key) => _objects.ContainsKey(key);
 
             public Sector(uint id, Action<Sector> stateChangedEvent)
             {
@@ -52,44 +70,27 @@ namespace TestServer.Model
 
             private void Update() => Activated = (Characters.Count() > 0);
 
-            public int IndexOf(Object item) => _objects.IndexOf(item);
+            public bool TryGetValue(int key, [MaybeNullWhen(false)] out Object value) => _objects.TryGetValue(key, out value);
 
-            public void Insert(int index, Object item) => _objects.Insert(index, item);
+            public IEnumerator<KeyValuePair<int, Object>> GetEnumerator() => _objects.GetEnumerator();
 
-            public void RemoveAt(int index)
-            { 
-                 _objects.RemoveAt(index);
-                Update();
-            }
+            IEnumerator IEnumerable.GetEnumerator() => _objects.GetEnumerator();
 
-            public void Add(Object item)
+            public bool Remove(int key)
             {
-                _objects.Add(item);
-                if (item is Character)
-                    Activated = true;
-            }
-
-            public void Clear()
-            {
-                Activated = false;
-            }
-
-            public bool Contains(Object item) => _objects.Contains(item);
-
-            public void CopyTo(Object[] array, int arrayIndex) => _objects.CopyTo(array, arrayIndex);
-
-            public bool Remove(Object item)
-            {
-                if (_objects.Remove(item) == false)
+                if (_objects.Remove(key) == false)
                     return false;
-                    
+                
                 Update();
                 return true;
             }
 
-            public IEnumerator<Object> GetEnumerator() => _objects.GetEnumerator();
+            public void CopyTo(KeyValuePair<int, Object>[] array, int arrayIndex) => throw new NotImplementedException();
 
-            IEnumerator IEnumerable.GetEnumerator() => _objects.GetEnumerator();
+            public bool Remove(KeyValuePair<int, Object> item)
+            {
+                return Remove(item.Key);
+            }
         }
     }
 }

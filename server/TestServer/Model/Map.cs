@@ -14,7 +14,6 @@ namespace TestServer.Model
         public Size Size { get; private set; }
         public SectorContainer Sectors { get; private set; }
         public Dictionary<int, Object> Objects { get; private set; } = new Dictionary<int, Object>();
-
         public int? NextSequence
         {
             get
@@ -86,7 +85,11 @@ namespace TestServer.Model
             Name = name;
             Size = size;
 
+#if DEBUG
+            Sectors = new SectorContainer(this, new Size(8, 8));
+#else
             Sectors = new SectorContainer(this, new Size(64, 64));
+#endif
         }
 
         public Sector Add(Object obj)
@@ -94,9 +97,11 @@ namespace TestServer.Model
             var sequence = NextSequence ??
                 throw new Exception("cannot get next sequence.");
 
+            Objects.Add(sequence, obj);
             obj.Map = this;
             obj.Sequence = sequence;
-            return Sectors.Add(obj);
+            obj.Sector = Sectors.Add(obj);
+            return obj.Sector;
         }
 
         public Sector Add(Object obj, Position position)
@@ -107,8 +112,24 @@ namespace TestServer.Model
 
         public Sector Remove(Object obj)
         {
+            if (obj.Sequence.HasValue == false)
+                return null;
+
             obj.Map = null;
+            Objects.Remove(obj.Sequence.Value);
+            obj.Sequence = null;
             return Sectors.Remove(obj);
+        }
+
+        public Sector Update(Object obj)
+        {
+            if (obj.Sequence.HasValue == false || Objects.ContainsKey(obj.Sequence.Value) == false)
+                return null;
+
+            if (obj.Sector == null)
+                return null;
+
+            return Sectors.Add(obj);
         }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using KeraLua;
 using System;
-using System.Drawing;
 
 namespace TestServer.Model
 {
@@ -25,7 +24,7 @@ namespace TestServer.Model
             return 1;
         }
 
-        public Position UpdatePosition(DateTime time)
+        public Position Synchronize(DateTime time)
         {
             if (Time == null)
                 return Position;
@@ -55,6 +54,7 @@ namespace TestServer.Model
                     throw new Exception("Invalid direction value");
             }
 
+            Map.Update(this);
             return Position;
         }
     }

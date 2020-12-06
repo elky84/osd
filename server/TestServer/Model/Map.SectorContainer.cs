@@ -14,6 +14,8 @@ namespace TestServer.Model
             private Size _sectorSize;
             private List<Sector> _sectors = new List<Sector>();
 
+            public Action<Object> OnSectorChanged { get; set; }
+
             public uint Rows { get; private set; }
             public uint Columns { get; private set; }
             public uint Count { get; private set; }
@@ -67,21 +69,35 @@ namespace TestServer.Model
 
             public Sector Add(Object obj)
             {
+                if (obj.Sequence.HasValue == false)
+                    return null;
+
                 var sector = this[obj.Position];
                 if (sector == null)
                     return null;
 
-                sector.Add(obj);
+                if (obj.Sector == sector)
+                    return sector;
+
+                obj.Sector?.Remove(obj.Sequence.Value);
+                obj.Sector = sector;
+                sector.Add(obj.Sequence.Value, obj);
+                OnSectorChanged?.Invoke(obj);
                 return sector;
             }
 
             public Sector Remove(Object obj)
             {
+                if (obj.Sequence.HasValue == false)
+                    return null;
+
                 var sector = this[obj.Position];
                 if (sector == null)
                     return null;
 
-                sector.Remove(obj);
+                sector.Remove(obj.Sequence.Value);
+                obj.Sector = null;
+                OnSectorChanged?.Invoke(obj);
                 return sector;
             }
 
