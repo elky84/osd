@@ -26,8 +26,8 @@ def root(code):
             parameter['type'] = COMMON_FLATBUFFER_TYPES[parameter['type']]
 
         if parameter['type'] == 'List':
-            groups = extract(rf"\spublic (?P<type>\b\w+) {parameter['pure name'].capitalize()}\(int j\)", code)
-            parameter['type'] = f"List<{groups['type']}>"
+            groups = extract(rf"\spublic (?P<type>[(\b\w)?]+) {parameter['pure name'].capitalize()}\(int j\)", code)
+            parameter['type'] = f"List<{groups['type'].replace('?', '')}>"
 
         match = extract(r'Offset<(?P<type>\b\w+)>', parameter['type'])
         if match:

@@ -46,37 +46,33 @@ if __name__ == '__main__':
     env = jinja2.Environment(loader=loader)
     flatbuffer_template = env.get_template('flatbuffer.txt')
 
-    try:
-        parser = argparse.ArgumentParser(description='Excel table converter')
-        parser.add_argument('--dir', default='../Protocols')
-        args = parser.parse_args()
+    parser = argparse.ArgumentParser(description='Excel table converter')
+    parser.add_argument('--dir', default='../Protocols')
+    args = parser.parse_args()
 
-        os.makedirs(args.dir, exist_ok=True)
+    os.makedirs(args.dir, exist_ok=True)
 
-        files = [os.path.join(args.dir, f) for f in os.listdir(args.dir) if os.path.isfile(os.path.join(args.dir, f)) and f.endswith('.cs')]
-        code_dict = {}
-        METHOD_DICT = {}
-        for file in files:
-            with open(file, 'r', encoding='utf8') as f:
-                _, contents = extractor.contents(f.read())
-                code_dict[file] = contents
+    files = [os.path.join(args.dir, f) for f in os.listdir(args.dir) if os.path.isfile(os.path.join(args.dir, f)) and f.endswith('.cs')]
+    code_dict = {}
+    METHOD_DICT = {}
+    for file in files:
+        with open(file, 'r', encoding='utf8') as f:
+            _, contents = extractor.contents(f.read())
+            code_dict[file] = contents
 
-        for file in code_dict:
-            name, parameters = extractor.root(code_dict[file])
-            METHOD_DICT[name] = parameters
+    for file in code_dict:
+        name, parameters = extractor.root(code_dict[file])
+        METHOD_DICT[name] = parameters
 
-        for file in code_dict:
-            data = code_dict[file]
-            name = os.path.splitext(os.path.basename(file))[0]
-            parameters = METHOD_DICT[name]
+    for file in code_dict:
+        data = code_dict[file]
+        name = os.path.splitext(os.path.basename(file))[0]
+        parameters = METHOD_DICT[name]
 
-            model_code = model(parameters)
-            method_code = method(name, parameters)
-            data = f"{data[:-3]}\n\n{model_code}\n\n{method_code}{data[-3:]}"
-            data = '\n'.join([f'  {x}' for x in data.split('\n')])
+        model_code = model(parameters)
+        method_code = method(name, parameters)
+        data = f"{data[:-3]}\n\n{model_code}\n\n{method_code}{data[-3:]}"
+        data = '\n'.join([f'  {x}' for x in data.split('\n')])
 
-            with open(file, 'w', encoding='utf8') as f:
-                f.write(flatbuffer_template.render({'code': data}))
-
-    except Exception as e:
-        print(str(e))
+        with open(file, 'w', encoding='utf8') as f:
+            f.write(flatbuffer_template.render({'code': data}))
