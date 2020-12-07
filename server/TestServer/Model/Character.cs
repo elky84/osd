@@ -1,6 +1,7 @@
 ﻿using DotNetty.Transport.Channels;
 using FlatBuffers.Protocol;
 using KeraLua;
+using ServerShared.NetworkHandler;
 using System;
 
 namespace TestServer.Model
@@ -37,8 +38,7 @@ namespace TestServer.Model
             var icon = lua.ToString(3);
             var list = lua.ToStringList(4);
 
-            //TODO boyism80 헤더가 구성 안되서 오류가났습니다.
-            //character.Context.WriteAndFlushAsync(ShowListDialog.Bytes(message, icon, list));
+            character.Context.Send(ShowListDialog.Bytes(message, icon, list));
             return lua.Yield(1);
         }
     }

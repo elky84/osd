@@ -1,13 +1,12 @@
-﻿using System;
+﻿using DotNetty.Buffers;
+using DotNetty.Transport.Channels;
+using FlatBuffers;
+using FlatBuffers.Protocol;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Text;
-using DotNetty.Buffers;
-using DotNetty.Transport.Channels;
-using FlatBuffers;
-using FlatBuffers.Protocol;
 using UnityEngine;
 
 [AttributeUsage(AttributeTargets.Method)]
@@ -103,7 +102,6 @@ public class ClientHandler : SimpleChannelInboundHandler<IByteBuffer>
         }
     }
 
-
     public override void ChannelInactive(DotNetty.Transport.Channels.IChannelHandlerContext context)
     {
         base.ChannelInactive(context);
@@ -134,6 +132,26 @@ public class ClientHandler : SimpleChannelInboundHandler<IByteBuffer>
     public bool OnSelectListDialog(SelectListDialog x)
     {
         Debug.Log($"OnSelectListDialog()");
+        return true;
+    }
+
+    [FlatBufferEvent]
+    public bool OnShowList(ShowList x)
+    {
+        NettyClient.Instance.Send(Click.Bytes(0));
+        return true;
+    }
+
+    [FlatBufferEvent]
+    public bool OnShowListDialog(ShowListDialog x)
+    {
+        for (int i = 0; i < x.ListLength; i++)
+        {
+            Debug.Log($"{x.List(i)}");
+        }
+
+        var selection = ((int)(UnityEngine.Random.value * 100)) % x.ListLength;
+        NettyClient.Instance.Send(SelectListDialog.Bytes(selection));
         return true;
     }
 
@@ -206,6 +224,4 @@ public class ClientHandler : SimpleChannelInboundHandler<IByteBuffer>
         Debug.LogError("Channel Closed!!");
         OnClose?.Invoke();
     }
-
-
 }

@@ -5,7 +5,9 @@
 using global::System;
 using global::System.Collections.Generic;
 using global::FlatBuffers;
-using System.Linq;
+using global::System.Linq;
+using global::System.IO;
+using global::System.Text;
 
 namespace FlatBuffers.Protocol
 {
@@ -56,7 +58,20 @@ namespace FlatBuffers.Protocol
       var positionOffset = FlatBuffers.Protocol.Position.CreatePosition(builder, position.X, position.Y);
       var offset = Object.CreateObject(builder, sequence, positionOffset);
       builder.Finish(offset.Value);
-      return builder.DataBuffer.ToSizedArray();
+      
+      var bytes = builder.DataBuffer.ToSizedArray();
+      using (var mstream = new MemoryStream())
+      {
+        using (var writer = new BinaryWriter(mstream))
+        {
+          writer.Write(BitConverter.ToInt32(BitConverter.GetBytes(bytes.Length).Reverse().ToArray(), 0));
+          writer.Write((byte)(nameof(Object).Length));
+          writer.Write(Encoding.Default.GetBytes(nameof(Object)));
+          writer.Write(bytes);
+          writer.Flush();
+          return mstream.ToArray();
+        }
+      }
     }
   };
 }

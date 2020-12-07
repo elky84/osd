@@ -26,8 +26,6 @@ namespace KeraLua
 
         public static LuaStatus Resume(this Lua lua, int arguments)
         {
-            //TODO boyism80 
-            // 여기서 첫번째 접속해제하고, 두번째에 오류가 났어요
             var result = lua.Resume(lua, arguments);
             switch (result)
             {

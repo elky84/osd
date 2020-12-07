@@ -3,5 +3,18 @@ public static byte[] Bytes({{ parameters }}) {
 {{ offsets }}
   var offset = {{ flatbName }}.Create{{ flatbName }}(builder, {{ arguments }});
   builder.Finish(offset.Value);
-  return builder.DataBuffer.ToSizedArray();
+  
+  var bytes = builder.DataBuffer.ToSizedArray();
+  using (var mstream = new MemoryStream())
+  {
+    using (var writer = new BinaryWriter(mstream))
+    {
+      writer.Write(BitConverter.ToInt32(BitConverter.GetBytes(bytes.Length).Reverse().ToArray(), 0));
+      writer.Write((byte)(nameof({{ flatbName}}).Length));
+      writer.Write(Encoding.Default.GetBytes(nameof({{ flatbName}})));
+      writer.Write(bytes);
+      writer.Flush();
+      return mstream.ToArray();
+    }
+  }
 }

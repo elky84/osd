@@ -82,21 +82,9 @@ public class NettyClient
         }
     }
 
-    public void Send<T>(byte[] bytes)
+    public void Send(byte[] data)
     {
-        var msg = Unpooled.Buffer();
-        msg.WriteInt(bytes.Length);
-
-        var name = typeof(T).Name;
-        msg.WriteByte(name.Length);
-        msg.WriteString(name, Encoding.Default);
-        msg.WriteBytes(bytes);
-        Send(msg);
-    }
-
-    private void Send(IByteBuffer data)
-    {
-        bootstrapChannel?.WriteAndFlushAsync(data);
+        bootstrapChannel?.WriteAndFlushAsync(Unpooled.Buffer().WriteBytes(data));
     }
 
     void OnCloseCallback()

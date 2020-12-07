@@ -10,12 +10,10 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Threading.Tasks;
-using TestServer.Model;
 using System.Linq;
+using System.Threading.Tasks;
 using TestServer.Extension;
-using DotNetty.Buffers;
-using System.Text;
+using TestServer.Model;
 
 namespace TestServer
 {
@@ -59,20 +57,6 @@ namespace TestServer
                 //session.WriteAndFlushAsync(...);
                 //foreach (var s in this)
                 //    s.WriteAndFlushAsync(...);
-
-                {
-                    // 임시 테스트 코드
-                    var msg = Unpooled.Buffer();
-                    var begin = DateTime.Now;
-                    var bytes = Move.Bytes(new FlatBuffers.Protocol.Position.Model(1, 2), begin.Ticks, 2);
-                    msg = Unpooled.Buffer();
-                    msg.WriteInt(bytes.Length);
-                    var name = nameof(Move);
-                    msg.WriteByte(name.Length);
-                    msg.WriteString(name, Encoding.Default);
-                    msg.WriteBytes(bytes);
-                    _ = session.WriteAndFlushAsync(msg);
-                }
 
                 return true;
             }
@@ -155,7 +139,7 @@ namespace TestServer
                 .Select(x => new FlatBuffers.Protocol.Object.Model(x.Key, new FlatBuffers.Protocol.Position.Model(x.Value.Position.X, x.Value.Position.Y)))
                 .ToList();
 
-            ShowList.Bytes(objects);
+            session.Send(ShowList.Bytes(objects));
         }
 
         protected override void OnDisconnected(Session<Character> session)

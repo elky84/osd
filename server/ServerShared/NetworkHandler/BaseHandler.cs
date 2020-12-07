@@ -212,4 +212,12 @@ namespace ServerShared.NetworkHandler
 
         protected abstract void OnDisconnected(Session<DataType> session);
     }
+
+    public static class Extension
+    {
+        public static async void Send(this IChannelHandlerContext context, byte[] bytes)
+        {
+            await context.WriteAndFlushAsync(Unpooled.Buffer().WriteBytes(bytes));
+        }
+    }
 }
