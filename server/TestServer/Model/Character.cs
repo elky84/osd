@@ -8,6 +8,7 @@ namespace TestServer.Model
     public class Character : Life
     {
         public IChannelHandlerContext Context { get; set; }
+
         public Lua DialogThread { get; set; }
 
         public int Damage { get; set; } = 30;
@@ -36,7 +37,8 @@ namespace TestServer.Model
             var icon = lua.ToString(3);
             var list = lua.ToStringList(4);
 
-            character.Context.WriteAndFlushAsync(ShowListDialog.Bytes(message, icon, list));
+            //TODO boyism80 헤더가 구성 안되서 오류가났습니다.
+            //character.Context.WriteAndFlushAsync(ShowListDialog.Bytes(message, icon, list));
             return lua.Yield(1);
         }
     }

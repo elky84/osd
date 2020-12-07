@@ -26,6 +26,8 @@ namespace KeraLua
 
         public static LuaStatus Resume(this Lua lua, int arguments)
         {
+            //TODO boyism80 
+            // 여기서 첫번째 접속해제하고, 두번째에 오류가 났어요
             var result = lua.Resume(lua, arguments);
             switch (result)
             {
@@ -98,7 +100,7 @@ namespace KeraLua
         private static void LoadBuiltinFunctions(this Lua lua, string assemblyName = null)
         {
             var assembly = string.IsNullOrEmpty(assemblyName) ?
-                Assembly.GetEntryAssembly() : 
+                Assembly.GetEntryAssembly() :
                 AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(x => x.GetName().Name == assemblyName);
 
             var luableTypes = assembly.GetTypes().Where(x => typeof(ILuable).IsAssignableFrom(x)).ToList();   // 모든 루아 오브젝트

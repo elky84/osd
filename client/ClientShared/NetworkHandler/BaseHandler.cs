@@ -1,29 +1,25 @@
-using DotNetty.Buffers;
+﻿using DotNetty.Buffers;
 using DotNetty.Transport.Channels;
 using FlatBuffers;
 using Serilog;
-using ServerShared.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace ServerShared.NetworkHandler
+namespace NetworkShared.NetworkHandler
 {
     [AttributeUsage(AttributeTargets.Method)]
     public class FlatBufferEventAttribute : Attribute
     { }
 
-    public abstract class BaseHandler<DataType> : ChannelHandlerAdapter, IEnumerable<Session<DataType>>
+    public abstract class BaseHandler<DataType> : ChannelHandlerAdapter
         where DataType : class, new()
     {
         private Dictionary<Type, Delegate> _allocatorDict = new Dictionary<Type, Delegate>();
         private Dictionary<string, Type> _flatBufferDict = new Dictionary<string, Type>();
-        private Dictionary<Type, Func<Session<DataType>, IFlatbufferObject, bool>> _bindedEventDict = new Dictionary<Type, Func<Session<DataType>, IFlatbufferObject, bool>>();
-        private Dictionary<IChannelHandlerContext, Session<DataType>> _sessionDict = new Dictionary<IChannelHandlerContext, Session<DataType>>();
-
-        public List<Session<DataType>> Sessions => _sessionDict.Values.ToList();
+        private Dictionary<Type, Func<IFlatbufferObject, bool>> _bindedEventDict = new Dictionary<Type, Func<IFlatbufferObject, bool>>();
 
         protected BaseHandler()
         {
@@ -77,13 +73,10 @@ namespace ServerShared.NetworkHandler
                     return false;
 
                 var parameters = x.GetParameters();
-                if (parameters.Length != 2)
+                if (parameters.Length != 1)
                     return false;
 
-                if (parameters[0].ParameterType != typeof(Session<DataType>))
-                    return false;
-
-                if (parameters[1].ParameterType.GetInterface(nameof(IFlatbufferObject)) == null)
+                if (parameters[0].ParameterType.GetInterface(nameof(IFlatbufferObject)) == null)
                     return false;
 
                 return true;
@@ -95,13 +88,13 @@ namespace ServerShared.NetworkHandler
                 try
                 {
                     var parameters = method.GetParameters();
-                    var flatBufferType = parameters[1].ParameterType;
+                    var flatBufferType = parameters[0].ParameterType;
                     var delegateType = Expression.GetDelegateType(parameters.Select(x => x.ParameterType).Concat(new[] { method.ReturnType }).ToArray());
                     var createdDelegate = method.CreateDelegate(delegateType, this);
-                    _bindedEventDict.Add(flatBufferType, new Func<Session<DataType>, IFlatbufferObject, bool>((session, protocol) =>
-                    {
-                        return (bool)createdDelegate.DynamicInvoke(session, Convert.ChangeType(protocol, flatBufferType));
-                    }));
+                    _bindedEventDict.Add(flatBufferType, new Func<IFlatbufferObject, bool>((protocol) =>
+                   {
+                       return (bool)createdDelegate.DynamicInvoke(Convert.ChangeType(protocol, flatBufferType));
+                   }));
                 }
                 catch (Exception e)
                 {
@@ -113,29 +106,19 @@ namespace ServerShared.NetworkHandler
         public override void ChannelActive(IChannelHandlerContext context)
         {
             base.ChannelActive(context);
-            _sessionDict.Add(context, new Session<DataType>(context));
 
-            OnConnected(_sessionDict[context]);
+            OnConnected(context);
         }
 
         public override void ChannelInactive(IChannelHandlerContext context)
         {
             base.ChannelInactive(context);
-            if (_sessionDict.ContainsKey(context))
-            {
-                OnDisconnected(_sessionDict[context]);
-                _sessionDict.Remove(context);
-            }
+
+            OnDisconnected(context);
         }
 
         public override void ChannelRead(IChannelHandlerContext context, object byteBuffer)
         {
-            if (_sessionDict.TryGetValue(context, out var session) == false)
-            {
-                Log.Logger.Error("Session Get Failed() {0}", context);
-                return;
-            }
-
             var buffer = byteBuffer as IByteBuffer;
             try
             {
@@ -147,10 +130,9 @@ namespace ServerShared.NetworkHandler
 
                 var bytes = new byte[size];
                 buffer.ReadBytes(bytes);
-                var result = Call(session, flatBufferType, bytes);
+                var result = Call(flatBufferType, bytes);
                 if (result == false)
                 {
-                    _sessionDict.Remove(context);
                     context.CloseAsync();
                 }
             }
@@ -168,7 +150,7 @@ namespace ServerShared.NetworkHandler
             context.CloseAsync();
         }
 
-        public bool Call<FlatBufferType>(Session<DataType> session, byte[] bytes) where FlatBufferType : struct, IFlatbufferObject
+        public bool Call<FlatBufferType>(byte[] bytes) where FlatBufferType : struct, IFlatbufferObject
         {
             try
             {
@@ -178,7 +160,7 @@ namespace ServerShared.NetworkHandler
                 if (_allocatorDict.TryGetValue(typeof(FlatBufferType), out var allocator) == false)
                     return false;
 
-                return bindedEvent.Invoke(session, (FlatBufferType)allocator.DynamicInvoke(new ByteBuffer(bytes)));
+                return bindedEvent.Invoke((FlatBufferType)allocator.DynamicInvoke(new ByteBuffer(bytes)));
             }
             catch (Exception)
             {
@@ -186,7 +168,7 @@ namespace ServerShared.NetworkHandler
             }
         }
 
-        public bool Call(Session<DataType> session, Type type, byte[] bytes)
+        public bool Call(Type type, byte[] bytes)
         {
             try
             {
@@ -196,7 +178,7 @@ namespace ServerShared.NetworkHandler
                 if (_allocatorDict.TryGetValue(type, out var allocator) == false)
                     return false;
 
-                return bindedEvent.Invoke(session, Convert.ChangeType(allocator.DynamicInvoke(new ByteBuffer(bytes)), type) as IFlatbufferObject);
+                return bindedEvent.Invoke(Convert.ChangeType(allocator.DynamicInvoke(new ByteBuffer(bytes)), type) as IFlatbufferObject);
             }
             catch (Exception)
             {
@@ -204,12 +186,8 @@ namespace ServerShared.NetworkHandler
             }
         }
 
-        public IEnumerator<Session<DataType>> GetEnumerator() => Sessions.GetEnumerator();
+        protected abstract void OnConnected(IChannelHandlerContext context);
 
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => Sessions.GetEnumerator();
-
-        protected abstract void OnConnected(Session<DataType> session);
-
-        protected abstract void OnDisconnected(Session<DataType> session);
+        protected abstract void OnDisconnected(IChannelHandlerContext context);
     }
 }

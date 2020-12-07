@@ -14,6 +14,8 @@ using System.Threading.Tasks;
 using TestServer.Model;
 using System.Linq;
 using TestServer.Extension;
+using DotNetty.Buffers;
+using System.Text;
 
 namespace TestServer
 {
@@ -41,7 +43,7 @@ namespace TestServer
 
             try
             {
-                if(x.Now.Validate() == false)
+                if (x.Now.Validate() == false)
                     throw new Exception("...");
 
                 character.Synchronize(new DateTime(x.Now));
@@ -57,6 +59,21 @@ namespace TestServer
                 //session.WriteAndFlushAsync(...);
                 //foreach (var s in this)
                 //    s.WriteAndFlushAsync(...);
+
+                {
+                    // 임시 테스트 코드
+                    var msg = Unpooled.Buffer();
+                    var begin = DateTime.Now;
+                    var bytes = Move.Bytes(new FlatBuffers.Protocol.Position.Model(1, 2), begin.Ticks, 2);
+                    msg = Unpooled.Buffer();
+                    msg.WriteInt(bytes.Length);
+                    var name = nameof(Move);
+                    msg.WriteByte(name.Length);
+                    msg.WriteString(name, Encoding.Default);
+                    msg.WriteBytes(bytes);
+                    _ = session.WriteAndFlushAsync(msg);
+                }
+
                 return true;
             }
             catch (Exception e)
@@ -73,7 +90,7 @@ namespace TestServer
 
             try
             {
-                if(x.Now.Validate() == false)
+                if (x.Now.Validate() == false)
                     throw new Exception("...");
 
                 character.Synchronize(new DateTime(x.Now));
