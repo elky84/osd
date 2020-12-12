@@ -1,152 +1,182 @@
 [
-    {
-        "id": "아이디1",
-        "value": 0.1,
-        "cshyeon": 0
-    },
-    {
-        "id": "아이디2",
-        "value": 0.2,
-        "cshyeon": 1
-    },
-    {
-        "id": "아이디3",
-        "value": 0.3,
-        "cshyeon": 2
-    },
-    {
-        "id": "아이디4",
-        "value": 0.4,
-        "cshyeon": 3
-    },
-    {
-        "id": "아이디5",
-        "value": 0.5,
-        "cshyeon": 4
-    },
-    {
-        "id": "아이디6",
-        "value": null,
-        "cshyeon": 5
-    },
-    {
-        "id": "아이디7",
-        "value": 0.7,
-        "cshyeon": 6
-    },
-    {
-        "id": "아이디8",
-        "value": 0.8,
-        "cshyeon": 7
-    },
-    {
-        "id": "아이디9",
-        "value": 0.9,
-        "cshyeon": 8
-    },
-    {
-        "id": "아이디10",
-        "value": 1.0,
-        "cshyeon": 9
-    },
-    {
-        "id": "아이디11",
-        "value": 1.1,
-        "cshyeon": 10
-    },
-    {
-        "id": "아이디12",
-        "value": null,
-        "cshyeon": 11
-    },
-    {
-        "id": "아이디13",
-        "value": 1.3,
-        "cshyeon": 12
-    },
-    {
-        "id": "아이디14",
-        "value": 1.4,
-        "cshyeon": 13
-    },
-    {
-        "id": "아이디15",
-        "value": 1.5,
-        "cshyeon": 14
-    },
-    {
-        "id": "아이디16",
-        "value": 1.6,
-        "cshyeon": 15
-    },
-    {
-        "id": "아이디17",
-        "value": 1.7,
-        "cshyeon": 16
-    },
-    {
-        "id": "아이디18",
-        "value": 1.8,
-        "cshyeon": 17
-    },
-    {
-        "id": "아이디19",
-        "value": 1.9,
-        "cshyeon": 18
-    },
-    {
-        "id": "아이디20",
-        "value": 2.0,
-        "cshyeon": 19
-    },
-    {
-        "id": "아이디21",
-        "value": 2.1,
-        "cshyeon": 20
-    },
-    {
-        "id": "아이디22",
-        "value": 2.2,
-        "cshyeon": 21
-    },
-    {
-        "id": "아이디23",
-        "value": 2.3,
-        "cshyeon": 22
-    },
-    {
-        "id": "아이디24",
-        "value": 2.4,
-        "cshyeon": 23
-    },
-    {
-        "id": "아이디25",
-        "value": 2.5,
-        "cshyeon": 24
-    },
-    {
-        "id": "아이디26",
-        "value": 2.6,
-        "cshyeon": 25
-    },
-    {
-        "id": "아이디27",
-        "value": 2.7,
-        "cshyeon": 26
-    },
-    {
-        "id": "아이디28",
-        "value": 2.8,
-        "cshyeon": 27
-    },
-    {
-        "id": "아이디29",
-        "value": 2.9,
-        "cshyeon": 28
-    },
-    {
-        "id": "아이디30",
-        "value": 3.0,
-        "cshyeon": 29
-    }
+  {
+    "id": "아이디1",
+    "value": 0.1,
+    "cshyeon": 0,
+    "relation": "아이디1"
+  },
+  {
+    "id": "아이디2",
+    "value": 0.2,
+    "cshyeon": 1,
+    "relation": "아이디2"
+  },
+  {
+    "id": "아이디3",
+    "value": 0.3,
+    "cshyeon": 2,
+    "relation": "아이디3"
+  },
+  {
+    "id": "아이디4",
+    "value": 0.4,
+    "cshyeon": 3,
+    "relation": "아이디4"
+  },
+  {
+    "id": "아이디5",
+    "value": 0.5,
+    "cshyeon": 4,
+    "relation": "아이디5"
+  },
+  {
+    "id": "아이디6",
+    "value": null,
+    "cshyeon": 5,
+    "relation": "아이디6"
+  },
+  {
+    "id": "아이디7",
+    "value": 0.7,
+    "cshyeon": 6,
+    "relation": "아이디7"
+  },
+  {
+    "id": "아이디8",
+    "value": 0.8,
+    "cshyeon": 7,
+    "relation": "아이디8"
+  },
+  {
+    "id": "아이디9",
+    "value": 0.9,
+    "cshyeon": 8,
+    "relation": "아이디9"
+  },
+  {
+    "id": "아이디10",
+    "value": 1.0,
+    "cshyeon": 9,
+    "relation": "아이디10"
+  },
+  {
+    "id": "아이디11",
+    "value": 1.1,
+    "cshyeon": 10,
+    "relation": "아이디11"
+  },
+  {
+    "id": "아이디12",
+    "value": null,
+    "cshyeon": 11,
+    "relation": "아이디12"
+  },
+  {
+    "id": "아이디13",
+    "value": 1.3,
+    "cshyeon": 12,
+    "relation": "아이디13"
+  },
+  {
+    "id": "아이디14",
+    "value": 1.4,
+    "cshyeon": 13,
+    "relation": "아이디14"
+  },
+  {
+    "id": "아이디15",
+    "value": 1.5,
+    "cshyeon": 14,
+    "relation": "아이디15"
+  },
+  {
+    "id": "아이디16",
+    "value": 1.6,
+    "cshyeon": 15,
+    "relation": "아이디16"
+  },
+  {
+    "id": "아이디17",
+    "value": 1.7,
+    "cshyeon": 16,
+    "relation": "아이디17"
+  },
+  {
+    "id": "아이디18",
+    "value": 1.8,
+    "cshyeon": 17,
+    "relation": "아이디18"
+  },
+  {
+    "id": "아이디19",
+    "value": 1.9,
+    "cshyeon": 18,
+    "relation": "아이디19"
+  },
+  {
+    "id": "아이디20",
+    "value": 2.0,
+    "cshyeon": 19,
+    "relation": "아이디20"
+  },
+  {
+    "id": "아이디21",
+    "value": 2.1,
+    "cshyeon": 20,
+    "relation": "아이디21"
+  },
+  {
+    "id": "아이디22",
+    "value": 2.2,
+    "cshyeon": 21,
+    "relation": "아이디22"
+  },
+  {
+    "id": "아이디23",
+    "value": 2.3,
+    "cshyeon": 22,
+    "relation": "아이디23"
+  },
+  {
+    "id": "아이디24",
+    "value": 2.4,
+    "cshyeon": 23,
+    "relation": "아이디24"
+  },
+  {
+    "id": "아이디25",
+    "value": 2.5,
+    "cshyeon": 24,
+    "relation": "아이디25"
+  },
+  {
+    "id": "아이디26",
+    "value": 2.6,
+    "cshyeon": 25,
+    "relation": "아이디26"
+  },
+  {
+    "id": "아이디27",
+    "value": 2.7,
+    "cshyeon": 26,
+    "relation": "아이디27"
+  },
+  {
+    "id": "아이디28",
+    "value": 2.8,
+    "cshyeon": 27,
+    "relation": "아이디28"
+  },
+  {
+    "id": "아이디29",
+    "value": 2.9,
+    "cshyeon": 28,
+    "relation": "아이디29"
+  },
+  {
+    "id": "아이디30",
+    "value": 3.0,
+    "cshyeon": 29,
+    "relation": "아이디30"
+  }
 ]

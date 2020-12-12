@@ -37,7 +37,7 @@ namespace TestServer.Model
 
                 Count = Rows * Columns;
                 for (uint i = 0; i < Count; i++)
-                    _sectors.Add(new Sector(i, OnSectorStateChanged));
+                    _sectors.Add(new Sector(this, i, OnSectorStateChanged));
             }
 
             private void OnSectorStateChanged(Sector sector)
@@ -101,79 +101,25 @@ namespace TestServer.Model
                 return sector;
             }
 
-            public List<Sector> Nears(Position position)
+            public IEnumerable<Sector> Nears(Position position)
             {
                 try
                 {
                     var pivot = this[position] ??
                         throw new System.Exception("invalid position");
 
-                    var sectors = new List<Sector>();
-                    sectors.Add(pivot);
-
-                    var index = Index(position);
-
-                    var isLeft = index % Columns == 0;
-                    if (isLeft == false)
+                    return new List<Sector>
                     {
-                        var sector = this[index - 1];
-                        if (sector != null)
-                            sectors.Add(sector);
-                    }
-
-                    var isRight = index % Columns == Columns - 1;
-                    if (isRight)
-                    {
-                        var sector = this[index + 1];
-                        if (sector != null)
-                            sectors.Add(sector);
-                    }
-
-                    var isTop = index < Columns;
-                    if (isTop)
-                    {
-                        var sector = this[index - Columns];
-                        if (sector != null)
-                            sectors.Add(sector);
-                    }
-
-                    var isBottom = index > Columns * (Rows - 1) - 1;
-                    if (isBottom)
-                    {
-                        var sector = this[index + Columns];
-                        if (sector != null)
-                            sectors.Add(sector);
-                    }
-
-                    if (isLeft == false && isTop == false)
-                    {
-                        var sector = this[index - Columns - 1];
-                        if (sector != null)
-                            sectors.Add(sector);
-                    }
-
-                    if (isRight == false && isTop == false)
-                    {
-                        var sector = this[index - Columns + 1];
-                        if (sector != null)
-                            sectors.Add(sector);
-                    }
-
-                    if (isLeft == false && isBottom == false)
-                    {
-                        var sector = this[index + Columns - 1];
-                        if (sector != null)
-                            sectors.Add(sector);
-                    }
-
-                    if (isRight == false && isBottom == false)
-                    {
-                        var sector = this[index + Columns + 1];
-                        if (sector != null)
-                            sectors.Add(sector);
-                    }
-
-                    return sectors;
+                        pivot,
+                        pivot.Left,
+                        pivot.Right,
+                        pivot.Top,
+                        pivot.Bottom,
+                        pivot.LeftTop,
+                        pivot.RightTop,
+                        pivot.LeftBottom,
+                        pivot.RightBottom
+                    }.Where(x => x != null);
                 }
                 catch (Exception e)
                 {

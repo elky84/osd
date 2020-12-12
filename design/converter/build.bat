@@ -1,3 +1,3 @@
-pyinstaller --onefile excel_converter.py
-COPY dist\excel_converter.exe .
+pyinstaller --onefile app.py
+COPY dist\app.exe .
 PAUSE

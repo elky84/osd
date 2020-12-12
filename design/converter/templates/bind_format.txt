@@ -1,0 +1,3 @@
+[Table("json/{{ name }}.json")]
+public partial class Table{{ name }} : {{ tableType }}{{ generic }}
+{ }

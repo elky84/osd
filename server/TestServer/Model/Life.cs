@@ -3,11 +3,6 @@ using System;
 
 namespace TestServer.Model
 {
-    public enum Direction
-    {
-        Left, Top, Right, Bottom
-    }
-
     public class Life : Object
     {
         public int Hp { get; set; } = 50;

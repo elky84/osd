@@ -1,21 +1,28 @@
+@ECHO OFF
+
 PUSHD converter
-CALL excel_converter.exe --dir=.. --out=output
+CALL app.exe --dir=.. --out=output
 
 RMDIR /s/q ..\..\client\ClientShared\MasterDataType
-ROBOCOPY output\class\client ..\..\client\ClientShared\MasterDataType
+ROBOCOPY output\class\client ..\..\client\ClientShared\MasterDataType /E /NFL /NDL /NJH /NJS /nc /ns /np
 RMDIR /s/q ..\..\server\ServerShared\MasterDataType
-ROBOCOPY output\class\server ..\..\server\ServerShared\MasterDataType
+ROBOCOPY output\class\server ..\..\server\ServerShared\MasterDataType /E /NFL /NDL /NJH /NJS /nc /ns /np
 
-RMDIR /s/q ..\..\client\ClientShared\Table.cs
-ROBOCOPY output\table\client\Table.cs ..\..\client\ClientShared\Table\Table.cs
-RMDIR /s/q ..\..\server\ServerShared\Table.cs
-ROBOCOPY output\table\server\Table.cs ..\..\server\ServerShared\Table\Table.cs
+DEL /Q /F ..\..\client\ClientShared\Table\Table.cs
+COPY output\bind\client\Table.cs ..\..\client\ClientShared\Table\Table.cs >NUL
+DEL /Q /F ..\..\server\ServerShared\Table\Table.cs
+COPY output\bind\server\Table.cs ..\..\server\ServerShared\Table\Table.cs >NUL
 
 RMDIR /s/q ..\..\client\ClientShared\Json
-ROBOCOPY output\json\client ..\..\client\ClientShared\Json
+ROBOCOPY output\json\client ..\..\client\ClientShared\Json /E /NFL /NDL /NJH /NJS /nc /ns /np
+
 RMDIR /s/q ..\..\server\ServerShared\Json
+ROBOCOPY output\json\server ..\..\server\ServerShared\Json /E /NFL /NDL /NJH /NJS /nc /ns /np
 RMDIR /s/q ..\..\server\TestServer\bin\Debug\net5.0\Json
-ROBOCOPY output\json\server ..\..\server\TestServer\bin\Debug\net5.0\Json
+ROBOCOPY output\json\server ..\..\server\TestServer\bin\Debug\net5.0\Json /E /NFL /NDL /NJH /NJS /nc /ns /np
+
+RMDIR /s/q ..\..\shared\NetworkShared\Enum
+ROBOCOPY output\enum ..\..\shared\NetworkShared\Enum /E /NFL /NDL /NJH /NJS /nc /ns /np
 POPD
 
 PAUSE

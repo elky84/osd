@@ -1,3 +1,0 @@
-[Table("Json/{{ sheetName }}.json")]
-public partial class {{ tableName }} : BaseList<{{ className }}>
-{ }

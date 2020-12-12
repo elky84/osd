@@ -1,152 +1,182 @@
 [
-    {
-        "id": "아이디1",
-        "value": 0.1,
-        "value2": true
-    },
-    {
-        "id": "아이디2",
-        "value": 0.2,
-        "value2": true
-    },
-    {
-        "id": "아이디3",
-        "value": 0.3,
-        "value2": true
-    },
-    {
-        "id": "아이디4",
-        "value": 0.4,
-        "value2": true
-    },
-    {
-        "id": "아이디5",
-        "value": 0.5,
-        "value2": true
-    },
-    {
-        "id": "아이디6",
-        "value": null,
-        "value2": true
-    },
-    {
-        "id": "아이디7",
-        "value": 0.7,
-        "value2": true
-    },
-    {
-        "id": "아이디8",
-        "value": 0.8,
-        "value2": true
-    },
-    {
-        "id": "아이디9",
-        "value": 0.9,
-        "value2": true
-    },
-    {
-        "id": "아이디10",
-        "value": 1.0,
-        "value2": true
-    },
-    {
-        "id": "아이디11",
-        "value": 1.1,
-        "value2": true
-    },
-    {
-        "id": "아이디12",
-        "value": null,
-        "value2": true
-    },
-    {
-        "id": "아이디13",
-        "value": 1.3,
-        "value2": true
-    },
-    {
-        "id": "아이디14",
-        "value": 1.4,
-        "value2": true
-    },
-    {
-        "id": "아이디15",
-        "value": 1.5,
-        "value2": true
-    },
-    {
-        "id": "아이디16",
-        "value": 1.6,
-        "value2": true
-    },
-    {
-        "id": "아이디17",
-        "value": 1.7,
-        "value2": true
-    },
-    {
-        "id": "아이디18",
-        "value": 1.8,
-        "value2": true
-    },
-    {
-        "id": "아이디19",
-        "value": 1.9,
-        "value2": true
-    },
-    {
-        "id": "아이디20",
-        "value": 2.0,
-        "value2": true
-    },
-    {
-        "id": "아이디21",
-        "value": 2.1,
-        "value2": true
-    },
-    {
-        "id": "아이디22",
-        "value": 2.2,
-        "value2": true
-    },
-    {
-        "id": "아이디23",
-        "value": 2.3,
-        "value2": true
-    },
-    {
-        "id": "아이디24",
-        "value": 2.4,
-        "value2": true
-    },
-    {
-        "id": "아이디25",
-        "value": 2.5,
-        "value2": true
-    },
-    {
-        "id": "아이디26",
-        "value": 2.6,
-        "value2": true
-    },
-    {
-        "id": "아이디27",
-        "value": 2.7,
-        "value2": true
-    },
-    {
-        "id": "아이디28",
-        "value": 2.8,
-        "value2": true
-    },
-    {
-        "id": "아이디29",
-        "value": 2.9,
-        "value2": true
-    },
-    {
-        "id": "아이디30",
-        "value": 3.0,
-        "value2": true
-    }
+  {
+    "id": "아이디1",
+    "value": 0.1,
+    "value2": true,
+    "direction": "위"
+  },
+  {
+    "id": "아이디2",
+    "value": 0.2,
+    "value2": true,
+    "direction": "위"
+  },
+  {
+    "id": "아이디3",
+    "value": 0.3,
+    "value2": true,
+    "direction": "아래"
+  },
+  {
+    "id": "아이디4",
+    "value": 0.4,
+    "value2": true,
+    "direction": "아래"
+  },
+  {
+    "id": "아이디5",
+    "value": 0.5,
+    "value2": true,
+    "direction": "위"
+  },
+  {
+    "id": "아이디6",
+    "value": null,
+    "value2": true,
+    "direction": "위"
+  },
+  {
+    "id": "아이디7",
+    "value": 0.7,
+    "value2": true,
+    "direction": "아래"
+  },
+  {
+    "id": "아이디8",
+    "value": 0.8,
+    "value2": true,
+    "direction": "아래"
+  },
+  {
+    "id": "아이디9",
+    "value": 0.9,
+    "value2": true,
+    "direction": "위"
+  },
+  {
+    "id": "아이디10",
+    "value": 1.0,
+    "value2": true,
+    "direction": "위"
+  },
+  {
+    "id": "아이디11",
+    "value": 1.1,
+    "value2": true,
+    "direction": "아래"
+  },
+  {
+    "id": "아이디12",
+    "value": null,
+    "value2": true,
+    "direction": "아래"
+  },
+  {
+    "id": "아이디13",
+    "value": 1.3,
+    "value2": true,
+    "direction": "위"
+  },
+  {
+    "id": "아이디14",
+    "value": 1.4,
+    "value2": true,
+    "direction": "위"
+  },
+  {
+    "id": "아이디15",
+    "value": 1.5,
+    "value2": true,
+    "direction": "아래"
+  },
+  {
+    "id": "아이디16",
+    "value": 1.6,
+    "value2": true,
+    "direction": "아래"
+  },
+  {
+    "id": "아이디17",
+    "value": 1.7,
+    "value2": true,
+    "direction": "위"
+  },
+  {
+    "id": "아이디18",
+    "value": 1.8,
+    "value2": true,
+    "direction": "위"
+  },
+  {
+    "id": "아이디19",
+    "value": 1.9,
+    "value2": true,
+    "direction": "아래"
+  },
+  {
+    "id": "아이디20",
+    "value": 2.0,
+    "value2": true,
+    "direction": "아래"
+  },
+  {
+    "id": "아이디21",
+    "value": 2.1,
+    "value2": true,
+    "direction": "위"
+  },
+  {
+    "id": "아이디22",
+    "value": 2.2,
+    "value2": true,
+    "direction": "위"
+  },
+  {
+    "id": "아이디23",
+    "value": 2.3,
+    "value2": true,
+    "direction": "아래"
+  },
+  {
+    "id": "아이디24",
+    "value": 2.4,
+    "value2": true,
+    "direction": "아래"
+  },
+  {
+    "id": "아이디25",
+    "value": 2.5,
+    "value2": true,
+    "direction": "위"
+  },
+  {
+    "id": "아이디26",
+    "value": 2.6,
+    "value2": true,
+    "direction": "위"
+  },
+  {
+    "id": "아이디27",
+    "value": 2.7,
+    "value2": true,
+    "direction": "아래"
+  },
+  {
+    "id": "아이디28",
+    "value": 2.8,
+    "value2": true,
+    "direction": "아래"
+  },
+  {
+    "id": "아이디29",
+    "value": 2.9,
+    "value2": true,
+    "direction": "위"
+  },
+  {
+    "id": "아이디30",
+    "value": 3.0,
+    "value2": true,
+    "direction": "위"
+  }
 ]

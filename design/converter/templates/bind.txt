@@ -1,0 +1,4 @@
+namespace NetworkShared.Table
+{
+{{ codeLines }}
+}

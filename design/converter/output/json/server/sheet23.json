@@ -1,152 +1,182 @@
 [
-    {
-        "id": "아이디1",
-        "name": "이름1",
-        "cshyeon": 0
-    },
-    {
-        "id": "아이디2",
-        "name": "이름2",
-        "cshyeon": 1
-    },
-    {
-        "id": "아이디3",
-        "name": "이름3",
-        "cshyeon": 2
-    },
-    {
-        "id": "아이디4",
-        "name": "이름4",
-        "cshyeon": 3
-    },
-    {
-        "id": "아이디5",
-        "name": "이름5",
-        "cshyeon": 4
-    },
-    {
-        "id": "아이디6",
-        "name": "이름6",
-        "cshyeon": 5
-    },
-    {
-        "id": "아이디7",
-        "name": "이름7",
-        "cshyeon": 6
-    },
-    {
-        "id": "아이디8",
-        "name": "이름8",
-        "cshyeon": 7
-    },
-    {
-        "id": "아이디9",
-        "name": "이름9",
-        "cshyeon": 8
-    },
-    {
-        "id": "아이디10",
-        "name": "이름10",
-        "cshyeon": 9
-    },
-    {
-        "id": "아이디11",
-        "name": "이름11",
-        "cshyeon": 10
-    },
-    {
-        "id": "아이디12",
-        "name": "이름12",
-        "cshyeon": 11
-    },
-    {
-        "id": "아이디13",
-        "name": "이름13",
-        "cshyeon": 12
-    },
-    {
-        "id": "아이디14",
-        "name": "이름14",
-        "cshyeon": 13
-    },
-    {
-        "id": "아이디15",
-        "name": "이름15",
-        "cshyeon": 14
-    },
-    {
-        "id": "아이디16",
-        "name": "이름16",
-        "cshyeon": 15
-    },
-    {
-        "id": "아이디17",
-        "name": "이름17",
-        "cshyeon": 16
-    },
-    {
-        "id": "아이디18",
-        "name": "이름18",
-        "cshyeon": 17
-    },
-    {
-        "id": "아이디19",
-        "name": "이름19",
-        "cshyeon": 18
-    },
-    {
-        "id": "아이디20",
-        "name": "이름20",
-        "cshyeon": 19
-    },
-    {
-        "id": "아이디21",
-        "name": "이름21",
-        "cshyeon": 20
-    },
-    {
-        "id": "아이디22",
-        "name": "이름22",
-        "cshyeon": 21
-    },
-    {
-        "id": "아이디23",
-        "name": "이름23",
-        "cshyeon": 22
-    },
-    {
-        "id": "아이디24",
-        "name": "이름24",
-        "cshyeon": 23
-    },
-    {
-        "id": "아이디25",
-        "name": "이름25",
-        "cshyeon": 24
-    },
-    {
-        "id": "아이디26",
-        "name": "이름26",
-        "cshyeon": 25
-    },
-    {
-        "id": "아이디27",
-        "name": "이름27",
-        "cshyeon": 26
-    },
-    {
-        "id": "아이디28",
-        "name": "이름28",
-        "cshyeon": 27
-    },
-    {
-        "id": "아이디29",
-        "name": "이름29",
-        "cshyeon": 28
-    },
-    {
-        "id": "아이디30",
-        "name": "이름30",
-        "cshyeon": 29
-    }
+  {
+    "id": "아이디1",
+    "name": "이름1",
+    "cshyeon": 0,
+    "relation": "아이디1"
+  },
+  {
+    "id": "아이디2",
+    "name": "이름2",
+    "cshyeon": 1,
+    "relation": "아이디2"
+  },
+  {
+    "id": "아이디3",
+    "name": "이름3",
+    "cshyeon": 2,
+    "relation": "아이디3"
+  },
+  {
+    "id": "아이디4",
+    "name": "이름4",
+    "cshyeon": 3,
+    "relation": "아이디4"
+  },
+  {
+    "id": "아이디5",
+    "name": "이름5",
+    "cshyeon": 4,
+    "relation": "아이디5"
+  },
+  {
+    "id": "아이디6",
+    "name": "이름6",
+    "cshyeon": 5,
+    "relation": "아이디6"
+  },
+  {
+    "id": "아이디7",
+    "name": "이름7",
+    "cshyeon": 6,
+    "relation": "아이디7"
+  },
+  {
+    "id": "아이디8",
+    "name": "이름8",
+    "cshyeon": 7,
+    "relation": "아이디8"
+  },
+  {
+    "id": "아이디9",
+    "name": "이름9",
+    "cshyeon": 8,
+    "relation": "아이디9"
+  },
+  {
+    "id": "아이디10",
+    "name": "이름10",
+    "cshyeon": 9,
+    "relation": "아이디10"
+  },
+  {
+    "id": "아이디11",
+    "name": "이름11",
+    "cshyeon": 10,
+    "relation": "아이디11"
+  },
+  {
+    "id": "아이디12",
+    "name": "이름12",
+    "cshyeon": 11,
+    "relation": "아이디12"
+  },
+  {
+    "id": "아이디13",
+    "name": "이름13",
+    "cshyeon": 12,
+    "relation": "아이디13"
+  },
+  {
+    "id": "아이디14",
+    "name": "이름14",
+    "cshyeon": 13,
+    "relation": "아이디14"
+  },
+  {
+    "id": "아이디15",
+    "name": "이름15",
+    "cshyeon": 14,
+    "relation": "아이디15"
+  },
+  {
+    "id": "아이디16",
+    "name": "이름16",
+    "cshyeon": 15,
+    "relation": "아이디16"
+  },
+  {
+    "id": "아이디17",
+    "name": "이름17",
+    "cshyeon": 16,
+    "relation": "아이디17"
+  },
+  {
+    "id": "아이디18",
+    "name": "이름18",
+    "cshyeon": 17,
+    "relation": "아이디18"
+  },
+  {
+    "id": "아이디19",
+    "name": "이름19",
+    "cshyeon": 18,
+    "relation": "아이디19"
+  },
+  {
+    "id": "아이디20",
+    "name": "이름20",
+    "cshyeon": 19,
+    "relation": "아이디20"
+  },
+  {
+    "id": "아이디21",
+    "name": "이름21",
+    "cshyeon": 20,
+    "relation": "아이디21"
+  },
+  {
+    "id": "아이디22",
+    "name": "이름22",
+    "cshyeon": 21,
+    "relation": "아이디22"
+  },
+  {
+    "id": "아이디23",
+    "name": "이름23",
+    "cshyeon": 22,
+    "relation": "아이디23"
+  },
+  {
+    "id": "아이디24",
+    "name": "이름24",
+    "cshyeon": 23,
+    "relation": "아이디24"
+  },
+  {
+    "id": "아이디25",
+    "name": "이름25",
+    "cshyeon": 24,
+    "relation": "아이디25"
+  },
+  {
+    "id": "아이디26",
+    "name": "이름26",
+    "cshyeon": 25,
+    "relation": "아이디26"
+  },
+  {
+    "id": "아이디27",
+    "name": "이름27",
+    "cshyeon": 26,
+    "relation": "아이디27"
+  },
+  {
+    "id": "아이디28",
+    "name": "이름28",
+    "cshyeon": 27,
+    "relation": "아이디28"
+  },
+  {
+    "id": "아이디29",
+    "name": "이름29",
+    "cshyeon": 28,
+    "relation": "아이디29"
+  },
+  {
+    "id": "아이디30",
+    "name": "이름30",
+    "cshyeon": 29,
+    "relation": "아이디30"
+  }
 ]
