@@ -17,6 +17,8 @@ namespace NetworkShared.NetworkHandler
     public abstract class BaseHandler<DataType> : ChannelHandlerAdapter
         where DataType : class, new()
     {
+        private IChannelHandlerContext _context;
+
         private Dictionary<Type, Delegate> _allocatorDict = new Dictionary<Type, Delegate>();
         private Dictionary<string, Type> _flatBufferDict = new Dictionary<string, Type>();
         private Dictionary<Type, Func<IFlatbufferObject, bool>> _bindedEventDict = new Dictionary<Type, Func<IFlatbufferObject, bool>>();
@@ -106,7 +108,8 @@ namespace NetworkShared.NetworkHandler
         public override void ChannelActive(IChannelHandlerContext context)
         {
             base.ChannelActive(context);
-
+            
+            _context = context;
             OnConnected(context);
         }
 
@@ -189,5 +192,10 @@ namespace NetworkShared.NetworkHandler
         protected abstract void OnConnected(IChannelHandlerContext context);
 
         protected abstract void OnDisconnected(IChannelHandlerContext context);
+
+        public async void Send(byte[] bytes)
+        {
+            await _context.WriteAndFlushAsync(Unpooled.Buffer().WriteBytes(bytes));
+        }
     }
 }

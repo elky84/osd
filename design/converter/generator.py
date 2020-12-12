@@ -37,7 +37,7 @@ def bindFormatStringify(name, pureSchemaSet):
         generic = f"<{name}>"
     else:
         tableType = 'BaseDict'
-        generic = f"<{id['type'].replace('*', '')}, {name}>"
+        generic = f"<{id['type'].replace('*', '')}, {name.capitalize()}>"
 
     return templateBindFormat.render({'name': name, 'tableType': tableType, 'generic': generic})
 

@@ -1,4 +1,5 @@
 ﻿using KeraLua;
+using NetworkShared;
 using System;
 
 namespace TestServer.Model

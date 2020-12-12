@@ -99,7 +99,7 @@ def relationshipType(type, schemaSetDict):
     splitted = type.split('.')
     if len(splitted) == 1:
         if type not in schemaSetDict:
-            raise Exception('asd')
+            raise Exception(f'{type} is not contained any excel schema.')
 
         id = primary(schemaSetDict[type])
         if not id:
