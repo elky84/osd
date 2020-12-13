@@ -1,6 +1,8 @@
 ﻿using FlatBuffers.Protocol;
 using KeraLua;
 using NetworkShared;
+using NetworkShared.Common;
+using Newtonsoft.Json;
 using Serilog;
 using ServerShared.DotNetty;
 using ServerShared.Model;
@@ -180,6 +182,8 @@ namespace TestServer
             try
             {
                 ServerService.Register();
+
+                var mapData = JsonConvert.DeserializeObject<MapData>(File.ReadAllText("Resources/Map/town.json"));
 
                 var bootstrap = bootstrapHelper.Create<GameHandler, Character>();
                 var channel = await bootstrap.BindAsync(ServerShared.Config.ServerSettings.Port);

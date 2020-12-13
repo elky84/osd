@@ -25,23 +25,4 @@
     <ProjectReference Include="..\ServerShared\ServerShared.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Include=".\json\**" LinkBase="json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-
-    <None Include=".\map\**" LinkBase="json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Remove="json\**" />
-    <Compile Remove="map\**" />
-    <EmbeddedResource Remove="json\**" />
-    <EmbeddedResource Remove="map\**" />
-    <None Remove="json\**" />
-    <None Remove="map\**" />
-  </ItemGroup>
-
 </Project>

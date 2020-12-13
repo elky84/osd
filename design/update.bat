@@ -18,10 +18,6 @@ ROBOCOPY output\json\client ..\..\client\ClientShared\json /E /NFL /NDL /NJH /NJ
 
 RMDIR /s/q ..\..\server\ServerShared\json
 ROBOCOPY output\json\server ..\..\server\ServerShared\json /E /NFL /NDL /NJH /NJS /nc /ns /np
-RMDIR /s/q ..\..\server\TestServer\bin\Debug\net5.0\json
-ROBOCOPY output\json\server ..\..\server\TestServer\bin\Debug\net5.0\json /E /NFL /NDL /NJH /NJS /nc /ns /np
-RMDIR /s/q ..\..\bin\server\json
-ROBOCOPY output\json\server ..\..\bin\server\json /E /NFL /NDL /NJH /NJS /nc /ns /np
 
 RMDIR /s/q ..\..\shared\NetworkShared\Enum
 ROBOCOPY output\enum ..\..\shared\NetworkShared\Enum /E /NFL /NDL /NJH /NJS /nc /ns /np

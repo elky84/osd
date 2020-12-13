@@ -28,4 +28,13 @@
     <PackageReference Include="DotNetty.Transport.Libuv" Version="0.6.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include=".\json\**" LinkBase="json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+
+    <None Include=".\Resources\Map\**" LinkBase="Resources\Map">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>
