@@ -138,7 +138,6 @@ public class ClientHandler : SimpleChannelInboundHandler<IByteBuffer>
     [FlatBufferEvent]
     public bool OnShowList(ShowList x)
     {
-        NettyClient.Instance.Send(Click.Bytes(0));
         return true;
     }
 

@@ -29,7 +29,7 @@ public class Position
 
 public enum Direction
 {
-    Left, Top, Right, Bottom
+    Left, Right, Top, Bottom
 }
 
 public class Character : SpriteObject
@@ -116,7 +116,7 @@ public class Character : SpriteObject
 
     public void MoveDirection(Direction direction)
     {
-        if (TargetDirection == direction)
+        if (this.TargetDirection == direction)
         {
             return;
         }
@@ -135,16 +135,20 @@ public class Character : SpriteObject
         if (MoveCoroutine != null)
         {
             StopCoroutine(MoveCoroutine);
-        }
+            MoveCoroutine = null;
+            Animator.SetBool("Walking", false);
 
-        Animator.SetBool("Walking", false);
+            var end = DateTime.Now;
+            NettyClient.Instance.Send(Stop.Bytes(new FlatBuffers.Protocol.Position.Model(CurrentPosition.X, CurrentPosition.Y), end.Ticks));
+        }
     }
 
 
-    public void KeyUp()
+    public void KeyUp(Direction direction)
     {
-        StopMove();
-        var end = DateTime.Now;
-        NettyClient.Instance.Send(Stop.Bytes(new FlatBuffers.Protocol.Position.Model(CurrentPosition.X, CurrentPosition.Y), end.Ticks));
+        if (direction == TargetDirection)
+        {
+            StopMove();
+        }
     }
 }

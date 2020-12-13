@@ -75,26 +75,7 @@ public class GameController : MonoBehaviour
         }
 
         Event e = Event.current;
-        if (e.type == EventType.KeyUp)
-        {
-            if (Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.UpArrow))
-            {
-                MyCharacter.KeyUp();
-            }
-            else if (Input.GetKeyUp(KeyCode.S) || Input.GetKeyUp(KeyCode.DownArrow))
-            {
-                MyCharacter.KeyUp();
-            }
-            else if (Input.GetKeyUp(KeyCode.A) || Input.GetKeyUp(KeyCode.LeftArrow))
-            {
-                MyCharacter.KeyUp();
-            }
-            else if (Input.GetKeyUp(KeyCode.D) || Input.GetKeyUp(KeyCode.RightArrow))
-            {
-                MyCharacter.KeyUp();
-            }
-        }
-        else if (e.type == EventType.KeyDown)
+        if (e.type == EventType.KeyDown)
         {
             if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
             {
@@ -111,6 +92,25 @@ public class GameController : MonoBehaviour
             else if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
             {
                 MyCharacter.MoveDirection(Direction.Right);
+            }
+        }
+        else if (e.type == EventType.KeyUp)
+        {
+            if (Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.UpArrow))
+            {
+                MyCharacter.KeyUp(Direction.Top);
+            }
+            else if (Input.GetKeyUp(KeyCode.S) || Input.GetKeyUp(KeyCode.DownArrow))
+            {
+                MyCharacter.KeyUp(Direction.Bottom);
+            }
+            else if (Input.GetKeyUp(KeyCode.A) || Input.GetKeyUp(KeyCode.LeftArrow))
+            {
+                MyCharacter.KeyUp(Direction.Left);
+            }
+            else if (Input.GetKeyUp(KeyCode.D) || Input.GetKeyUp(KeyCode.RightArrow))
+            {
+                MyCharacter.KeyUp(Direction.Right);
             }
         }
     }

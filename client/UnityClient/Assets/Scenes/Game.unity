@@ -316,7 +316,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   LoginUI: {fileID: 268476190}
-  ReconnectButton: {fileID: 2067425335}
 --- !u!114 &77366738
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1190,8 +1189,8 @@ Canvas:
   m_GameObject: {fileID: 1402322797}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 0
-  m_Camera: {fileID: 0}
+  m_RenderMode: 1
+  m_Camera: {fileID: 534669904}
   m_PlaneDistance: 100
   m_PixelPerfect: 0
   m_ReceivesEvents: 1
