@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace ServerShared.NetworkHandler
 {
@@ -215,7 +216,7 @@ namespace ServerShared.NetworkHandler
 
     public static class Extension
     {
-        public static async void Send(this IChannelHandlerContext context, byte[] bytes)
+        public static async Task Send(this IChannelHandlerContext context, byte[] bytes)
         {
             await context.WriteAndFlushAsync(Unpooled.Buffer().WriteBytes(bytes));
         }

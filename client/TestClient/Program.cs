@@ -4,14 +4,16 @@ using Microsoft.Extensions.Configuration;
 using Serilog;
 using System;
 using System.IO;
+using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using TestClient.Model;
 
 namespace TestClient
 {
     class Program
     {
-        static void Main()
+        public static async Task Main()
         {
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Information()
@@ -27,12 +29,24 @@ namespace TestClient
                     .Build();
 
                 var bootstrap = bootstrapHelper.Create<GameHandler, Character>();
+                var channel = await bootstrap.ConnectAsync(new IPEndPoint(ClientSettings.Host, ClientSettings.Port));
+                var handler = channel.Pipeline.Get<GameHandler>();
 
-                var connectTask = bootstrap.ConnectAsync(new IPEndPoint(ClientSettings.Host, ClientSettings.Port));
-                connectTask.Wait();
-                var channel = connectTask.Result;
+                while (true)
+                {
+                    Console.Write("command : ");
+                    var line = Console.ReadLine();
+                    var splitted = line.Split(' ');
 
-                channel.CloseAsync().Wait();
+                    var cmd = splitted.First();
+                    if (cmd.ToLower() == "quit")
+                        break;
+
+                    var parameters = splitted.Skip(1).ToArray();
+                    handler.Command(cmd, parameters);
+                }
+
+                await channel.CloseAsync();
             }
             catch (Exception ex)
             {

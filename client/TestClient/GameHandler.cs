@@ -45,13 +45,7 @@ namespace TestClient
 
         protected override void OnConnected(IChannelHandlerContext context)
         {
-            Command("move", "Top");
-            Command("stop");
-
             Character = new Character { Context = context };
-
-            Send(Click.Bytes(0));
-            Send(SelectListDialog.Bytes(3));
         }
 
         protected override void OnDisconnected(IChannelHandlerContext context)

@@ -1,6 +1,7 @@
 ﻿using NetworkShared;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace TestClient
@@ -42,16 +43,15 @@ namespace TestClient
 
             var method = _commandMethodDict[name];
             var methodParameters = method.GetParameters();
-
-            for (int i = 0; i < parameters.Length; i++)
+            var convertedList = parameters.Select((x, i) => 
             {
-                if(methodParameters[i].ParameterType.IsEnum)
-                    parameters[i] = Enum.Parse(methodParameters[i].ParameterType, parameters[i] as string);
+                if (methodParameters[i].ParameterType.IsEnum)
+                    return Enum.Parse(methodParameters[i].ParameterType, parameters[i] as string);
                 else
-                    parameters[i] = Convert.ChangeType(parameters[i], methodParameters[i].ParameterType);
-            }
-            
-            _commandMethodDict[name].Invoke(this, parameters);
+                    return Convert.ChangeType(parameters[i], methodParameters[i].ParameterType);
+            }).ToArray();
+
+            _commandMethodDict[name].Invoke(this, convertedList);
             return true;
         }
 

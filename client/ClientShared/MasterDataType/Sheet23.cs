@@ -6,8 +6,8 @@ using NetworkShared;
 public class Sheet23
 {
     [Key]
-    public string Id { get; set; }
-    public double? Value { get; set; }
-    public int Cshyeon { get; set; }
-    public string Relation { get; set; }
+    public string id { get; set; }
+    public double? value { get; set; }
+    public int cshyeon { get; set; }
+    public string relation { get; set; }
 }

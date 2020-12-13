@@ -9,7 +9,7 @@ namespace NetworkShared.Table
 
         public TableSheet1()
         {
-            Cached = this.ToDictionary(x => x.Value.Name, x => x.Value.Value2);
+            Cached = this.ToDictionary(x => x.Value.name, x => x.Value.value2);
         }
     }
 }

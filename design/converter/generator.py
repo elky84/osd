@@ -24,10 +24,10 @@ def classStringify(name, pureSchemaSet, enumDict, usage):
         if baseType in enumDict:
             properties.append(f'[JsonConverter(typeof(JsonEnumConverter<{baseType}>))]')
 
-        properties.append(f"public {type} {schema['name'].capitalize()} {{ get; set; }}")
+        properties.append(f"public {type} {schema['name']} {{ get; set; }}")
 
     properties = [x if x == '' else f"    {x}" for x in properties]
-    return templateClass.render({'name': name.capitalize(), 'properties': '\n'.join(properties)})
+    return templateClass.render({'name': name, 'properties': '\n'.join(properties)})
 
 
 def bindFormatStringify(name, pureSchemaSet):
@@ -37,7 +37,7 @@ def bindFormatStringify(name, pureSchemaSet):
         generic = f"<{name}>"
     else:
         tableType = 'BaseDict'
-        generic = f"<{id['type'].replace('*', '')}, {name.capitalize()}>"
+        generic = f"<{id['type'].replace('*', '')}, {name}>"
 
     return templateBindFormat.render({'name': name, 'tableType': tableType, 'generic': generic})
 
@@ -52,7 +52,7 @@ def bindStringify(pureSchemaDict, usage):
         
     codeLines = [x if x == '' else f"    {x}" for x in codeLines]
     codeLines = '\n'.join(codeLines)
-    return templateBind.render({'usage': usage.capitalize(), 'codeLines': codeLines})
+    return templateBind.render({'usage': usage, 'codeLines': codeLines})
 
 def enumFormatStringify(value, desc):
     return templateEnumFormat.render({'desc': desc, 'value': value})

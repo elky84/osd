@@ -24,14 +24,31 @@ namespace TestServer
         public GameHandler()
         { }
 
-        public override void ChannelInactive(DotNetty.Transport.Channels.IChannelHandlerContext context)
-        {
-            base.ChannelInactive(context);
-        }
-
         private void Synchronize(DateTime now)
         {
             _movingSessions.ForEach(x => x.Data?.Synchronize(now));
+        }
+
+        public async Task Broadcast(Session<Character> pivot, byte[] bytes, bool exceptSelf = true)
+        {
+            var character = pivot.Data;
+            var targets = character.Map.Sectors.Nears(character.Position).SelectMany(x => x.Characters);
+
+            if (exceptSelf)
+                targets = targets.Except(new[] { character });
+
+            foreach (var target in targets)
+            {
+                await target.Context.Send(bytes);
+            }
+        }
+
+        public async Task Broadcast(Map map, byte[] bytes)
+        {
+            foreach (var context in map.Sectors.SelectMany(x => x.Characters).Select(x => x.Context))
+            {
+                await context.Send(bytes);
+            }
         }
 
         [FlatBufferEvent]

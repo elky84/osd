@@ -13,13 +13,15 @@ COPY output\bind\client\Table.cs ..\..\client\ClientShared\Table\Table.cs >NUL
 DEL /Q /F ..\..\server\ServerShared\Table\Table.cs
 COPY output\bind\server\Table.cs ..\..\server\ServerShared\Table\Table.cs >NUL
 
-RMDIR /s/q ..\..\client\ClientShared\Json
-ROBOCOPY output\json\client ..\..\client\ClientShared\Json /E /NFL /NDL /NJH /NJS /nc /ns /np
+RMDIR /s/q ..\..\client\ClientShared\json
+ROBOCOPY output\json\client ..\..\client\ClientShared\json /E /NFL /NDL /NJH /NJS /nc /ns /np
 
-RMDIR /s/q ..\..\server\ServerShared\Json
-ROBOCOPY output\json\server ..\..\server\ServerShared\Json /E /NFL /NDL /NJH /NJS /nc /ns /np
-RMDIR /s/q ..\..\server\TestServer\bin\Debug\net5.0\Json
-ROBOCOPY output\json\server ..\..\server\TestServer\bin\Debug\net5.0\Json /E /NFL /NDL /NJH /NJS /nc /ns /np
+RMDIR /s/q ..\..\server\ServerShared\json
+ROBOCOPY output\json\server ..\..\server\ServerShared\json /E /NFL /NDL /NJH /NJS /nc /ns /np
+RMDIR /s/q ..\..\server\TestServer\bin\Debug\net5.0\json
+ROBOCOPY output\json\server ..\..\server\TestServer\bin\Debug\net5.0\json /E /NFL /NDL /NJH /NJS /nc /ns /np
+RMDIR /s/q ..\..\bin\server\json
+ROBOCOPY output\json\server ..\..\bin\server\json /E /NFL /NDL /NJH /NJS /nc /ns /np
 
 RMDIR /s/q ..\..\shared\NetworkShared\Enum
 ROBOCOPY output\enum ..\..\shared\NetworkShared\Enum /E /NFL /NDL /NJH /NJS /nc /ns /np
