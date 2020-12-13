@@ -1,8 +1,6 @@
 ﻿using FlatBuffers.Protocol;
 using KeraLua;
 using NetworkShared;
-using NetworkShared.Common;
-using Newtonsoft.Json;
 using Serilog;
 using ServerShared.DotNetty;
 using ServerShared.Model;
@@ -21,10 +19,13 @@ namespace TestServer
 {
     public class GameHandler : BaseHandler<Character>
     {
+        private List<Map> _maps;
         public List<Session<Character>> _movingSessions = new List<Session<Character>>();
 
         public GameHandler()
-        { }
+        {
+            _maps = Map.Load(Directory.GetFiles("Resources/Map", "*.json")); ;
+        }
 
         private void Synchronize(DateTime now)
         {
@@ -158,7 +159,7 @@ namespace TestServer
                 .Select(x => new FlatBuffers.Protocol.Object.Model(x.Key, new FlatBuffers.Protocol.Position.Model(x.Value.Position.X, x.Value.Position.Y)))
                 .ToList();
 
-            session.Send(ShowList.Bytes(objects));
+            _ = session.Send(ShowList.Bytes(objects));
         }
 
         protected override void OnDisconnected(Session<Character> session)
@@ -182,8 +183,6 @@ namespace TestServer
             try
             {
                 ServerService.Register();
-
-                var mapData = JsonConvert.DeserializeObject<MapData>(File.ReadAllText("Resources/Map/town.json"));
 
                 var bootstrap = bootstrapHelper.Create<GameHandler, Character>();
                 var channel = await bootstrap.BindAsync(ServerShared.Config.ServerSettings.Port);

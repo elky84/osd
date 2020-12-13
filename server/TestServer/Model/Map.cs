@@ -1,7 +1,10 @@
 ﻿using KeraLua;
+using NetworkShared.Common;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 
 namespace TestServer.Model
@@ -130,6 +133,17 @@ namespace TestServer.Model
                 return null;
 
             return Sectors.Add(obj);
+        }
+
+        public static List<Map> Load(params string[] path)
+        {
+            return path.Select(x =>
+            {
+                var contents = File.ReadAllText(x);
+                var format = JsonConvert.DeserializeObject<MapData>(contents);
+
+                return new Map(format.StageFileName, new Size(format.MapTileSize.x, format.MapTileSize.y));
+            }).ToList();
         }
     }
 }

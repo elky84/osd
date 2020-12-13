@@ -176,10 +176,10 @@ namespace NetworkShared.NetworkHandler
             try
             {
                 if (_bindedEventDict.TryGetValue(type, out var bindedEvent) == false)
-                    return false;
+                    return true;
 
                 if (_allocatorDict.TryGetValue(type, out var allocator) == false)
-                    return false;
+                    return true;
 
                 return bindedEvent.Invoke(Convert.ChangeType(allocator.DynamicInvoke(new ByteBuffer(bytes)), type) as IFlatbufferObject);
             }
