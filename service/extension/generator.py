@@ -12,7 +12,7 @@ def convert_type(type, method_dict):
     
 def constructor(name, type, param, method_dict):
     if type == 'string':
-        return f'builder.CreateString({param})'
+        return f'builder.CreateString({name})'
 
     group = extractor.extract(r'List<(?P<type>\b\w+)>', type)
     if group:
@@ -24,7 +24,7 @@ def constructor(name, type, param, method_dict):
     if method_dict is not None and type in method_dict:
         arguments = []
         for x in method_dict[type]:
-            code = constructor(f"x.{x['pure name'].capitalize()}", x['type'], 'x', method_dict)
+            code = constructor(f"{param}.{x['pure name'].capitalize()}", x['type'], 'x', method_dict)
             if code:
                 arguments.append(code)
             else:
