@@ -1,5 +1,6 @@
 ﻿using KeraLua;
 using NetworkShared.Common;
+using NetworkShared.Table;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -42,6 +43,8 @@ namespace TestServer.Model
                 return null;
             }
         }
+
+        public List<Portal> Portals => NetworkShared.MasterTable.From<TablePortal>().Nears(Name);
 
         public static int BuiltinName(IntPtr luaState)
         {

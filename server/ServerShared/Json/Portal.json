@@ -1,0 +1,28 @@
+[
+  {
+    "Id": "포탈1",
+    "BeforeMap": "Dungeon",
+    "BeforePosition": {
+      "x": 1,
+      "y": 1
+    },
+    "AfterMap": "Field",
+    "AfterPosition": {
+      "x": 2,
+      "y": 2
+    }
+  },
+  {
+    "Id": "포탈2",
+    "BeforeMap": "Field",
+    "BeforePosition": {
+      "x": 2,
+      "y": 2
+    },
+    "AfterMap": "Dungeon",
+    "AfterPosition": {
+      "x": 1,
+      "y": 1
+    }
+  }
+]

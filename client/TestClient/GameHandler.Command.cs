@@ -1,4 +1,5 @@
-﻿using NetworkShared;
+﻿using FlatBuffers.Protocol;
+using NetworkShared;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -58,13 +59,25 @@ namespace TestClient
         [CommandEvent("move")]
         public void OnMove(Direction direction)
         {
-            Console.WriteLine(direction);
+            Send(Move.Bytes(new Position.Model(Character.Position.X, Character.Position.Y), DateTime.Now.Ticks, (int)Character.Direction));
         }
 
         [CommandEvent("stop")]
         public void OnStop()
         {
-            Console.WriteLine("stop");
+            Send(Stop.Bytes(new Position.Model(Character.Position.X, Character.Position.Y), DateTime.Now.Ticks));
+        }
+
+        [CommandEvent("warp")]
+        public void OnWarp()
+        {
+            Send(Warp.Bytes(new Position.Model(Character.Position.X, Character.Position.Y), DateTime.Now.Ticks));
+        }
+
+        [CommandEvent("cheat/position")]
+        public void Cheat_OnPosition()
+        { 
+            Send(CheatPosition.Bytes(new Position.Model(Character.Position.X, Character.Position.Y), DateTime.Now.Ticks));
         }
     }
 }

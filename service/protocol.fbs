@@ -48,22 +48,49 @@ table Click {
 root_type Click;
 
 table Object {
+	name: string;
 	sequence: int;
+	type: int;
 	position: Position;
 }
-root_type Object;
 
-table ShowList {
-	objects: [Object];
+table Portal {
+	position: Position;
+	map: string;
 }
-root_type ShowList;
 
-table Hide {
+table Map {
+	name: string;
+}
+
+table Enter {
 	sequence: int;
+	position: Position;
+	map: Map;
+	objects: [Object];
+	portals: [Portal];
 }
-root_type Hide;
+root_type Enter;
 
-table HideList {
-	sequence: [int];
+table Warp {
+	position: Position;
+	now: long;
 }
-root_type HideList;
+root_type Warp;
+
+
+
+
+
+
+
+
+
+
+
+
+table CheatPosition {
+	position: Position;
+	now: long;
+}
+root_type CheatPosition;

@@ -6,4 +6,7 @@ namespace NetworkShared.Table
     [Table("json/Sheet23.json")]
     public partial class TableSheet23 : BaseDict<string, Sheet23>
     { }
+    [Table("json/Portal.json")]
+    public partial class TablePortal : BaseDict<string, Portal>
+    { }
 }

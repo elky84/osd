@@ -5,10 +5,20 @@ namespace TestServer.Model
 {
     public class Object : ILuable
     {
+        public string Name { get; set; }
         public Position Position { get; set; } = new Position();
         public Map Map { get; set; }
         public int? Sequence { get; set; }
         public Map.Sector Sector { get; set; }
+
+        public static int BuiltinName(IntPtr luaState)
+        {
+            var lua = Lua.FromIntPtr(luaState);
+            var obj = lua.ToLuable<Object>(1);
+
+            lua.PushString(obj.Name);
+            return 1;
+        }
 
         public static int BuiltinPosition(IntPtr luaState)
         {

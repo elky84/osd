@@ -8,7 +8,6 @@ using ServerShared.NetworkHandler;
 using ServerShared.Util;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -22,14 +21,21 @@ namespace TestServer
         private static readonly Lazy<GameHandler> _instance = new Lazy<GameHandler>(() => new GameHandler());
         public static GameHandler Instance => _instance.Value;
 
-        private List<Map> _maps;
+        private List<Model.Map> _maps;
         public List<Session<Character>> _movingSessions = new List<Session<Character>>();
 
         public override bool IsSharable => true;
 
         public GameHandler()
         {
-            _maps = Map.Load(Directory.GetFiles("Resources/Map", "*.json")); ;
+            _maps = Model.Map.Load(Directory.GetFiles("Resources/Map", "*.json")); ;
+            _maps.ForEach(x =>
+            {
+                x.Sectors.OnSectorChanged = obj =>
+                {
+                    Console.WriteLine($"Sector changed({obj.Sequence}, sector : {obj.Sector.Id})");
+                };
+            });
         }
 
         private void Synchronize(DateTime now)
@@ -51,7 +57,7 @@ namespace TestServer
             }
         }
 
-        public async Task Broadcast(Map map, byte[] bytes)
+        public async Task Broadcast(Model.Map map, byte[] bytes)
         {
             foreach (var context in map.Sectors.SelectMany(x => x.Characters).Select(x => x.Context))
             {
@@ -151,20 +157,25 @@ namespace TestServer
 
         protected override void OnConnected(Session<Character> session)
         {
+            var mapFirst = _maps.First();
+
             session.Data.Context = session;
-            var map = new Map("map name", new Size(1024, 768));
-            map.Sectors.OnSectorChanged = obj =>
-            {
-                Console.WriteLine($"Sector changed({obj.Sequence}, sector : {obj.Sector.Id})");
-            };
-            map.Add(session.Data);
+            session.Data.Name = $"{Guid.NewGuid()}";
+            mapFirst.Add(session.Data);
 
             // 현재 맵에 있는 모든 오브젝트
-            var objects = map.Objects
-                .Select(x => new FlatBuffers.Protocol.Object.Model(x.Key, new FlatBuffers.Protocol.Position.Model(x.Value.Position.X, x.Value.Position.Y)))
+            var objects = mapFirst.Objects
+                .Select(x => new FlatBuffers.Protocol.Object.Model(x.Value.Name, x.Key, 0, new FlatBuffers.Protocol.Position.Model(x.Value.Position.X, x.Value.Position.Y)))
                 .ToList();
 
-            _ = session.Send(ShowList.Bytes(objects));
+            // 현재 맵의 모든 포탈
+            var portals = mapFirst.Portals.ConvertAll(x => new FlatBuffers.Protocol.Portal.Model(new FlatBuffers.Protocol.Position.Model { X = x.BeforePosition.X, Y = x.BeforePosition.Y }, x.AfterMap));
+
+            _ = session.Send(Enter.Bytes(session.Data.Sequence.Value, 
+                new FlatBuffers.Protocol.Position.Model(session.Data.Position.X, session.Data.Position.Y), 
+                new FlatBuffers.Protocol.Map.Model(mapFirst.Name), 
+                objects,
+                portals));
         }
 
         protected override void OnDisconnected(Session<Character> session)

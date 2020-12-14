@@ -2,6 +2,7 @@
 using FlatBuffers.Protocol;
 using NetworkShared.NetworkHandler;
 using Serilog;
+using System;
 using TestClient.Model;
 
 namespace TestClient
@@ -16,30 +17,52 @@ namespace TestClient
         }
 
         [FlatBufferEvent]
-        public bool OnMove(Move x)
+        public bool OnMove(Move response)
         {
-            Log.Logger.Information($"OnMove() {x.Position.Value.X} {x.Position.Value.Y} {x.Direction} {x.Now}");
+            Log.Logger.Information($"OnMove() {response.Position.Value.X} {response.Position.Value.Y} {response.Direction} {response.Now}");
             return true;
         }
 
         [FlatBufferEvent]
-        public bool OnStop(Stop x)
+        public bool OnStop(Stop response)
         {
-            Log.Logger.Information($"OnStop() {x.Position.Value.X} {x.Position.Value.Y} {x.Now}");
+            Log.Logger.Information($"OnStop() {response.Position.Value.X} {response.Position.Value.Y} {response.Now}");
             return true;
         }
 
         [FlatBufferEvent]
-        public bool OnClick(Click x)
+        public bool OnClick(Click response)
         {
             Log.Logger.Information($"OnClick()");
             return true;
         }
 
         [FlatBufferEvent]
-        public bool OnSelectListDialog(SelectListDialog x)
+        public bool OnSelectListDialog(SelectListDialog response)
         {
             Log.Logger.Information($"OnSelectListDialog()");
+            return true;
+        }
+
+        [FlatBufferEvent]
+        public bool OnEnter(Enter response)
+        {
+            for (int i = 0; i < response.PortalsLength; i++)
+            {
+                var portal = response.Portals(i).Value;
+                Console.WriteLine($"Portal to {portal.Map} : {portal.Position?.X}, {portal.Position?.Y}");
+            }
+
+            for (int i = 0; i < response.ObjectsLength; i++)
+            {
+                var obj = response.Objects(i);
+                Console.WriteLine($"Object {i} : {obj?.Name}({obj?.Sequence})");
+            }
+
+            Console.WriteLine($"My sequence : {response.Sequence}");
+            Console.WriteLine($"After position : {response.Position.Value.X}, {response.Position.Value.Y}");
+            Console.WriteLine($"After map name : {response.Map?.Name}");
+
             return true;
         }
 

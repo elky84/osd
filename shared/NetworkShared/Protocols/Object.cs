@@ -21,21 +21,35 @@ namespace FlatBuffers.Protocol
     public void __init(int _i, ByteBuffer _bb) { __p = new Table(_i, _bb); }
     public Object __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
   
-    public int Sequence { get { int o = __p.__offset(4); return o != 0 ? __p.bb.GetInt(o + __p.bb_pos) : (int)0; } }
-    public Position? Position { get { int o = __p.__offset(6); return o != 0 ? (Position?)(new Position()).__assign(__p.__indirect(o + __p.bb_pos), __p.bb) : null; } }
+    public string Name { get { int o = __p.__offset(4); return o != 0 ? __p.__string(o + __p.bb_pos) : null; } }
+  #if ENABLE_SPAN_T
+    public Span<byte> GetNameBytes() { return __p.__vector_as_span<byte>(4, 1); }
+  #else
+    public ArraySegment<byte>? GetNameBytes() { return __p.__vector_as_arraysegment(4); }
+  #endif
+    public byte[] GetNameArray() { return __p.__vector_as_array<byte>(4); }
+    public int Sequence { get { int o = __p.__offset(6); return o != 0 ? __p.bb.GetInt(o + __p.bb_pos) : (int)0; } }
+    public int Type { get { int o = __p.__offset(8); return o != 0 ? __p.bb.GetInt(o + __p.bb_pos) : (int)0; } }
+    public Position? Position { get { int o = __p.__offset(10); return o != 0 ? (Position?)(new Position()).__assign(__p.__indirect(o + __p.bb_pos), __p.bb) : null; } }
   
     public static Offset<Object> CreateObject(FlatBufferBuilder builder,
+        StringOffset nameOffset = default(StringOffset),
         int sequence = 0,
+        int type = 0,
         Offset<Position> positionOffset = default(Offset<Position>)) {
-      builder.StartTable(2);
+      builder.StartTable(4);
       Object.AddPosition(builder, positionOffset);
+      Object.AddType(builder, type);
       Object.AddSequence(builder, sequence);
+      Object.AddName(builder, nameOffset);
       return Object.EndObject(builder);
     }
   
-    public static void StartObject(FlatBufferBuilder builder) { builder.StartTable(2); }
-    public static void AddSequence(FlatBufferBuilder builder, int sequence) { builder.AddInt(0, sequence, 0); }
-    public static void AddPosition(FlatBufferBuilder builder, Offset<Position> positionOffset) { builder.AddOffset(1, positionOffset.Value, 0); }
+    public static void StartObject(FlatBufferBuilder builder) { builder.StartTable(4); }
+    public static void AddName(FlatBufferBuilder builder, StringOffset nameOffset) { builder.AddOffset(0, nameOffset.Value, 0); }
+    public static void AddSequence(FlatBufferBuilder builder, int sequence) { builder.AddInt(1, sequence, 0); }
+    public static void AddType(FlatBufferBuilder builder, int type) { builder.AddInt(2, type, 0); }
+    public static void AddPosition(FlatBufferBuilder builder, Offset<Position> positionOffset) { builder.AddOffset(3, positionOffset.Value, 0); }
     public static Offset<Object> EndObject(FlatBufferBuilder builder) {
       int o = builder.EndTable();
       return new Offset<Object>(o);
@@ -43,20 +57,25 @@ namespace FlatBuffers.Protocol
   
     public struct Model
     {
+      public string Name { get; set; }
       public int Sequence { get; set; }
+      public int Type { get; set; }
       public FlatBuffers.Protocol.Position.Model Position { get; set; }
     
-      public Model(int sequence, FlatBuffers.Protocol.Position.Model position)
+      public Model(string name, int sequence, int type, FlatBuffers.Protocol.Position.Model position)
       {
+        Name = name;
         Sequence = sequence;
+        Type = type;
         Position = position;
       }
     }
   
-    public static byte[] Bytes(int sequence, FlatBuffers.Protocol.Position.Model position) {
+    public static byte[] Bytes(string name, int sequence, int type, FlatBuffers.Protocol.Position.Model position) {
       var builder = new FlatBufferBuilder(512);
+      var nameOffset = builder.CreateString(name);
       var positionOffset = FlatBuffers.Protocol.Position.CreatePosition(builder, position.X, position.Y);
-      var offset = Object.CreateObject(builder, sequence, positionOffset);
+      var offset = Object.CreateObject(builder, nameOffset, sequence, type, positionOffset);
       builder.Finish(offset.Value);
       
       var bytes = builder.DataBuffer.ToSizedArray();
