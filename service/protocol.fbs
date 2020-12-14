@@ -8,13 +8,11 @@ table Move {
 	now: long;
 	direction: int;
 }
-root_type Move;
 
 table Stop {
 	position: Position;
 	now: long;
 }
-root_type Stop;
 
 table ShowDialog {
 	message: string;
@@ -22,30 +20,25 @@ table ShowDialog {
 	next: bool;
 	quit: bool;
 }
-root_type ShowDialog;
 
 table ShowListDialog {
 	message: string;
 	icon: string;
 	list: [string];
 }
-root_type ShowListDialog;
 
 table ShowConfirmDialog {
 	message: string;
 	icon: string;
 }
-root_type ShowConfirmDialog;
 
 table SelectListDialog {
 	index: int;
 }
-root_type SelectListDialog;
 
 table Click {
 	sequence: int;
 }
-root_type Click;
 
 table Object {
 	name: string;
@@ -70,13 +63,26 @@ table Enter {
 	objects: [Object];
 	portals: [Portal];
 }
-root_type Enter;
+
+table Show {
+	name: string;
+	sequence: int;
+	position: Position;
+}
+
+table Leave {
+	sequence: int;
+}
+
+table PositionChanged {
+	sequence: int;
+	position: Position;
+}
 
 table Warp {
 	position: Position;
 	now: long;
 }
-root_type Warp;
 
 
 
@@ -93,4 +99,3 @@ table CheatPosition {
 	position: Position;
 	now: long;
 }
-root_type CheatPosition;

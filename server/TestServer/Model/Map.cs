@@ -1,10 +1,10 @@
 ﻿using KeraLua;
 using NetworkShared.Common;
 using NetworkShared.Table;
+using NetworkShared.Types;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 
@@ -92,7 +92,7 @@ namespace TestServer.Model
             Size = size;
 
 #if DEBUG
-            Sectors = new SectorContainer(this, new Size(8, 8));
+            Sectors = new SectorContainer(this, new Size { Width = 8, Height = 8 });
 #else
             Sectors = new SectorContainer(this, new Size(64, 64));
 #endif
@@ -103,14 +103,18 @@ namespace TestServer.Model
             var sequence = NextSequence ??
                 throw new Exception("cannot get next sequence.");
 
+            if (obj.Map != null)
+                obj.Map.Remove(obj);
+
             Objects.Add(sequence, obj);
             obj.Map = this;
             obj.Sequence = sequence;
             obj.Sector = Sectors.Add(obj);
+            obj.Listener?.OnEnter(obj);
             return obj.Sector;
         }
 
-        public Sector Add(Object obj, Position position)
+        public Sector Add(Object obj, Point position)
         {
             obj.Position = position;
             return Add(obj);
@@ -121,6 +125,7 @@ namespace TestServer.Model
             if (obj.Sequence.HasValue == false)
                 return null;
 
+            obj.Listener?.OnLeave(obj);
             obj.Map = null;
             Objects.Remove(obj.Sequence.Value);
             obj.Sequence = null;
@@ -138,15 +143,15 @@ namespace TestServer.Model
             return Sectors.Add(obj);
         }
 
-        public static List<Map> Load(params string[] path)
+        public static Dictionary<string, Map> Load(params string[] path)
         {
             return path.Select(x =>
             {
                 var contents = File.ReadAllText(x);
                 var format = JsonConvert.DeserializeObject<MapData>(contents);
 
-                return new Map(format.StageFileName, new Size(format.MapTileSize.x, format.MapTileSize.y));
-            }).ToList();
+                return new Map(format.StageFileName, new Size { Width = format.MapTileSize.x, Height = format.MapTileSize.y });
+            }).ToDictionary(x => x.Name, x => x);
         }
     }
 }

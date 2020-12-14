@@ -1,5 +1,6 @@
 ﻿using KeraLua;
 using NetworkShared;
+using NetworkShared.Types;
 using System;
 
 namespace TestServer.Model
@@ -20,7 +21,7 @@ namespace TestServer.Model
             return 1;
         }
 
-        public Position Synchronize(DateTime time)
+        public Point Synchronize(DateTime time)
         {
             if (Time == null)
                 return Position;

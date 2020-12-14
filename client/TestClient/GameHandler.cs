@@ -62,7 +62,21 @@ namespace TestClient
             Console.WriteLine($"My sequence : {response.Sequence}");
             Console.WriteLine($"After position : {response.Position.Value.X}, {response.Position.Value.Y}");
             Console.WriteLine($"After map name : {response.Map?.Name}");
+            
+            return true;
+        }
 
+        [FlatBufferEvent]
+        public bool OnShow(Show response)
+        {
+            Console.WriteLine($"{response.Name}({response.Sequence}) is entered in current map.");
+            return true;
+        }
+
+        [FlatBufferEvent]
+        public bool OnLeave(Leave response)
+        {
+            Console.WriteLine($"{response.Sequence} is leave from current map.");
             return true;
         }
 

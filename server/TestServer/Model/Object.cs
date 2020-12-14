@@ -1,12 +1,22 @@
 ﻿using KeraLua;
+using NetworkShared.Types;
 using System;
 
 namespace TestServer.Model
 {
     public class Object : ILuable
     {
+        public interface IListener
+        {
+            public void OnLeave(Object obj);
+            public void OnEnter(Object obj);
+            public void OnSectorChanged(Object obj);
+        }
+
+        public IListener Listener { get; set; }
+
         public string Name { get; set; }
-        public Position Position { get; set; } = new Position();
+        public Point Position { get; set; } = new Point();
         public Map Map { get; set; }
         public int? Sequence { get; set; }
         public Map.Sector Sector { get; set; }

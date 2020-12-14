@@ -1,7 +1,7 @@
-﻿using System;
+﻿using NetworkShared.Types;
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 
 namespace TestServer.Model
@@ -13,8 +13,6 @@ namespace TestServer.Model
             private Map _owner;
             private Size _sectorSize;
             private List<Sector> _sectors = new List<Sector>();
-
-            public Action<Object> OnSectorChanged { get; set; }
 
             public uint Rows { get; private set; }
             public uint Columns { get; private set; }
@@ -48,13 +46,13 @@ namespace TestServer.Model
                     ActivatedSectors.Remove(sector.Id);
             }
 
-            private uint Index(Position position) => (uint)(position.Y / _sectorSize.Height) * Columns + (uint)(position.X / _sectorSize.Width);
+            private uint Index(Point position) => (uint)(position.Y / _sectorSize.Height) * Columns + (uint)(position.X / _sectorSize.Width);
 
             public IEnumerator<Sector> GetEnumerator() => _sectors.GetEnumerator();
 
             IEnumerator IEnumerable.GetEnumerator() => _sectors.GetEnumerator();
 
-            public Sector this[Position position] => this[Index(position)];
+            public Sector this[Point position] => this[Index(position)];
 
             public Sector this[uint index]
             {
@@ -82,7 +80,8 @@ namespace TestServer.Model
                 obj.Sector?.Remove(obj.Sequence.Value);
                 obj.Sector = sector;
                 sector.Add(obj.Sequence.Value, obj);
-                OnSectorChanged?.Invoke(obj);
+
+                obj.Listener?.OnSectorChanged(obj);
                 return sector;
             }
 
@@ -97,11 +96,11 @@ namespace TestServer.Model
 
                 sector.Remove(obj.Sequence.Value);
                 obj.Sector = null;
-                OnSectorChanged?.Invoke(obj);
+                obj.Listener?.OnSectorChanged(obj);
                 return sector;
             }
 
-            public IEnumerable<Sector> Nears(Position position)
+            public IEnumerable<Sector> Nears(Point position)
             {
                 try
                 {
@@ -128,7 +127,7 @@ namespace TestServer.Model
                 }
             }
 
-            public List<T> Objects<T>(Position position) where T : Object
+            public List<T> Objects<T>(Point position) where T : Object
             {
                 var sectors = Nears(position);
                 return sectors.SelectMany(x => x.Objects).Select(x => x as T).Where(x => x != null).ToList();

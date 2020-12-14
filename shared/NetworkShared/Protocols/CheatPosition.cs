@@ -40,8 +40,6 @@ namespace FlatBuffers.Protocol
       int o = builder.EndTable();
       return new Offset<CheatPosition>(o);
     }
-    public static void FinishCheatPositionBuffer(FlatBufferBuilder builder, Offset<CheatPosition> offset) { builder.Finish(offset.Value); }
-    public static void FinishSizePrefixedCheatPositionBuffer(FlatBufferBuilder builder, Offset<CheatPosition> offset) { builder.FinishSizePrefixed(offset.Value); }
   
     public struct Model
     {
