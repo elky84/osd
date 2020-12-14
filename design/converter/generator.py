@@ -27,6 +27,9 @@ def classStringify(name, pureSchemaSet, enumDict, usage):
         properties.append(f"public {type} {schema['name']} {{ get; set; }}")
 
     properties = [x if x == '' else f"    {x}" for x in properties]
+    if not properties:
+        return None
+        
     return templateClass.render({'name': name, 'properties': '\n'.join(properties)})
 
 

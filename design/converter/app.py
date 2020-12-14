@@ -72,6 +72,9 @@ if __name__ == '__main__':
             os.makedirs(f'{output}/{usage}', exist_ok=True)
             code = generator.classStringify(name, schemaSet, enumDict, usage)
 
+            if not code:
+                continue
+            
             with open(f'{output}/{usage}/{name}.cs', 'w', encoding='utf8') as f:
                 f.write(code)
 

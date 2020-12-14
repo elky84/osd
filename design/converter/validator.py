@@ -3,6 +3,7 @@ import converter
 
 def supportedType(type, enumDict):
     PRIMITIVE_TYPES = ['int', 'double', 'float', 'string', 'bool', 'DateTime', 'TimeSpan']
+    CUSTOM_TYPES = ['Point']
     
     type = type.replace('*', '').replace('?', '')
 
@@ -13,7 +14,7 @@ def supportedType(type, enumDict):
     if type in enumDict:
         return True
 
-    return type in PRIMITIVE_TYPES
+    return type in PRIMITIVE_TYPES or type in CUSTOM_TYPES
 
 def supportedTypeDict(schemaDict, enumDict):
     for name, schema in schemaDict.items():

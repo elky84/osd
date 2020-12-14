@@ -1,5 +1,6 @@
 import datetime
 import extractor
+import re
 
 CUSTOM_KEYWORDS = ['$', '%', '~']
 
@@ -50,6 +51,14 @@ def cast(dtype, value, schemaDict, enumDict):
         if value.lower() == 'false':
             return False
         raise Exception(f'{value} is not a boolean type.')
+
+    if baseType == 'Point':
+        result = re.search(r'^\((?P<x>\d),\s?(?P<y>\d)\)$', value)
+        if not result:
+            raise Exception(f'{value} cannot convert to point type.')
+
+        group = result.groupdict()
+        return {'x': int(group['x']), 'y': int(group['y'])}
 
     if baseType in enumDict:
         return value
