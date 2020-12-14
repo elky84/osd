@@ -19,8 +19,13 @@ namespace TestServer
 {
     public class GameHandler : BaseHandler<Character>
     {
+        private static readonly Lazy<GameHandler> _instance = new Lazy<GameHandler>(() => new GameHandler());
+        public static GameHandler Instance => _instance.Value;
+
         private List<Map> _maps;
         public List<Session<Character>> _movingSessions = new List<Session<Character>>();
+
+        public override bool IsSharable => true;
 
         public GameHandler()
         {
@@ -184,7 +189,7 @@ namespace TestServer
             {
                 ServerService.Register();
 
-                var bootstrap = bootstrapHelper.Create<GameHandler, Character>();
+                var bootstrap = bootstrapHelper.Create(GameHandler.Instance);
                 var channel = await bootstrap.BindAsync(ServerShared.Config.ServerSettings.Port);
                 Log.Logger.Information("Server Started");
                 Console.ReadLine();
