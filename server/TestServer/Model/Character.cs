@@ -1,8 +1,10 @@
 ﻿using DotNetty.Transport.Channels;
 using FlatBuffers.Protocol;
 using KeraLua;
+using NetworkShared;
 using ServerShared.NetworkHandler;
 using System;
+using System.Text;
 
 namespace TestServer.Model
 {
@@ -13,6 +15,8 @@ namespace TestServer.Model
         public Lua DialogThread { get; set; }
 
         public int Damage { get; set; } = 30;
+
+        public override ObjectType Type => ObjectType.Character;
 
         public static int BuiltinDamage(IntPtr luaState)
         {
@@ -30,15 +34,29 @@ namespace TestServer.Model
             return lua.Yield(1);
         }
 
+        public static int BuiltinDialog(IntPtr luaState)
+        {
+            var lua = Lua.FromIntPtr(luaState);
+            var argc = lua.GetTop();
+            var character = lua.ToLuable<Character>(1);
+            var npc = lua.ToLuable<NPC>(2);
+            var message = lua.ToString(3);
+            var next = argc >= 4 ? lua.ToBoolean(4) : true;
+            var quit = argc >= 5 ? lua.ToBoolean(5) : true;
+
+            _ = character.Context.Send(ShowDialog.Bytes(message, next, quit));
+            return lua.Yield(1);
+        }
+
         public static int BuiltinDialog_List(IntPtr luaState)
         {
             var lua = Lua.FromIntPtr(luaState);
             var character = lua.ToLuable<Character>(1);
-            var message = lua.ToString(2);
-            var icon = lua.ToString(3);
+            var npc = lua.ToLuable<NPC>(2);
+            var message = lua.ToString(3);
             var list = lua.ToStringList(4);
 
-            character.Context.Send(ShowListDialog.Bytes(message, icon, list));
+            _ = character.Context.Send(ShowListDialog.Bytes(message, list));
             return lua.Yield(1);
         }
     }

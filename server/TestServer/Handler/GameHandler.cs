@@ -1,4 +1,7 @@
-﻿using ServerShared.Model;
+﻿using KeraLua;
+using NetworkShared;
+using NetworkShared.Table;
+using ServerShared.Model;
 using ServerShared.NetworkHandler;
 using System;
 using System.Collections.Generic;
@@ -15,13 +18,28 @@ namespace TestServer.Handler
         public static GameHandler Instance => _instance.Value;
 
         private Dictionary<string, Map> _maps;
+        private Dictionary<string, NPC> _npcs = new Dictionary<string, NPC>();
         public List<Session<Character>> _movingSessions = new List<Session<Character>>();
 
-        public override bool IsSharable => true;
-
-        public GameHandler()
+        private GameHandler()
         {
             _maps = Map.Load(Directory.GetFiles("Resources/Map", "*.json")); ;
+
+            // NPC spawn
+            foreach (var (id, x) in MasterTable.From<TableNpc>())
+            {
+                var map = _maps[x.Map] ??
+                    throw new Exception($"{x.Map} is not valid map name.");
+
+                var createdNPC = new NPC
+                {
+                    Name = id,
+                    Script = x.Script,
+                    Listener = this,
+                };
+
+                map.Add(createdNPC, x.Position);
+            }
         }
 
         private void Synchronize(DateTime now)
@@ -66,6 +84,10 @@ namespace TestServer.Handler
 
             var character = session.Data;
             character.Map.Remove(character);
+
+            character.DialogThread?.Clean();
+            character.DialogThread?.Close();
+            character.DialogThread?.Dispose();
         }
     }
 }

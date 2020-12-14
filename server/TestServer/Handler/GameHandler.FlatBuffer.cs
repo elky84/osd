@@ -6,6 +6,7 @@ using ServerShared.NetworkHandler;
 using System;
 using System.IO;
 using System.Linq;
+using System.Text;
 using TestServer.Extension;
 using TestServer.Model;
 
@@ -79,12 +80,43 @@ namespace TestServer.Handler
         public bool OnClick(Session<Character> session, Click request)
         {
             var character = session.Data;
-            character.DialogThread = Static.Main.NewThread();
-            character.DialogThread.DoFile(Path.Join(Environment.CurrentDirectory, "..", "..", "..", "hello.lua"));
-            character.DialogThread.GetGlobal("func");
+            var target = character.Map.Objects[request.Sequence];
+            if (target == null)
+                return true;
 
-            character.DialogThread.PushLuable(character);
-            character.DialogThread.Resume(1);
+            switch (target.Type)
+            {
+                case ObjectType.NPC:
+                    {
+                        var npc = target as NPC;
+                        if (File.Exists(npc.Script) == false)
+                            break;
+
+                        var luaThread = Static.Main.NewThread();
+                        luaThread.Encoding = Encoding.UTF8;
+                        luaThread.DoFile(npc.Script);
+                        luaThread.GetGlobal("func");
+
+                        luaThread.PushLuable(character);
+                        luaThread.PushLuable(npc);
+                        luaThread.Resume(2);
+
+                        character.DialogThread = luaThread;
+                    }
+                    break;
+            }
+            return true;
+        }
+
+        [FlatBufferEvent]
+        public bool OnDialog(Session<Character> session, ResponseDialog request)
+        {
+            var character = session.Data;
+            if (character.DialogThread == null)
+                return false;
+
+            character.DialogThread.PushBoolean(request.Next);
+            var result = character.DialogThread.Resume(1);
             return true;
         }
 

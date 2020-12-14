@@ -16,14 +16,12 @@ table Stop {
 
 table ShowDialog {
 	message: string;
-	icon: string;
 	next: bool;
 	quit: bool;
 }
 
 table ShowListDialog {
 	message: string;
-	icon: string;
 	list: [string];
 }
 
@@ -38,6 +36,10 @@ table SelectListDialog {
 
 table Click {
 	sequence: int;
+}
+
+table ResponseDialog {
+	next: bool;
 }
 
 table Object {

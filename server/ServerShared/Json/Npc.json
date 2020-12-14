@@ -1,0 +1,32 @@
+[
+  {
+    "Id": "김성훈",
+    "Sprite": "Resources/Sprite/NPC/1",
+    "Map": "Dungeon",
+    "Position": {
+      "x": 0,
+      "y": 0
+    },
+    "Script": "Scripts/1.lua"
+  },
+  {
+    "Id": "김호정",
+    "Sprite": "Resources/Sprite/NPC/2",
+    "Map": "Dungeon",
+    "Position": {
+      "x": 1,
+      "y": 1
+    },
+    "Script": "Scripts/2.lua"
+  },
+  {
+    "Id": "채승현",
+    "Sprite": "Resources/Sprite/NPC/3",
+    "Map": "Dungeon",
+    "Position": {
+      "x": 2,
+      "y": 2
+    },
+    "Script": "Scripts/3.lua"
+  }
+]

@@ -1,10 +1,11 @@
 ﻿using KeraLua;
+using NetworkShared;
 using NetworkShared.Types;
 using System;
 
 namespace TestServer.Model
 {
-    public class Object : ILuable
+    public abstract class Object : ILuable
     {
         public interface IListener
         {
@@ -12,6 +13,8 @@ namespace TestServer.Model
             public void OnEnter(Object obj);
             public void OnSectorChanged(Object obj);
         }
+
+        public abstract ObjectType Type { get; }
 
         public IListener Listener { get; set; }
 

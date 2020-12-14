@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace KeraLua
 {
@@ -15,7 +16,7 @@ namespace KeraLua
         //   1. Builtin 으로 시작
         //   2. 뒤에 붙는 이름의 lowercase로 등록
         public static readonly string BUILTIN_PREFIX = "Builtin";
-        public static Lua Main { get; private set; } = new Lua();
+        public static Lua Main { get; private set; } = new Lua { Encoding = Encoding.UTF8 };
 
         static Static()
         {
@@ -33,15 +34,20 @@ namespace KeraLua
                     break;
 
                 default:
-                    if (allocatedGCHandlerDict.TryGetValue(lua, out var allocatedList) == false)
-                        break;
-
-                    allocatedList.ForEach(x => x.Free());
-                    allocatedGCHandlerDict.Remove(lua);
+                    lua.Clean();
                     break;
             }
 
             return result;
+        }
+
+        public static void Clean(this Lua lua)
+        {
+            if (allocatedGCHandlerDict.TryGetValue(lua, out var allocatedList) == false)
+                return;
+
+            allocatedList.ForEach(x => x.Free());
+            allocatedGCHandlerDict.Remove(lua);
         }
 
         public static T ToLuable<T>(this Lua lua, int offset) where T : class, ILuable

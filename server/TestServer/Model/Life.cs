@@ -5,7 +5,7 @@ using System;
 
 namespace TestServer.Model
 {
-    public class Life : Object
+    public abstract class Life : Object
     {
         public int Hp { get; set; } = 50;
         public Direction Direction { get; set; }

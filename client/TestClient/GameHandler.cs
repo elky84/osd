@@ -1,5 +1,6 @@
 ﻿using DotNetty.Transport.Channels;
 using FlatBuffers.Protocol;
+using NetworkShared;
 using NetworkShared.NetworkHandler;
 using Serilog;
 using System;
@@ -31,16 +32,24 @@ namespace TestClient
         }
 
         [FlatBufferEvent]
-        public bool OnClick(Click response)
+        public bool OnDialog(ShowDialog response)
         {
-            Log.Logger.Information($"OnClick()");
+            Console.WriteLine($"Enabled next button : {response.Next}");
+            Console.WriteLine($"Enabled quit button : {response.Quit}");
+            Console.WriteLine($"Message : {response.Message}");
+
             return true;
         }
 
         [FlatBufferEvent]
-        public bool OnSelectListDialog(SelectListDialog response)
+        public bool OnSelectListDialog(ShowListDialog response)
         {
-            Log.Logger.Information($"OnSelectListDialog()");
+            Console.WriteLine($"Message : {response.Message}");
+            for (int i = 0; i < response.ListLength; i++)
+            {
+                var item = response.List(i);
+                Console.WriteLine($"item {i} : {item}");
+            }
             return true;
         }
 
@@ -56,7 +65,7 @@ namespace TestClient
             for (int i = 0; i < response.ObjectsLength; i++)
             {
                 var obj = response.Objects(i);
-                Console.WriteLine($"Object {i} : {obj?.Name}({obj?.Sequence})");
+                Console.WriteLine($"Object {i} : {obj?.Name}({obj?.Sequence}) => {(ObjectType)obj.Value.Type}");
             }
 
             Console.WriteLine($"My sequence : {response.Sequence}");

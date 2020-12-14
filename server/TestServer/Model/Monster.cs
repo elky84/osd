@@ -1,4 +1,5 @@
 ﻿using KeraLua;
+using NetworkShared;
 using System;
 
 namespace TestServer.Model
@@ -6,6 +7,8 @@ namespace TestServer.Model
     public class Monster : Life
     {
         public bool Attackable { get; set; } = true;
+
+        public override ObjectType Type => ObjectType.Mob;
 
         public static int BuiltInAttackable(IntPtr luaState)
         {

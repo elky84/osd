@@ -11,16 +11,21 @@ namespace TestServer.Handler
         public void OnLeave(Model.Object obj)
         {
             var character = obj as Character;
+            if (character == null)
+                return;
+
             _ = Broadcast(character, Leave.Bytes(obj.Sequence.Value));
         }
 
         public void OnEnter(Model.Object obj)
         {
             var character = obj as Character;
+            if (character == null)
+                return;
 
             // 현재 맵에 있는 모든 오브젝트
             var objects = character.Map.Objects
-                .Select(x => new FlatBuffers.Protocol.Object.Model(x.Value.Name, x.Key, 0, new FlatBuffers.Protocol.Position.Model(x.Value.Position.X, x.Value.Position.Y)))
+                .Select(x => new FlatBuffers.Protocol.Object.Model(x.Value.Name, x.Key, (int)x.Value.Type, new FlatBuffers.Protocol.Position.Model(x.Value.Position.X, x.Value.Position.Y)))
                 .ToList();
 
             // 현재 맵의 모든 포탈

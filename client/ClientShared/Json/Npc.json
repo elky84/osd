@@ -1,0 +1,26 @@
+[
+  {
+    "Id": "김성훈",
+    "Sprite": "Resources/Sprite/NPC/1",
+    "Position": {
+      "x": 0,
+      "y": 0
+    }
+  },
+  {
+    "Id": "김호정",
+    "Sprite": "Resources/Sprite/NPC/2",
+    "Position": {
+      "x": 1,
+      "y": 1
+    }
+  },
+  {
+    "Id": "채승현",
+    "Sprite": "Resources/Sprite/NPC/3",
+    "Position": {
+      "x": 2,
+      "y": 2
+    }
+  }
+]

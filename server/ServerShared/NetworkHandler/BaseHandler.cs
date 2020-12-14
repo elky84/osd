@@ -24,6 +24,8 @@ namespace ServerShared.NetworkHandler
         private Dictionary<Type, Func<Session<DataType>, IFlatbufferObject, bool>> _bindedEventDict = new Dictionary<Type, Func<Session<DataType>, IFlatbufferObject, bool>>();
         private Dictionary<IChannelHandlerContext, Session<DataType>> _sessionDict = new Dictionary<IChannelHandlerContext, Session<DataType>>();
 
+        public override bool IsSharable => true;
+
         public List<Session<DataType>> Sessions => _sessionDict.Values.ToList();
 
         protected BaseHandler()

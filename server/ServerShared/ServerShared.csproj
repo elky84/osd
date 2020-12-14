@@ -9,7 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="KeraLua" Version="1.2.10" />
+    <PackageReference Include="KeraLua" Version="1.2.11" />
     <PackageReference Include="LightInject" Version="5.5.0" />
     <PackageReference Include="LightInject.Annotation" Version="1.1.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.1.9" />

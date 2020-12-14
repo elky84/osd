@@ -79,5 +79,33 @@ namespace TestClient
         { 
             Send(CheatPosition.Bytes(new Position.Model(Character.Position.X, Character.Position.Y), DateTime.Now.Ticks));
         }
+
+        [CommandEvent("click")]
+        public void OnClick(int sequence)
+        {
+            Send(Click.Bytes(sequence));
+        }
+
+        [CommandEvent("dialog/next")]
+        public void OnDialogNext()
+        {
+            Send(ResponseDialog.Bytes(true));
+        }
+
+        [CommandEvent("dialog/quit")]
+        public void OnDialogQuit()
+        {
+            Send(ResponseDialog.Bytes(false));
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="index">one based</param>
+        [CommandEvent("dialog/select")]
+        public void OnDialogSelect(int index)
+        {
+            Send(SelectListDialog.Bytes(index));
+        }
     }
 }
