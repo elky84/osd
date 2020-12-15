@@ -63,8 +63,7 @@ def loads(directory, callback=None):
     size = len(sheets)
     progress = 0
 
-    for sheet in sheets:
-        sheet.title
+    for sheet in [x for x in sheets if not x.title.startswith('#')]:
         schema, data = load(sheet)
 
         schemaDict[sheet.title] = schema

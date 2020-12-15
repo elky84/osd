@@ -63,26 +63,42 @@ def cast(dtype, value, schemaDict, enumDict):
     if baseType in enumDict:
         return value
 
+    match = re.match(r'^List<(?P<type>\w+)>$', baseType)
+    if match:
+        value = value.replace(' ', '')
+        value = [f'({x})' for x in re.compile(r'\),\(|\)|\(').split(value) if x] if '(' in value and ')' in value else value.split(',')
+        value = [cast(match.groupdict()['type'], x, schemaDict, enumDict) for x in value]
+        return value
+
     print(f'invalid type {baseType}')
     return value
 
-def pureSchemaSet(name, schemaSet, schemaDict):
+def pureSchema(type, schemaDict):
+    if type.startswith('$'):
+        type = extractor.relationshipType(type, schemaDict).replace('*', '')
+        
+    if type.startswith('%') or type.startswith('~'):
+        type = 'int'
+
+    match = re.match(r'^\[(?P<type>\w*)\]$', type)
+    if match:
+        inner = match.groupdict()['type']
+        inner = pureSchema(inner, schemaDict)
+        type = f'List<{inner}>'
+
+    return type
+
+def pureSchemaSet(schemaSet, schemaDict):
     convertedSet = []
     for x in schemaSet:
         name, type, usage = x['name'], x['type'], x['usage']
-        if type.startswith('$'):
-            type = extractor.relationshipType(type, schemaDict).replace('*', '')
-        
-        elif type.startswith('%') or type.startswith('~'):
-            type = 'int'
-        
-        convertedSet.append({'name': name, 'type': type, 'usage': usage})
+        convertedSet.append({'name': name, 'type': pureSchema(type, schemaDict), 'usage': usage})
     return convertedSet
 
 def pureSchemaDict(schemaDict):
     result = {}
     for name, schemaSet in schemaDict.items():
-        result[name] = pureSchemaSet(name, schemaSet, schemaDict)
+        result[name] = pureSchemaSet(schemaSet, schemaDict)
 
     return result
 

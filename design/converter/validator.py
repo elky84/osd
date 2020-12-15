@@ -1,11 +1,13 @@
 import extractor
 import converter
+import re
 
-def supportedType(type, enumDict):
+def supportedType(type, schemaDict, enumDict):
     PRIMITIVE_TYPES = ['int', 'double', 'float', 'string', 'bool', 'DateTime', 'TimeSpan']
     CUSTOM_TYPES = ['Point']
     
     type = type.replace('*', '').replace('?', '')
+    type = converter.pureSchema(type, schemaDict)
 
     for customKeyword in converter.CUSTOM_KEYWORDS:
         if type.startswith(customKeyword):
@@ -14,12 +16,19 @@ def supportedType(type, enumDict):
     if type in enumDict:
         return True
 
-    return type in PRIMITIVE_TYPES or type in CUSTOM_TYPES
+    if type in PRIMITIVE_TYPES or type in CUSTOM_TYPES:
+        return True
+
+    match = re.match(r'^List<(?P<type>\w+)>$', type)
+    if match and supportedType(match.groupdict()['type'], schemaDict, enumDict):
+        return True
+
+    return False
 
 def supportedTypeDict(schemaDict, enumDict):
     for name, schema in schemaDict.items():
         for type in [x['type'] for x in schema]:
-            if not supportedType(type, enumDict):
+            if not supportedType(type, schemaDict, enumDict):
                 raise f'{type} not supported. ({name})'
 
 def conflictIndex(schemaSet, dataSet):
