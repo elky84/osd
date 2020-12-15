@@ -12,6 +12,8 @@ namespace KeraLua
 
     public static class Static
     {
+        private static Dictionary<Type, LuaRegister[]> _builtinFunctions = new Dictionary<Type, LuaRegister[]>();
+
         // 빌트인 함수 규칙
         //   1. Builtin 으로 시작
         //   2. 뒤에 붙는 이름의 lowercase로 등록
@@ -23,8 +25,6 @@ namespace KeraLua
             Main.LoadBuiltinFunctions();
         }
 
-        private static Dictionary<Lua, List<GCHandle>> allocatedGCHandlerDict = new Dictionary<Lua, List<GCHandle>>();
-
         public static LuaStatus Resume(this Lua lua, int arguments)
         {
             var result = lua.Resume(lua, arguments);
@@ -34,20 +34,11 @@ namespace KeraLua
                     break;
 
                 default:
-                    lua.Clean();
+                    lua.GarbageCollector(LuaGC.Collect, 0);
                     break;
             }
 
             return result;
-        }
-
-        public static void Clean(this Lua lua)
-        {
-            if (allocatedGCHandlerDict.TryGetValue(lua, out var allocatedList) == false)
-                return;
-
-            allocatedList.ForEach(x => x.Free());
-            allocatedGCHandlerDict.Remove(lua);
         }
 
         public static T ToLuable<T>(this Lua lua, int offset) where T : class, ILuable
@@ -80,6 +71,15 @@ namespace KeraLua
             return list;
         }
 
+        public static int BuiltinGC(IntPtr luaState)
+        {
+            var lua = Lua.FromIntPtr(luaState);
+            var ud = Marshal.ReadIntPtr(lua.ToUserData(1));
+            var allocated = GCHandle.FromIntPtr(ud);
+            allocated.Free();
+            return 0;
+        }
+
         public static bool PushLuable<T>(this Lua lua, T luable) where T : ILuable
         {
             try
@@ -87,11 +87,9 @@ namespace KeraLua
                 var allocated = GCHandle.Alloc(luable, GCHandleType.Weak);
                 Marshal.WriteIntPtr(lua.NewUserData(IntPtr.Size), GCHandle.ToIntPtr(allocated));
                 lua.GetMetaTable(typeof(T).Name);
+                lua.PushCFunction(BuiltinGC);
+                lua.SetField(-2, "__gc");
                 lua.SetMetaTable(-2);
-
-                if (allocatedGCHandlerDict.ContainsKey(lua) == false)
-                    allocatedGCHandlerDict.Add(lua, new List<GCHandle>());
-                allocatedGCHandlerDict[lua].Add(allocated);
                 return true;
             }
             catch (Exception e)
@@ -133,7 +131,9 @@ namespace KeraLua
                         return true;
                     });
 
-                var registerList = builtinMethods.Select(x =>
+                // 레퍼런스가 없으면 가비지컬렉터에 의해서 해제되어 빌트인 함수가 호출되는 시점에서 프로세스 크래시
+                // https://blog.msalt.net/298
+                _builtinFunctions[luableType] = builtinMethods.Select(x =>
                 {
                     var builtinFunctionName = x.Name.Replace(BUILTIN_PREFIX, string.Empty).ToLower();
                     var buildinFunctionParameterse = x.GetParameters().Select(x => x.ParameterType).Concat(new[] { x.ReturnType });
@@ -153,7 +153,7 @@ namespace KeraLua
                 }
                 lua.PushCopy(-1);
                 lua.SetField(-2, "__index");
-                lua.SetFuncs(registerList, 0);
+                lua.SetFuncs(_builtinFunctions[luableType], 0);
             }
         }
     }

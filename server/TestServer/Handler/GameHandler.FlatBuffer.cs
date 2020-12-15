@@ -92,16 +92,14 @@ namespace TestServer.Handler
                         if (File.Exists(npc.Script) == false)
                             break;
 
-                        var luaThread = Static.Main.NewThread();
-                        luaThread.Encoding = Encoding.UTF8;
-                        luaThread.DoFile(npc.Script);
-                        luaThread.GetGlobal("func");
+                        character.DialogThread = Static.Main.NewThread();
+                        character.DialogThread.Encoding = Encoding.UTF8;
+                        character.DialogThread.DoFile(npc.Script);
+                        character.DialogThread.GetGlobal("func");
 
-                        luaThread.PushLuable(character);
-                        luaThread.PushLuable(npc);
-                        luaThread.Resume(2);
-
-                        character.DialogThread = luaThread;
+                        character.DialogThread.PushLuable(character);
+                        character.DialogThread.PushLuable(npc);
+                        character.DialogThread.Resume(2);
                     }
                     break;
             }

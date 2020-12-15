@@ -1,5 +1,4 @@
-﻿using KeraLua;
-using NetworkShared;
+﻿using NetworkShared;
 using NetworkShared.Table;
 using ServerShared.Model;
 using ServerShared.NetworkHandler;
@@ -38,6 +37,7 @@ namespace TestServer.Handler
                     Listener = this,
                 };
 
+                _npcs.Add(id, createdNPC);
                 map.Add(createdNPC, x.Position);
             }
         }
@@ -84,10 +84,6 @@ namespace TestServer.Handler
 
             var character = session.Data;
             character.Map.Remove(character);
-
-            character.DialogThread?.Clean();
-            character.DialogThread?.Close();
-            character.DialogThread?.Dispose();
         }
     }
 }
