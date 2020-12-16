@@ -1,10 +1,16 @@
 namespace MasterData.Table
 {
-    [Table("json/Sheet1.json")]
-    public partial class TableSheet1 : BaseDict<string, Sheet1>
+    [Table("json/Item.json")]
+    public partial class TableItem : BaseDict<string, Item>
     { }
-    [Table("json/Sheet23.json")]
-    public partial class TableSheet23 : BaseDict<string, Sheet23>
+    [Table("json/EquipmentOption.json")]
+    public partial class TableEquipmentOption : BaseDict<string, EquipmentOption>
+    { }
+    [Table("json/WeaponOption.json")]
+    public partial class TableWeaponOption : BaseDict<string, WeaponOption>
+    { }
+    [Table("json/ConsumeOption.json")]
+    public partial class TableConsumeOption : BaseDict<string, ConsumeOption>
     { }
     [Table("json/Portal.json")]
     public partial class TablePortal : BaseDict<string, Portal>

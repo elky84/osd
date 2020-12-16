@@ -1,0 +1,23 @@
+[
+  {
+    "Id": "무기.검",
+    "PhysicalDamage": 100000,
+    "MagicalDamage": 0,
+    "CriticalDamage": 1.0,
+    "AttackSpeed": 5.0
+  },
+  {
+    "Id": "무기.활",
+    "PhysicalDamage": 1000,
+    "MagicalDamage": 0,
+    "CriticalDamage": 10.0,
+    "AttackSpeed": 1.0
+  },
+  {
+    "Id": "무기.지팡이",
+    "PhysicalDamage": 10,
+    "MagicalDamage": 10000,
+    "CriticalDamage": 1.5,
+    "AttackSpeed": 2.0
+  }
+]

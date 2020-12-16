@@ -94,12 +94,15 @@ def loadEnums(directory, callback=None):
     return enumDict
 
 def relationshipType(type, schemaSetDict):
+    type = type.replace('*', '')
     if not type.startswith('$'):
         return None
 
     schemaSetDict = {name.split('_')[1] if '_' in name else name: schemaSet for name, schemaSet in schemaSetDict.items()}
     type = type.replace('$', '').replace('?', '')
     splitted = type.split('.')
+    
+    id = None
     if len(splitted) == 1:
         if type not in schemaSetDict:
             raise Exception(f'{type} is not contained any excel schema.')
@@ -108,7 +111,7 @@ def relationshipType(type, schemaSetDict):
         if not id:
             raise Exception(f'{type} does not have primary key.')
 
-        return id['type']
+        id = id['type']
     elif len(splitted) == 2:
         namespace, member = splitted
         if namespace not in schemaSetDict:
@@ -119,6 +122,12 @@ def relationshipType(type, schemaSetDict):
             raise Exception(f'{member} is not a member of {namespace}')
 
         member = member[0]
-        return member['type']
+        id = member['type']
     else:
         raise Exception(f'{type} cannot parse relationship type.')
+
+    id = id.replace('*', '')
+    if id.startswith('$'):
+        return relationshipType(id, schemaSetDict)
+    
+    return id

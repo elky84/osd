@@ -83,20 +83,25 @@ def cast(dtype, value, schemaDict, enumDict):
     print(f'invalid type {baseType}')
     return value
 
-def pureSchema(type, schemaDict):
-    if type.startswith('$'):
-        type = extractor.relationshipType(type, schemaDict).replace('*', '')
+def pureSchema(dtype, schemaDict):
+    isKey = dtype.startswith('*')
+    dtype = dtype.replace('*', '')
+    if dtype.startswith('$'):
+        dtype = extractor.relationshipType(dtype, schemaDict).replace('*', '')
         
-    if type.startswith('%') or type.startswith('~'):
-        type = 'int'
+    if dtype.startswith('%') or dtype.startswith('~'):
+        dtype = 'int'
 
-    match = re.match(r'^\[(?P<type>\w*)\]$', type)
+    match = re.match(r'^\[(?P<type>\w*)\]$', dtype)
     if match:
         inner = match.groupdict()['type']
         inner = pureSchema(inner, schemaDict)
-        type = f'List<{inner}>'
+        dtype = f'List<{inner}>'
 
-    return type
+    if isKey:
+        dtype = f'*{dtype}'
+        
+    return dtype
 
 def pureSchemaSet(schemaSet, schemaDict):
     convertedSet = []

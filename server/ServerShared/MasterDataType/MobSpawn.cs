@@ -1,9 +1,9 @@
+using System;
 using System.Collections.Generic;
 using NetworkShared.Util.Table;
 using Newtonsoft.Json;
 using NetworkShared;
 using NetworkShared.Types;
-using System;
 
 namespace MasterData.Table
 {
