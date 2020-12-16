@@ -52,7 +52,7 @@ namespace TestServer.Handler
 
         public void OnDie(Life life)
         {
-            Console.WriteLine($"{life.Sequence} is dead.");
+            Console.WriteLine($"{life.Name}({life.Sequence}) is dead.");
         }
     }
 }

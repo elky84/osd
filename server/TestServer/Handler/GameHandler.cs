@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Timers;
 using TestServer.Model;
 
 namespace TestServer.Handler
@@ -15,6 +16,7 @@ namespace TestServer.Handler
         private static readonly Lazy<GameHandler> _instance = new Lazy<GameHandler>(() => new GameHandler());
         public static GameHandler Instance => _instance.Value;
 
+        private Timer _rezenTimer = new Timer(1000);
         private Dictionary<string, Model.Map> _maps;
         private Dictionary<string, Model.NPC> _npcs = new Dictionary<string, NPC>();
         private Dictionary<string, Model.Mob> _mobs;
@@ -54,6 +56,19 @@ namespace TestServer.Handler
                 createdNPC.Position = x.Position;
                 createdNPC.Map = map;
             }
+
+            _rezenTimer = new Timer(1000)
+            {
+                AutoReset = true,
+                Enabled = true
+            };
+            _rezenTimer.Elapsed += this._rezenTimer_Elapsed;
+        }
+
+        private void _rezenTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            foreach (var map in _maps.Values.Where(x => x.IsActivated))
+                map.Zen();
         }
 
         private void Synchronize(DateTime now)

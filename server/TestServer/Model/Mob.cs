@@ -19,10 +19,12 @@ namespace TestServer.Model
             get => base.Hp;
             set
             {
-                if (Math.Max(0, value) == 0)
-                    Map = null;
-
                 base.Hp = value;
+                if (Math.Max(0, value) == 0)
+                {
+                    SpawnedTime = null;
+                    Map = null;
+                }
             }
         }
 

@@ -45,6 +45,8 @@ namespace TestServer.Model
             }
         }
 
+        public bool IsActivated => Objects.Values.FirstOrDefault(x => x.Type == NetworkShared.ObjectType.Character) != null;
+
         public List<Portal> Portals => MasterTable.From<TablePortal>().Nears(Name);
 
         public Dictionary<MobSpawn, List<Mob>> MobSpawns { get; private set; }
