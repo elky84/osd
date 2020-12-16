@@ -1,4 +1,4 @@
-namespace NetworkShared.Table
+namespace MasterData.Table
 {
 {{ codeLines }}
 }

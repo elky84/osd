@@ -35,12 +35,22 @@ def cast(dtype, value, schemaDict, enumDict):
         return float(value)
 
     if baseType == 'DateTime':
-        datetime.datetime.strptime(value, '%Y-%m-%d %H:%M:%S')
-        return value
+        if type(value) is datetime.time:
+            return value.strftime('%Y-%m-%d %H:%M:%S')
+        elif type(value) is str:
+            datetime.datetime.strptime(value, '%Y-%m-%d %H:%M:%S')
+            return value
+        else:
+            raise Exception(f'{value} cannot be convert to \'DateTime\' type')
 
     if baseType == 'TimeSpan':
-        datetime.datetime.strptime(value, '%H:%M:%S')
-        return value
+        if type(value) is datetime.time:
+            return value.strftime('%H:%M:%S')
+        elif type(value) is str:
+            datetime.datetime.strptime(value, '%H:%M:%S')
+            return value
+        else:
+            raise Exception(f'{value} cannot be convert to \'TimeSpan\' type')
 
     if baseType == 'bool':
         if type(value) is bool:

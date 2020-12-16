@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace NetworkShared.Table
+namespace MasterData.Table
 {
     public partial class TableSheet1 : BaseDict<string, Sheet1>
     {

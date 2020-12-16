@@ -7,10 +7,41 @@ namespace TestServer.Model
 {
     public abstract class Life : Object
     {
-        public int Hp { get; set; } = 50;
+        public new interface IListener : Object.IListener
+        {
+            public void OnDie(Life life);
+        }
+        public new IListener Listener { get; private set; }
+
+        private int _hp = 50;
+        public virtual int Hp
+        {
+            get => _hp;
+            set
+            {
+                _hp = Math.Max(0, value);
+                if (_hp > 0)
+                {
+                    IsAlive = true;
+                    DeadTime = null;
+                }
+                else
+                {
+                    IsAlive = false;
+                    DeadTime = DateTime.Now;
+                    Listener?.OnDie(this);
+                }
+            }
+        }
         public Direction Direction { get; set; }
         public DateTime? Time { get; set; }
         public uint Speed { get; set; } = 10;
+        public bool IsAlive { get; set; }
+        public DateTime? DeadTime { get; private set; }
+
+        public override bool IsActive => IsAlive;
+
+        public void Kill() => Hp = 0;
 
         public static int BuiltinHP(IntPtr luaState)
         {
@@ -53,6 +84,12 @@ namespace TestServer.Model
 
             Map.Update(this);
             return Position;
+        }
+
+        public  void BindEvent(IListener listener)
+        {
+            base.BindEvent(listener);
+            Listener = listener;
         }
     }
 }

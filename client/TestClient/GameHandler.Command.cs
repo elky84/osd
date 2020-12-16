@@ -107,5 +107,11 @@ namespace TestClient
         {
             Send(SelectListDialog.Bytes(index));
         }
+
+        [CommandEvent("kill")]
+        public void OnKill(int sequence)
+        {
+            Send(CheatKill.Bytes(sequence));
+        }
     }
 }

@@ -13,16 +13,57 @@ namespace TestServer.Model
             public void OnEnter(Object obj);
             public void OnSectorChanged(Object obj);
         }
+        public IListener Listener { get; set; }
 
         public abstract ObjectType Type { get; }
 
-        public IListener Listener { get; set; }
-
         public string Name { get; set; }
         public Point Position { get; set; } = new Point();
-        public Map Map { get; set; }
+
+        private Map _map;
+        public Map Map
+        {
+            get => _map;
+            set
+            {
+                if (_map == value)
+                    return;
+
+                if (_map != null)
+                {
+                    Listener?.OnLeave(this);
+                    _map.Remove(this);
+                }
+
+                _map = value;
+                if (value != null)
+                {
+                    _map.Add(this);
+                    Listener?.OnEnter(this);
+                }
+            }
+        }
         public int? Sequence { get; set; }
-        public Map.Sector Sector { get; set; }
+
+        private Map.Sector _sector;
+        public Map.Sector Sector
+        {
+            get => _sector;
+            set
+            {
+                if (_sector == value)
+                    return;
+
+                _sector = value;
+                Listener?.OnSectorChanged(this);
+            }
+        }
+        public virtual bool IsActive => true;
+
+        public void BindEvent(IListener listener)
+        {
+            Listener = listener;
+        }
 
         public static int BuiltinName(IntPtr luaState)
         {

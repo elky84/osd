@@ -1,14 +1,18 @@
+using System;
 using System.Collections.Generic;
 using NetworkShared.Util.Table;
 using Newtonsoft.Json;
 using NetworkShared;
 using NetworkShared.Types;
 
-public class Sheet23
+namespace MasterData.Table
 {
-    [Key]
-    public string id { get; set; }
-    public double? value { get; set; }
-    public int cshyeon { get; set; }
-    public string relation { get; set; }
+    public class Sheet23
+    {
+        [Key]
+        public string id { get; set; }
+        public double? value { get; set; }
+        public int cshyeon { get; set; }
+        public string relation { get; set; }
+    }
 }

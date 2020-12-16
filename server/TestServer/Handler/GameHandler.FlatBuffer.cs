@@ -154,7 +154,21 @@ namespace TestServer.Handler
             if (portal != null)
             {
                 var after = _maps[portal.AfterMap];
-                after.Add(character);
+                character.Map = after;
+            }
+
+            return true;
+        }
+
+        [FlatBufferEvent]
+        public bool OnCheatKill(Session<Character> session, CheatKill request)
+        {
+            var character = session.Data;
+            var target = character.Map.Objects[request.Sequence];
+            if (target is Life)
+            {
+                var life = target as Life;
+                life.Kill();
             }
 
             return true;

@@ -1,6 +1,7 @@
 ﻿using KeraLua;
+using MasterData;
+using MasterData.Table;
 using NetworkShared.Common;
-using NetworkShared.Table;
 using NetworkShared.Types;
 using Newtonsoft.Json;
 using System;
@@ -44,7 +45,9 @@ namespace TestServer.Model
             }
         }
 
-        public List<Portal> Portals => NetworkShared.MasterTable.From<TablePortal>().Nears(Name);
+        public List<Portal> Portals => MasterTable.From<TablePortal>().Nears(Name);
+
+        public Dictionary<MobSpawn, List<Mob>> MobSpawns { get; private set; }
 
         public static int BuiltinName(IntPtr luaState)
         {
@@ -80,22 +83,38 @@ namespace TestServer.Model
             return 1;
         }
 
-        public Map(string name, Size size)
+        public Map(MasterData.Table.Map master, IEnumerable<MobSpawn> mobSpawns)
         {
-            if (string.IsNullOrEmpty(name))
+            if (File.Exists(master.Data) == false)
+                throw new Exception($"cannot find map file : {master.Data}");
+
+            var contents = File.ReadAllText(master.Data);
+            var format = JsonConvert.DeserializeObject<MapData>(contents);
+
+            Name = format.StageFileName;
+            if (string.IsNullOrEmpty(Name))
                 throw new Exception("map name cannot be null or empty.");
-
-            if (size.IsEmpty)
-                throw new Exception($"map size cannot be empty : {name}.");
-
-            Name = name;
-            Size = size;
+            Size = new Size { Width = format.MapTileSize.x, Height = format.MapTileSize.y };
+            if (Size.IsEmpty)
+                throw new Exception($"map size cannot be empty : {Name}.");
 
 #if DEBUG
             Sectors = new SectorContainer(this, new Size { Width = 8, Height = 8 });
 #else
             Sectors = new SectorContainer(this, new Size(64, 64));
 #endif
+
+            MobSpawns = mobSpawns.ToDictionary(x => x, x =>
+            {
+                var mobs = new List<Mob>();
+                for (int i = 0; i < x.Count; i++)
+                {
+                    var mobCase = MasterTable.From<TableMob>()[x.Mob];
+                    mobs.Add(new Mob(mobCase));
+                }
+
+                return mobs;
+            });
         }
 
         public Sector Add(Object obj)
@@ -103,21 +122,10 @@ namespace TestServer.Model
             var sequence = NextSequence ??
                 throw new Exception("cannot get next sequence.");
 
-            if (obj.Map != null)
-                obj.Map.Remove(obj);
-
             Objects.Add(sequence, obj);
-            obj.Map = this;
             obj.Sequence = sequence;
             obj.Sector = Sectors.Add(obj);
-            obj.Listener?.OnEnter(obj);
             return obj.Sector;
-        }
-
-        public Sector Add(Object obj, Point position)
-        {
-            obj.Position = position;
-            return Add(obj);
         }
 
         public Sector Remove(Object obj)
@@ -125,8 +133,6 @@ namespace TestServer.Model
             if (obj.Sequence.HasValue == false)
                 return null;
 
-            obj.Listener?.OnLeave(obj);
-            obj.Map = null;
             Objects.Remove(obj.Sequence.Value);
             obj.Sequence = null;
             return Sectors.Remove(obj);
@@ -143,15 +149,30 @@ namespace TestServer.Model
             return Sectors.Add(obj);
         }
 
-        public static Dictionary<string, Map> Load(params string[] path)
+        public void Zen()
         {
-            return path.Select(x =>
+            var random = new Random();
+            var now = DateTime.Now;
+            foreach (var (spawnCase, mobs) in MobSpawns)
             {
-                var contents = File.ReadAllText(x);
-                var format = JsonConvert.DeserializeObject<MapData>(contents);
+                foreach (var unspawned in mobs.Where(x => x.IsSpawned == false))
+                {
+                    var elapsedDeadTime = now - (unspawned.DeadTime ?? DateTime.MinValue);
+                    if (elapsedDeadTime < spawnCase.ZenTime)
+                        continue;
 
-                return new Map(format.StageFileName, new Size { Width = format.MapTileSize.x, Height = format.MapTileSize.y });
-            }).ToDictionary(x => x.Name, x => x);
+                    var beginPoint = spawnCase.Begin;
+                    if (beginPoint == null)
+                        beginPoint = new Point { X = 0, Y = 0 };
+
+                    var endPoint = spawnCase.End;
+                    if (endPoint == null)
+                        endPoint = new Point { X = Size.Width, Y = Size.Height };
+
+                    var randomPoint = new Point { X = random.Next((int)beginPoint.X, (int)endPoint.X), Y = random.Next((int)beginPoint.Y, (int)endPoint.Y) };
+                    unspawned.Spawn(this, randomPoint);
+                }
+            }
         }
     }
 }

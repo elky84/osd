@@ -1,0 +1,14 @@
+[
+  {
+    "Id": "몬스터1",
+    "Sprite": "Resources/Sprite/Mob/1"
+  },
+  {
+    "Id": "몬스터2",
+    "Sprite": "Resources/Sprite/Mob/2"
+  },
+  {
+    "Id": "몬스터3",
+    "Sprite": "Resources/Sprite/Mob/3"
+  }
+]

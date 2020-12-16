@@ -58,7 +58,7 @@ namespace TestServer.Model
             {
                 get
                 {
-                    if (index > _sectors.Count)
+                    if (index >= _sectors.Count)
                         return null;
 
                     return _sectors[(int)index];
@@ -80,8 +80,6 @@ namespace TestServer.Model
                 obj.Sector?.Remove(obj.Sequence.Value);
                 obj.Sector = sector;
                 sector.Add(obj.Sequence.Value, obj);
-
-                obj.Listener?.OnSectorChanged(obj);
                 return sector;
             }
 
@@ -96,7 +94,6 @@ namespace TestServer.Model
 
                 sector.Remove(obj.Sequence.Value);
                 obj.Sector = null;
-                obj.Listener?.OnSectorChanged(obj);
                 return sector;
             }
 

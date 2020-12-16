@@ -1,4 +1,4 @@
-﻿using NetworkShared;
+﻿using MasterData;
 using Serilog;
 using ServerShared.DotNetty;
 using ServerShared.Util;

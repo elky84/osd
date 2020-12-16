@@ -101,3 +101,7 @@ table CheatPosition {
 	position: Position;
 	now: long;
 }
+
+table CheatKill {
+	sequence: int;
+}

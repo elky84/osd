@@ -38,6 +38,10 @@ def load(sheet):
 
             columnName = schema[column]['name']
             dataSet[columnName] = sheet.cell(row+4, column+1+additionalColumn).value
+
+        if all([x is None for x in dataSet.values()]):
+            continue
+
         data.append(dataSet)
 
     return schema, data
@@ -102,7 +106,7 @@ def relationshipType(type, schemaSetDict):
 
         id = primary(schemaSetDict[type])
         if not id:
-            raise Exception('{type} does not have primary key.')
+            raise Exception(f'{type} does not have primary key.')
 
         return id['type']
     elif len(splitted) == 2:

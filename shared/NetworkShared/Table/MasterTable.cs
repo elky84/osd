@@ -8,7 +8,7 @@ using System.Linq;
 using System.Reflection;
 
 
-namespace NetworkShared
+namespace MasterData
 {
     [AttributeUsage(AttributeTargets.Class)]
     public class TableAttribute : Attribute

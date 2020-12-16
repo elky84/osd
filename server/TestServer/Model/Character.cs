@@ -4,12 +4,16 @@ using KeraLua;
 using NetworkShared;
 using ServerShared.NetworkHandler;
 using System;
-using System.Text;
 
 namespace TestServer.Model
 {
     public class Character : Life
     {
+        public new interface IListener : Life.IListener
+        { }
+
+        public new IListener Listener { get; private set; }
+
         public IChannelHandlerContext Context { get; set; }
 
         public Lua DialogThread { get; set; }
@@ -58,6 +62,12 @@ namespace TestServer.Model
 
             _ = character.Context.Send(ShowListDialog.Bytes(message, list));
             return lua.Yield(1);
+        }
+
+        public void BindEvent(IListener listener)
+        {
+            base.BindEvent(listener);
+            Listener = listener;
         }
     }
 }

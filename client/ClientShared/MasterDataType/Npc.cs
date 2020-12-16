@@ -1,13 +1,17 @@
+using System;
 using System.Collections.Generic;
 using NetworkShared.Util.Table;
 using Newtonsoft.Json;
 using NetworkShared;
 using NetworkShared.Types;
 
-public class Npc
+namespace MasterData.Table
 {
-    [Key]
-    public string Id { get; set; }
-    public string Sprite { get; set; }
-    public Point Position { get; set; }
+    public class Npc
+    {
+        [Key]
+        public string Id { get; set; }
+        public string Sprite { get; set; }
+        public Point Position { get; set; }
+    }
 }
