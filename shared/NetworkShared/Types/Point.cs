@@ -9,6 +9,8 @@ namespace NetworkShared.Types
         public double X { get; set; }
         public double Y { get; set; }
 
+        public FlatBuffers.Protocol.Position.Model FlatBuffer => new FlatBuffers.Protocol.Position.Model(X, Y);
+
         public double Delta(Point p)
         {
             return Math.Abs(X - p.X) + Math.Abs(p.Y - p.Y);

@@ -7,7 +7,7 @@ using NetworkShared.Types;
 
 namespace MasterData.Table
 {
-    public class WeaponOption
+    public partial class WeaponOption
     {
         [Key]
         public string Id { get; set; }

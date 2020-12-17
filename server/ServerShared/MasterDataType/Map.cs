@@ -7,7 +7,7 @@ using NetworkShared.Types;
 
 namespace MasterData.Table
 {
-    public class Map
+    public partial class Map
     {
         [Key]
         public string Id { get; set; }

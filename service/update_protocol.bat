@@ -7,4 +7,3 @@ POPD
 RMDIR ..\shared\NetworkShared\Protocols /s /q
 ROBOCOPY Protocols ..\shared\NetworkShared\Protocols
 RMDIR Protocols /s /q
-PAUSE

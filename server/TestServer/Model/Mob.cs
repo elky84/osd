@@ -14,6 +14,8 @@ namespace TestServer.Model
 
         public override ObjectType Type => ObjectType.Mob;
 
+        public override string Name => Master.Id;
+
         public override int Hp
         {
             get => base.Hp;
@@ -36,7 +38,6 @@ namespace TestServer.Model
 
         public Mob(MasterData.Table.Mob master)
         {
-            Name = master.Id;
             Master = master;
         }
 

@@ -17,7 +17,10 @@ namespace TestServer.Model
 
         public abstract ObjectType Type { get; }
 
-        public string Name { get; set; }
+        public FlatBuffers.Protocol.Object.Model FlatBuffer =>
+            new FlatBuffers.Protocol.Object.Model(Sequence.Value, Name, (int)Type, Position.FlatBuffer);
+
+        public virtual string Name { get; set; }
         public Point Position { get; set; } = new Point();
 
         private Map _map;

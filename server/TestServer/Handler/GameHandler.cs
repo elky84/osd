@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
+using TestServer.Factory;
 using TestServer.Model;
 
 namespace TestServer.Handler
@@ -45,10 +46,8 @@ namespace TestServer.Handler
                 var map = _maps[x.Map] ??
                     throw new Exception($"{x.Map} is not valid map name.");
 
-                var createdNPC = new NPC
+                var createdNPC = new NPC(x)
                 {
-                    Name = id,
-                    Script = x.Script,
                     Listener = this,
                 };
 
@@ -107,6 +106,12 @@ namespace TestServer.Handler
             session.Data.Context = session;
             session.Data.Name = $"{Guid.NewGuid()}";
             session.Data.Map = mapFirst;
+
+
+            session.Data.Items.Inventory.Add(ItemFactory.Create("무기.검"));
+            session.Data.Items.Inventory.Add(ItemFactory.Create("무기.활"));
+            session.Data.Items.Inventory.Add(ItemFactory.Create("무기.지팡이"));
+            session.Data.Items.Inventory.Add(ItemFactory.Create("장비.옷"));
         }
 
         protected override void OnDisconnected(Session<Character> session)

@@ -45,6 +45,8 @@ namespace TestServer.Model
             }
         }
 
+        public FlatBuffers.Protocol.Map.Model FlatBuffer => new FlatBuffers.Protocol.Map.Model(Name);
+
         public bool IsActivated => Objects.Values.FirstOrDefault(x => x.Type == NetworkShared.ObjectType.Character) != null;
 
         public List<Portal> Portals => MasterTable.From<TablePortal>().Nears(Name);
@@ -103,7 +105,7 @@ namespace TestServer.Model
 #if DEBUG
             Sectors = new SectorContainer(this, new Size { Width = 8, Height = 8 });
 #else
-            Sectors = new SectorContainer(this, new Size(64, 64));
+            Sectors = new SectorContainer(this, new Size { Width = 64, Height = 64 });
 #endif
 
             MobSpawns = mobSpawns.ToDictionary(x => x, x =>

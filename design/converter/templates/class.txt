@@ -7,7 +7,7 @@ using NetworkShared.Types;
 
 namespace MasterData.Table
 {
-    public class {{ name }}
+    public partial class {{ name }}
     {
 {{ properties }}
     }

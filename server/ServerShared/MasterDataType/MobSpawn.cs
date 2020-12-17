@@ -7,7 +7,7 @@ using NetworkShared.Types;
 
 namespace MasterData.Table
 {
-    public class MobSpawn
+    public partial class MobSpawn
     {
         public string Mob { get; set; }
         public string Map { get; set; }

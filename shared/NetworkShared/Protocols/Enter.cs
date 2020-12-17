@@ -83,7 +83,7 @@ namespace FlatBuffers.Protocol
       var builder = new FlatBufferBuilder(512);
       var positionOffset = FlatBuffers.Protocol.Position.CreatePosition(builder, position.X, position.Y);
       var mapOffset = FlatBuffers.Protocol.Map.CreateMap(builder, builder.CreateString(map.Name));
-      var objectsOffset = CreateObjectsVector(builder, objects.Select(x => FlatBuffers.Protocol.Object.CreateObject(builder, builder.CreateString(x.Name), x.Sequence, x.Type, FlatBuffers.Protocol.Position.CreatePosition(builder, x.Position.X, x.Position.Y))).ToArray());
+      var objectsOffset = CreateObjectsVector(builder, objects.Select(x => FlatBuffers.Protocol.Object.CreateObject(builder, x.Sequence, builder.CreateString(x.Name), x.Type, FlatBuffers.Protocol.Position.CreatePosition(builder, x.Position.X, x.Position.Y))).ToArray());
       var portalsOffset = CreatePortalsVector(builder, portals.Select(x => FlatBuffers.Protocol.Portal.CreatePortal(builder, FlatBuffers.Protocol.Position.CreatePosition(builder, x.Position.X, x.Position.Y), builder.CreateString(x.Map))).ToArray());
       var offset = Enter.CreateEnter(builder, sequence, positionOffset, mapOffset, objectsOffset, portalsOffset);
       builder.Finish(offset.Value);

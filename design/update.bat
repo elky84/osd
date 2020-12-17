@@ -1,5 +1,3 @@
-@ECHO OFF
-
 PUSHD converter
 CALL app.exe --dir=.. --out=output
 
@@ -24,5 +22,3 @@ ROBOCOPY output\enum ..\..\shared\NetworkShared\Enum /E /NFL /NDL /NJH /NJS /nc 
 POPD
 
 ROBOCOPY ..\client\UnityClient\Assets\Resources\MapFile ..\server\ServerShared\Resources\Map *.json /E /NFL /NDL /NJH /NJS /nc /ns /np
-
-PAUSE

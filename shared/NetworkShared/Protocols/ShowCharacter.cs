@@ -11,15 +11,15 @@ using global::System.Text;
 
 namespace FlatBuffers.Protocol
 {
-  public struct Show : IFlatbufferObject
+  public struct ShowCharacter : IFlatbufferObject
   {
     private Table __p;
     public ByteBuffer ByteBuffer { get { return __p.bb; } }
     public static void ValidateVersion() { FlatBufferConstants.FLATBUFFERS_1_12_0(); }
-    public static Show GetRootAsShow(ByteBuffer _bb) { return GetRootAsShow(_bb, new Show()); }
-    public static Show GetRootAsShow(ByteBuffer _bb, Show obj) { return (obj.__assign(_bb.GetInt(_bb.Position) + _bb.Position, _bb)); }
+    public static ShowCharacter GetRootAsShowCharacter(ByteBuffer _bb) { return GetRootAsShowCharacter(_bb, new ShowCharacter()); }
+    public static ShowCharacter GetRootAsShowCharacter(ByteBuffer _bb, ShowCharacter obj) { return (obj.__assign(_bb.GetInt(_bb.Position) + _bb.Position, _bb)); }
     public void __init(int _i, ByteBuffer _bb) { __p = new Table(_i, _bb); }
-    public Show __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
+    public ShowCharacter __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
   
     public int Sequence { get { int o = __p.__offset(4); return o != 0 ? __p.bb.GetInt(o + __p.bb_pos) : (int)0; } }
     public string Name { get { int o = __p.__offset(6); return o != 0 ? __p.__string(o + __p.bb_pos) : null; } }
@@ -30,25 +30,29 @@ namespace FlatBuffers.Protocol
   #endif
     public byte[] GetNameArray() { return __p.__vector_as_array<byte>(6); }
     public Position? Position { get { int o = __p.__offset(8); return o != 0 ? (Position?)(new Position()).__assign(__p.__indirect(o + __p.bb_pos), __p.bb) : null; } }
+    public Equipment? Equipment { get { int o = __p.__offset(10); return o != 0 ? (Equipment?)(new Equipment()).__assign(__p.__indirect(o + __p.bb_pos), __p.bb) : null; } }
   
-    public static Offset<Show> CreateShow(FlatBufferBuilder builder,
+    public static Offset<ShowCharacter> CreateShowCharacter(FlatBufferBuilder builder,
         int sequence = 0,
         StringOffset nameOffset = default(StringOffset),
-        Offset<Position> positionOffset = default(Offset<Position>)) {
-      builder.StartTable(3);
-      Show.AddPosition(builder, positionOffset);
-      Show.AddName(builder, nameOffset);
-      Show.AddSequence(builder, sequence);
-      return Show.EndShow(builder);
+        Offset<Position> positionOffset = default(Offset<Position>),
+        Offset<Equipment> equipmentOffset = default(Offset<Equipment>)) {
+      builder.StartTable(4);
+      ShowCharacter.AddEquipment(builder, equipmentOffset);
+      ShowCharacter.AddPosition(builder, positionOffset);
+      ShowCharacter.AddName(builder, nameOffset);
+      ShowCharacter.AddSequence(builder, sequence);
+      return ShowCharacter.EndShowCharacter(builder);
     }
   
-    public static void StartShow(FlatBufferBuilder builder) { builder.StartTable(3); }
+    public static void StartShowCharacter(FlatBufferBuilder builder) { builder.StartTable(4); }
     public static void AddSequence(FlatBufferBuilder builder, int sequence) { builder.AddInt(0, sequence, 0); }
     public static void AddName(FlatBufferBuilder builder, StringOffset nameOffset) { builder.AddOffset(1, nameOffset.Value, 0); }
     public static void AddPosition(FlatBufferBuilder builder, Offset<Position> positionOffset) { builder.AddOffset(2, positionOffset.Value, 0); }
-    public static Offset<Show> EndShow(FlatBufferBuilder builder) {
+    public static void AddEquipment(FlatBufferBuilder builder, Offset<Equipment> equipmentOffset) { builder.AddOffset(3, equipmentOffset.Value, 0); }
+    public static Offset<ShowCharacter> EndShowCharacter(FlatBufferBuilder builder) {
       int o = builder.EndTable();
-      return new Offset<Show>(o);
+      return new Offset<ShowCharacter>(o);
     }
   
     public struct Model
@@ -56,20 +60,23 @@ namespace FlatBuffers.Protocol
       public int Sequence { get; set; }
       public string Name { get; set; }
       public FlatBuffers.Protocol.Position.Model Position { get; set; }
+      public FlatBuffers.Protocol.Equipment.Model Equipment { get; set; }
     
-      public Model(int sequence, string name, FlatBuffers.Protocol.Position.Model position)
+      public Model(int sequence, string name, FlatBuffers.Protocol.Position.Model position, FlatBuffers.Protocol.Equipment.Model equipment)
       {
         Sequence = sequence;
         Name = name;
         Position = position;
+        Equipment = equipment;
       }
     }
   
-    public static byte[] Bytes(int sequence, string name, FlatBuffers.Protocol.Position.Model position) {
+    public static byte[] Bytes(int sequence, string name, FlatBuffers.Protocol.Position.Model position, FlatBuffers.Protocol.Equipment.Model equipment) {
       var builder = new FlatBufferBuilder(512);
       var nameOffset = builder.CreateString(name);
       var positionOffset = FlatBuffers.Protocol.Position.CreatePosition(builder, position.X, position.Y);
-      var offset = Show.CreateShow(builder, sequence, nameOffset, positionOffset);
+      var equipmentOffset = FlatBuffers.Protocol.Equipment.CreateEquipment(builder, equipment.Sequence, builder.CreateString(equipment.Weapon), builder.CreateString(equipment.Armor), builder.CreateString(equipment.Shoes), builder.CreateString(equipment.Helmet), builder.CreateString(equipment.Shield));
+      var offset = ShowCharacter.CreateShowCharacter(builder, sequence, nameOffset, positionOffset, equipmentOffset);
       builder.Finish(offset.Value);
       
       var bytes = builder.DataBuffer.ToSizedArray();
@@ -78,8 +85,8 @@ namespace FlatBuffers.Protocol
         using (var writer = new BinaryWriter(mstream))
         {
           writer.Write(BitConverter.ToInt32(BitConverter.GetBytes(bytes.Length).Reverse().ToArray(), 0));
-          writer.Write((byte)(nameof(Show).Length));
-          writer.Write(Encoding.Default.GetBytes(nameof(Show)));
+          writer.Write((byte)(nameof(ShowCharacter).Length));
+          writer.Write(Encoding.Default.GetBytes(nameof(ShowCharacter)));
           writer.Write(bytes);
           writer.Flush();
           return mstream.ToArray();

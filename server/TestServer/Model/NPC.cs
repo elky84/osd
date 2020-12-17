@@ -6,6 +6,13 @@ namespace TestServer.Model
     {
         public override ObjectType Type => ObjectType.NPC;
 
-        public string Script { get; set; }
+        public MasterData.Table.Npc Master { get; private set; }
+
+        public override string Name => Master.Id;
+
+        public NPC(MasterData.Table.Npc master)
+        {
+            Master = master;
+        }
     }
 }

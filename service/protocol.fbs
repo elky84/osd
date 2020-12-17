@@ -43,10 +43,19 @@ table ResponseDialog {
 }
 
 table Object {
+sequence: int;
 	name: string;
-	sequence: int;
 	type: int;
 	position: Position;
+}
+
+table Equipment {
+	sequence: int;
+	weapon: string;
+	armor: string;
+	shoes: string;
+	helmet: string;
+	shield: string;
 }
 
 table Portal {
@@ -67,9 +76,16 @@ table Enter {
 }
 
 table Show {
-	name: string;
 	sequence: int;
+	name: string;
 	position: Position;
+}
+
+table ShowCharacter {
+	sequence: int;
+	name: string;
+	position: Position;
+	equipment: Equipment;
 }
 
 table Leave {

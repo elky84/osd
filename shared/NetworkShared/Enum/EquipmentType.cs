@@ -12,7 +12,7 @@ namespace NetworkShared
         [Description("갑옷")]
         Armor,
         [Description("신발")]
-        Shoose,
+        Shoes,
         [Description("모자")]
         Helmet,
     }

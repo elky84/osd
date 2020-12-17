@@ -7,7 +7,7 @@ using NetworkShared.Types;
 
 namespace MasterData.Table
 {
-    public class Portal
+    public partial class Portal
     {
         [Key]
         public string Id { get; set; }

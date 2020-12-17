@@ -4,9 +4,73 @@ using KeraLua;
 using NetworkShared;
 using ServerShared.NetworkHandler;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace TestServer.Model
 {
+    public class ItemCollection
+    { 
+        public Character Owner { get; private set; }
+
+        public Dictionary<ItemType, List<Item>> Inventory { get; private set; } = new Dictionary<ItemType, List<Item>>();
+        public Dictionary<EquipmentType, Equipment> Equipments { get; private set; } = new Dictionary<EquipmentType, Equipment>();
+
+        public ItemCollection(Character owner)
+        {
+            Owner = owner;
+
+            foreach (var itemType in Enum.GetValues(typeof(ItemType)).Cast<ItemType>())
+                Inventory.Add(itemType, new List<Item>());
+
+            foreach (var equipmentType in Enum.GetValues(typeof(EquipmentType)).Cast<EquipmentType>())
+                Equipments.Add(equipmentType, null);
+        }
+
+        public T Equip<T>(T equipment) where T : Equipment
+        {
+            var before = Equipments[equipment.EquipmentOption.Type];
+            Equipments[equipment.EquipmentOption.Type] = equipment;
+
+            Inventory.Remove(equipment);
+
+            if (before != null)
+                Inventory.Add(before);
+
+            return before as T;
+        }
+
+        public Weapon Weapon
+        {
+            get => Equipments[EquipmentType.Weapon] as Weapon;
+            set => Equip(value);
+        }
+        
+        public Shield Shield
+        {
+            get => Equipments[EquipmentType.Shield] as Shield;
+            set => Equip(value);
+        }
+        
+        public Armor Armor
+        {
+            get => Equipments[EquipmentType.Armor] as Armor;
+            set => Equip(value);
+        }
+        
+        public Shoes Shoes
+        {
+            get => Equipments[EquipmentType.Shoes] as Shoes;
+            set => Equip(value);
+        }
+        
+        public Helmet Helmet
+        {
+            get => Equipments[EquipmentType.Helmet] as Helmet;
+            set => Equip(value);
+        }
+    }
+
     public class Character : Life
     {
         public new interface IListener : Life.IListener
@@ -16,11 +80,18 @@ namespace TestServer.Model
 
         public IChannelHandlerContext Context { get; set; }
 
+        public ItemCollection Items { get; private set; }
+
         public Lua DialogThread { get; set; }
 
         public int Damage { get; set; } = 30;
 
         public override ObjectType Type => ObjectType.Character;
+
+        public Character()
+        {
+            Items = new ItemCollection(this);
+        }
 
         public static int BuiltinDamage(IntPtr luaState)
         {
@@ -43,7 +114,7 @@ namespace TestServer.Model
             var lua = Lua.FromIntPtr(luaState);
             var argc = lua.GetTop();
             var character = lua.ToLuable<Character>(1);
-            var npc = lua.ToLuable<NPC>(2);
+            var obj = lua.ToLuable<Object>(2);
             var message = lua.ToString(3);
             var next = argc >= 4 ? lua.ToBoolean(4) : true;
             var quit = argc >= 5 ? lua.ToBoolean(5) : true;
@@ -52,11 +123,11 @@ namespace TestServer.Model
             return lua.Yield(1);
         }
 
-        public static int BuiltinDialog_List(IntPtr luaState)
+        public static int BuiltinDialogList(IntPtr luaState)
         {
             var lua = Lua.FromIntPtr(luaState);
             var character = lua.ToLuable<Character>(1);
-            var npc = lua.ToLuable<NPC>(2);
+            var obj = lua.ToLuable<Object>(2);
             var message = lua.ToString(3);
             var list = lua.ToStringList(4);
 
@@ -64,10 +135,40 @@ namespace TestServer.Model
             return lua.Yield(1);
         }
 
+        public static int BuiltinItems(IntPtr luaState)
+        {
+            var lua = Lua.FromIntPtr(luaState);
+            var map = lua.ToLuable<Character>(1);
+
+            lua.NewTable();
+            foreach (var (item, i) in map.Items.Inventory.SelectMany(x => x.Value).Select((x, i) => (x, i)))
+            {
+                lua.PushLuable(item);
+                lua.RawSetInteger(-2, i + 1);
+            }
+
+            return 1;
+        }
+
         public void BindEvent(IListener listener)
         {
             base.BindEvent(listener);
             Listener = listener;
+        }
+    }
+
+    public static class ItemCollectionExtension
+    {
+        public static Item Add(this Dictionary<ItemType, List<Item>> inventory, Item item)
+        {
+            inventory[item.Master.Type].Add(item);
+            return item;
+        }
+
+        public static Item Remove(this Dictionary<ItemType, List<Item>> inventory, Item item)
+        {
+            inventory[item.Master.Type].Remove(item);
+            return item;
         }
     }
 }

@@ -11,5 +11,7 @@ namespace NetworkShared
         Mob,
         [Description("엔피씨")]
         NPC,
+        [Description("아이템")]
+        Item,
     }
 }

@@ -89,12 +89,12 @@ namespace TestServer.Handler
                 case ObjectType.NPC:
                     {
                         var npc = target as NPC;
-                        if (File.Exists(npc.Script) == false)
+                        if (File.Exists(npc.Master.Script) == false)
                             break;
 
                         character.DialogThread = Static.Main.NewThread();
                         character.DialogThread.Encoding = Encoding.UTF8;
-                        character.DialogThread.DoFile(npc.Script);
+                        character.DialogThread.DoFile(npc.Master.Script);
                         character.DialogThread.GetGlobal("func");
 
                         character.DialogThread.PushLuable(character);
@@ -136,7 +136,7 @@ namespace TestServer.Handler
             var character = session.Data;
             character.Position = new NetworkShared.Types.Point { X = request.Position.Value.X, Y = request.Position.Value.Y };
 
-            _ = Broadcast(session.Data, PositionChanged.Bytes(character.Sequence.Value, new FlatBuffers.Protocol.Position.Model { X = character.Position.X, Y = character.Position.Y }));
+            _ = Broadcast(session.Data, PositionChanged.Bytes(character.Sequence.Value, character.Position.FlatBuffer));
             return true;
         }
 

@@ -1,4 +1,11 @@
 function func(me, npc)
+	local items = me:items()
+	local message = '니가 가진 아이템들 목록이야.\n'
+	for i, item in pairs(items) do
+		message = message .. item:name() .. '\n'
+	end
+	me:dialog(npc, message)
+
 	local name = npc:name()
 	if me:dialog(npc, string.format('안녕 내 이름은 %s야. 선택할래??? (dialog/next or dialog/quit)', name)) == true then
 		local menu = {'1번메뉴', '2번메뉴', '3번메뉴', '4번메뉴'}

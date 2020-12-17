@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace KeraLua
 {
@@ -16,7 +17,7 @@ namespace KeraLua
 
         // 빌트인 함수 규칙
         //   1. Builtin 으로 시작
-        //   2. 뒤에 붙는 이름의 lowercase로 등록
+        //   2. 뒤에 붙는 이름의 snake case로 등록 (대문자 시작기준)
         public static readonly string BUILTIN_PREFIX = "Builtin";
         public static Lua Main { get; private set; } = new Lua { Encoding = Encoding.UTF8 };
 
@@ -82,11 +83,16 @@ namespace KeraLua
 
         public static bool PushLuable<T>(this Lua lua, T luable) where T : ILuable
         {
+            return PushLuable(lua, luable as ILuable, typeof(T));
+        }
+
+        public static bool PushLuable(this Lua lua, ILuable luable, Type type)
+        {
             try
             {
                 var allocated = GCHandle.Alloc(luable, GCHandleType.Weak);
                 Marshal.WriteIntPtr(lua.NewUserData(IntPtr.Size), GCHandle.ToIntPtr(allocated));
-                lua.GetMetaTable(typeof(T).Name);
+                lua.GetMetaTable(type.Name);
                 lua.PushCFunction(BuiltinGC);
                 lua.SetField(-2, "__gc");
                 lua.SetMetaTable(-2);
@@ -135,7 +141,7 @@ namespace KeraLua
                 // https://blog.msalt.net/298
                 _builtinFunctions[luableType] = builtinMethods.Select(x =>
                 {
-                    var builtinFunctionName = x.Name.Replace(BUILTIN_PREFIX, string.Empty).ToLower();
+                    var builtinFunctionName = string.Join('_', Regex.Split(x.Name.Replace(BUILTIN_PREFIX, string.Empty), @"(?<!^)(?=[A-Z])").Select(x => x.ToLower()));
                     var buildinFunctionParameterse = x.GetParameters().Select(x => x.ParameterType).Concat(new[] { x.ReturnType });
                     return new LuaRegister
                     {

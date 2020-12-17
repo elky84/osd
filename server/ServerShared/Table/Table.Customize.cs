@@ -3,15 +3,12 @@ using System.Linq;
 
 namespace MasterData.Table
 {
-    public partial class TableSheet1 : BaseDict<string, Sheet1>
+    public partial class Portal
     {
-        public Dictionary<string, bool?> Cached { get; private set; } = new Dictionary<string, bool?>();
-
-        public TableSheet1()
-        {
-            Cached = this.ToDictionary(x => x.Value.name, x => x.Value.value2);
-        }
+        public FlatBuffers.Protocol.Portal.Model FlatBuffer => new FlatBuffers.Protocol.Portal.Model(BeforePosition.FlatBuffer, AfterMap);
     }
+
+
 
     public partial class TablePortal : BaseDict<string, Portal>
     {
