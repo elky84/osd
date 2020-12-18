@@ -92,7 +92,7 @@ def pureSchema(dtype, schemaDict):
     if dtype.startswith('%') or dtype.startswith('~'):
         dtype = 'int'
 
-    match = re.match(r'^\[(?P<type>\w*)\]$', dtype)
+    match = re.match(r'^\[(?P<type>.*)\]$', dtype)
     if match:
         inner = match.groupdict()['type']
         inner = pureSchema(inner, schemaDict)

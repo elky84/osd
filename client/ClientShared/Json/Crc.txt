@@ -1,1 +1,1 @@
-{"ConsumeOption.json": 3533247025, "EquipmentOption.json": 1818671012, "Item.json": 1607003476, "Map.json": 3960920800, "Mob.json": 3367650198, "Npc.json": 3940200201, "WeaponOption.json": 2513412420}
+{"ConsumeOption.json": 3533247025, "EquipmentOption.json": 1818671012, "Item.json": 1607003476, "Map.json": 3960920800, "Mob.json": 3367650198, "Npc.json": 3940200201, "Reward.json": 922754042, "WeaponOption.json": 2513412420}

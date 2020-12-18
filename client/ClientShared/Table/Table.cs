@@ -21,4 +21,7 @@ namespace MasterData.Table
     [Table("json/Npc.json")]
     public partial class TableNpc : BaseDict<string, Npc>
     { }
+    [Table("json/Reward.json")]
+    public partial class TableReward : BaseDict<string, Reward>
+    { }
 }
