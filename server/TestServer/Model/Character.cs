@@ -138,15 +138,26 @@ namespace TestServer.Model
         public static int BuiltinItems(IntPtr luaState)
         {
             var lua = Lua.FromIntPtr(luaState);
-            var map = lua.ToLuable<Character>(1);
+            var character = lua.ToLuable<Character>(1);
 
             lua.NewTable();
-            foreach (var (item, i) in map.Items.Inventory.SelectMany(x => x.Value).Select((x, i) => (x, i)))
+            foreach (var (item, i) in character.Items.Inventory.SelectMany(x => x.Value).Select((x, i) => (x, i)))
             {
                 lua.PushLuable(item);
                 lua.RawSetInteger(-2, i + 1);
             }
 
+            return 1;
+        }
+
+        public static int BuiltinItemAdd(IntPtr luaState)
+        {
+            var lua = Lua.FromIntPtr(luaState);
+            var character = lua.ToLuable<Character>(1);
+            var item = lua.ToLuable<Item>(2);
+
+            character.Items.Inventory.Add(item);
+            lua.PushLuable(item);
             return 1;
         }
 

@@ -14,6 +14,7 @@ namespace KeraLua
     public static class Static
     {
         private static Dictionary<Type, LuaRegister[]> _builtinFunctions = new Dictionary<Type, LuaRegister[]>();
+        private static Dictionary<Type, Dictionary<string, LuaFunction>> _builtinGlobalFunctions = new Dictionary<Type, Dictionary<string, LuaFunction>>();
 
         // 빌트인 함수 규칙
         //   1. Builtin 으로 시작
@@ -115,40 +116,12 @@ namespace KeraLua
             var sortedLuableTypes = luableTypes.OrderByDescending(x => luableTypes.Count(luableType => luableType.IsSubclassOf(x))).ToList();   // 상속순으로 정렬된 루아 오브젝트
             foreach (var luableType in sortedLuableTypes)
             {
-                var builtinMethods = luableType.GetMethods()
-                    .Where(x =>
-                    {
-                        if (x.IsStatic == false)
-                            return false;
-
-                        if (x.Name.StartsWith(BUILTIN_PREFIX) == false)
-                            return false;
-
-                        if (x.ReturnType != typeof(int))
-                            return false;
-
-                        var parameters = x.GetParameters();
-                        if (parameters.Length != 1)
-                            return false;
-
-                        if (parameters.First().ParameterType != typeof(IntPtr))
-                            return false;
-
-                        return true;
-                    });
-
                 // 레퍼런스가 없으면 가비지컬렉터에 의해서 해제되어 빌트인 함수가 호출되는 시점에서 프로세스 크래시
                 // https://blog.msalt.net/298
-                _builtinFunctions[luableType] = builtinMethods.Select(x =>
-                {
-                    var builtinFunctionName = string.Join('_', Regex.Split(x.Name.Replace(BUILTIN_PREFIX, string.Empty), @"(?<!^)(?=[A-Z])").Select(x => x.ToLower()));
-                    var buildinFunctionParameterse = x.GetParameters().Select(x => x.ParameterType).Concat(new[] { x.ReturnType });
-                    return new LuaRegister
-                    {
-                        name = builtinFunctionName,
-                        function = x.CreateDelegate(typeof(LuaFunction)) as LuaFunction
-                    };
-                }).Concat(new[] { new LuaRegister { name = null, function = null } }).ToArray();
+                _builtinFunctions[luableType] = luableType
+                    .BuiltinFunctions()
+                    .Select(pair => new LuaRegister { name = pair.Key, function = pair.Value })
+                    .Concat(new[] { new LuaRegister { name = null, function = null } }).ToArray();
 
 
                 lua.NewMetaTable(luableType.Name);
@@ -161,6 +134,44 @@ namespace KeraLua
                 lua.SetField(-2, "__index");
                 lua.SetFuncs(_builtinFunctions[luableType], 0);
             }
+        }
+
+        public static Dictionary<string, LuaFunction> BuiltinFunctions(this Type type)
+        { 
+            return type
+                .GetMethods()
+                .Where(x =>
+                {
+                    if (x.IsStatic == false)
+                        return false;
+
+                    if (x.Name.StartsWith(BUILTIN_PREFIX) == false)
+                        return false;
+
+                    if (x.ReturnType != typeof(int))
+                        return false;
+
+                    var parameters = x.GetParameters();
+                    if (parameters.Length != 1)
+                        return false;
+
+                    if (parameters.First().ParameterType != typeof(IntPtr))
+                        return false;
+
+                    return true;
+                })
+                .ToDictionary(x => string.Join('_', Regex.Split(x.Name.Replace(BUILTIN_PREFIX, string.Empty), @"(?<!^)(?=[A-Z])").Select(x => x.ToLower())), 
+                              x => x.CreateDelegate(typeof(LuaFunction)) as LuaFunction);
+        }
+
+        public static Dictionary<string, LuaFunction> BindGlobalBuiltinFunctions(this Type type)
+        {
+            var builtinFunctions = type.BuiltinFunctions();
+            foreach (var (name, func) in builtinFunctions)
+                Main.Register(name, func);
+
+            _builtinGlobalFunctions[type] = builtinFunctions;
+            return builtinFunctions;
         }
     }
 }

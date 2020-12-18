@@ -1,4 +1,5 @@
-﻿using MasterData;
+﻿using KeraLua;
+using MasterData;
 using MasterData.Table;
 using ServerShared.Model;
 using ServerShared.NetworkHandler;
@@ -25,6 +26,9 @@ namespace TestServer.Handler
 
         private GameHandler()
         {
+            foreach (var (name, func) in typeof(GameHandler).BindGlobalBuiltinFunctions())
+                Console.WriteLine($"{name} 함수가 전역으로 등록되었습니다.");
+
             _mobs = MasterTable.From<TableMob>().Select(x => new Model.Mob(x.Value)).ToDictionary(x => x.Master.Id, x => x);
 
             _maps = MasterTable.From<TableMap>()
@@ -120,6 +124,20 @@ namespace TestServer.Handler
 
             var character = session.Data;
             character.Map = null;
+        }
+
+        public static int BuiltinMkitem(IntPtr luaState)
+        {
+            var lua = Lua.FromIntPtr(luaState);
+            var name = lua.ToString(1);
+
+            var item = ItemFactory.Create(name);
+            if (item == null)
+                lua.PushNil();
+            else
+                lua.PushLuable(item, item.GetType());
+
+            return 1;
         }
     }
 }
