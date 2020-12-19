@@ -49,15 +49,6 @@ sequence: int;
 	position: Position;
 }
 
-table Equipment {
-	sequence: int;
-	weapon: string;
-	armor: string;
-	shoes: string;
-	helmet: string;
-	shield: string;
-}
-
 table Portal {
 	position: Position;
 	map: string;
@@ -85,7 +76,7 @@ table ShowCharacter {
 	sequence: int;
 	name: string;
 	position: Position;
-	equipment: Equipment;
+	equipment: [Equipment];
 }
 
 table Leave {
@@ -100,6 +91,30 @@ table PositionChanged {
 table Warp {
 	position: Position;
 	now: long;
+}
+
+table Item {
+	id: ulong;
+	name: string;
+}
+
+table Equipment {
+	id: ulong;
+	name: string;
+	type: int;
+}
+
+table Items {
+	inventory: [Item];
+	equipment: [Equipment];
+}
+
+table ActiveItem {
+	id: ulong;
+}
+
+table InactiveItem {
+	id: ulong;
 }
 
 

@@ -21,67 +21,31 @@ namespace FlatBuffers.Protocol
     public void __init(int _i, ByteBuffer _bb) { __p = new Table(_i, _bb); }
     public Equipment __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
   
-    public int Sequence { get { int o = __p.__offset(4); return o != 0 ? __p.bb.GetInt(o + __p.bb_pos) : (int)0; } }
-    public string Weapon { get { int o = __p.__offset(6); return o != 0 ? __p.__string(o + __p.bb_pos) : null; } }
+    public ulong Id { get { int o = __p.__offset(4); return o != 0 ? __p.bb.GetUlong(o + __p.bb_pos) : (ulong)0; } }
+    public string Name { get { int o = __p.__offset(6); return o != 0 ? __p.__string(o + __p.bb_pos) : null; } }
   #if ENABLE_SPAN_T
-    public Span<byte> GetWeaponBytes() { return __p.__vector_as_span<byte>(6, 1); }
+    public Span<byte> GetNameBytes() { return __p.__vector_as_span<byte>(6, 1); }
   #else
-    public ArraySegment<byte>? GetWeaponBytes() { return __p.__vector_as_arraysegment(6); }
+    public ArraySegment<byte>? GetNameBytes() { return __p.__vector_as_arraysegment(6); }
   #endif
-    public byte[] GetWeaponArray() { return __p.__vector_as_array<byte>(6); }
-    public string Armor { get { int o = __p.__offset(8); return o != 0 ? __p.__string(o + __p.bb_pos) : null; } }
-  #if ENABLE_SPAN_T
-    public Span<byte> GetArmorBytes() { return __p.__vector_as_span<byte>(8, 1); }
-  #else
-    public ArraySegment<byte>? GetArmorBytes() { return __p.__vector_as_arraysegment(8); }
-  #endif
-    public byte[] GetArmorArray() { return __p.__vector_as_array<byte>(8); }
-    public string Shoes { get { int o = __p.__offset(10); return o != 0 ? __p.__string(o + __p.bb_pos) : null; } }
-  #if ENABLE_SPAN_T
-    public Span<byte> GetShoesBytes() { return __p.__vector_as_span<byte>(10, 1); }
-  #else
-    public ArraySegment<byte>? GetShoesBytes() { return __p.__vector_as_arraysegment(10); }
-  #endif
-    public byte[] GetShoesArray() { return __p.__vector_as_array<byte>(10); }
-    public string Helmet { get { int o = __p.__offset(12); return o != 0 ? __p.__string(o + __p.bb_pos) : null; } }
-  #if ENABLE_SPAN_T
-    public Span<byte> GetHelmetBytes() { return __p.__vector_as_span<byte>(12, 1); }
-  #else
-    public ArraySegment<byte>? GetHelmetBytes() { return __p.__vector_as_arraysegment(12); }
-  #endif
-    public byte[] GetHelmetArray() { return __p.__vector_as_array<byte>(12); }
-    public string Shield { get { int o = __p.__offset(14); return o != 0 ? __p.__string(o + __p.bb_pos) : null; } }
-  #if ENABLE_SPAN_T
-    public Span<byte> GetShieldBytes() { return __p.__vector_as_span<byte>(14, 1); }
-  #else
-    public ArraySegment<byte>? GetShieldBytes() { return __p.__vector_as_arraysegment(14); }
-  #endif
-    public byte[] GetShieldArray() { return __p.__vector_as_array<byte>(14); }
+    public byte[] GetNameArray() { return __p.__vector_as_array<byte>(6); }
+    public int Type { get { int o = __p.__offset(8); return o != 0 ? __p.bb.GetInt(o + __p.bb_pos) : (int)0; } }
   
     public static Offset<Equipment> CreateEquipment(FlatBufferBuilder builder,
-        int sequence = 0,
-        StringOffset weaponOffset = default(StringOffset),
-        StringOffset armorOffset = default(StringOffset),
-        StringOffset shoesOffset = default(StringOffset),
-        StringOffset helmetOffset = default(StringOffset),
-        StringOffset shieldOffset = default(StringOffset)) {
-      builder.StartTable(6);
-      Equipment.AddShield(builder, shieldOffset);
-      Equipment.AddHelmet(builder, helmetOffset);
-      Equipment.AddShoes(builder, shoesOffset);
-      Equipment.AddArmor(builder, armorOffset);
-      Equipment.AddWeapon(builder, weaponOffset);
-      Equipment.AddSequence(builder, sequence);
+        ulong id = 0,
+        StringOffset nameOffset = default(StringOffset),
+        int type = 0) {
+      builder.StartTable(3);
+      Equipment.AddId(builder, id);
+      Equipment.AddType(builder, type);
+      Equipment.AddName(builder, nameOffset);
       return Equipment.EndEquipment(builder);
     }
   
-    public static void StartEquipment(FlatBufferBuilder builder) { builder.StartTable(6); }
-    public static void AddSequence(FlatBufferBuilder builder, int sequence) { builder.AddInt(0, sequence, 0); }
-    public static void AddWeapon(FlatBufferBuilder builder, StringOffset weaponOffset) { builder.AddOffset(1, weaponOffset.Value, 0); }
-    public static void AddArmor(FlatBufferBuilder builder, StringOffset armorOffset) { builder.AddOffset(2, armorOffset.Value, 0); }
-    public static void AddShoes(FlatBufferBuilder builder, StringOffset shoesOffset) { builder.AddOffset(3, shoesOffset.Value, 0); }
-    public static void AddHelmet(FlatBufferBuilder builder, StringOffset helmetOffset) { builder.AddOffset(4, helmetOffset.Value, 0); }
-    public static void AddShield(FlatBufferBuilder builder, StringOffset shieldOffset) { builder.AddOffset(5, shieldOffset.Value, 0); }
+    public static void StartEquipment(FlatBufferBuilder builder) { builder.StartTable(3); }
+    public static void AddId(FlatBufferBuilder builder, ulong id) { builder.AddUlong(0, id, 0); }
+    public static void AddName(FlatBufferBuilder builder, StringOffset nameOffset) { builder.AddOffset(1, nameOffset.Value, 0); }
+    public static void AddType(FlatBufferBuilder builder, int type) { builder.AddInt(2, type, 0); }
     public static Offset<Equipment> EndEquipment(FlatBufferBuilder builder) {
       int o = builder.EndTable();
       return new Offset<Equipment>(o);
@@ -89,32 +53,22 @@ namespace FlatBuffers.Protocol
   
     public struct Model
     {
-      public int Sequence { get; set; }
-      public string Weapon { get; set; }
-      public string Armor { get; set; }
-      public string Shoes { get; set; }
-      public string Helmet { get; set; }
-      public string Shield { get; set; }
+      public ulong Id { get; set; }
+      public string Name { get; set; }
+      public int Type { get; set; }
     
-      public Model(int sequence, string weapon, string armor, string shoes, string helmet, string shield)
+      public Model(ulong id, string name, int type)
       {
-        Sequence = sequence;
-        Weapon = weapon;
-        Armor = armor;
-        Shoes = shoes;
-        Helmet = helmet;
-        Shield = shield;
+        Id = id;
+        Name = name;
+        Type = type;
       }
     }
   
-    public static byte[] Bytes(int sequence, string weapon, string armor, string shoes, string helmet, string shield) {
+    public static byte[] Bytes(ulong id, string name, int type) {
       var builder = new FlatBufferBuilder(512);
-      var weaponOffset = builder.CreateString(weapon);
-      var armorOffset = builder.CreateString(armor);
-      var shoesOffset = builder.CreateString(shoes);
-      var helmetOffset = builder.CreateString(helmet);
-      var shieldOffset = builder.CreateString(shield);
-      var offset = Equipment.CreateEquipment(builder, sequence, weaponOffset, armorOffset, shoesOffset, helmetOffset, shieldOffset);
+      var nameOffset = builder.CreateString(name);
+      var offset = Equipment.CreateEquipment(builder, id, nameOffset, type);
       builder.Finish(offset.Value);
       
       var bytes = builder.DataBuffer.ToSizedArray();
@@ -130,6 +84,10 @@ namespace FlatBuffers.Protocol
           return mstream.ToArray();
         }
       }
+    }
+    
+    public static byte[] Bytes(Model model) {
+      return Bytes(model.Id, model.Name, model.Type);
     }
   };
 }

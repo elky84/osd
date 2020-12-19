@@ -9,7 +9,7 @@ def extract_all(regex, code):
     return [{} if not x else x.groupdict() for x in regex.finditer(code)]
 
 def contents(code):
-    group = extract(r'(?P<contents>public struct (?P<name>\b\w+) : IFlatbufferObject\s?{[\s\S.]+};)', code)
+    group = extract(r'(?P<contents>public struct (?P<name>\b\w+) : IFlatbufferObject\s?[\s\S.]+;)', code)
 
     return group['name'], group['contents']
 

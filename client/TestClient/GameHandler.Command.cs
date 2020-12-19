@@ -113,5 +113,17 @@ namespace TestClient
         {
             Send(CheatKill.Bytes(sequence));
         }
+
+        [CommandEvent("item/active")]
+        public void OnActiveItem(ulong id)
+        {
+            Send(ActiveItem.Bytes(id));
+        }
+
+        [CommandEvent("item/inactive")]
+        public void OnInactiveItem(ulong id)
+        {
+            Send(InactiveItem.Bytes(id));
+        }
     }
 }

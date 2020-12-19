@@ -79,5 +79,9 @@ namespace FlatBuffers.Protocol
         }
       }
     }
+    
+    public static byte[] Bytes(Model model) {
+      return Bytes(model.Position, model.Now, model.Direction);
+    }
   };
 }

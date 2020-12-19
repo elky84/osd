@@ -1,4 +1,5 @@
-﻿using KeraLua;
+﻿using FlatBuffers.Protocol;
+using KeraLua;
 using MasterData;
 using MasterData.Table;
 using ServerShared.Model;
@@ -109,13 +110,16 @@ namespace TestServer.Handler
             session.Data.BindEvent(this);
             session.Data.Context = session;
             session.Data.Name = $"{Guid.NewGuid()}";
-            session.Data.Map = mapFirst;
 
-
+            // 아이템 정보를 전달
             session.Data.Items.Inventory.Add(ItemFactory.Create("무기.검"));
             session.Data.Items.Inventory.Add(ItemFactory.Create("무기.활"));
             session.Data.Items.Inventory.Add(ItemFactory.Create("무기.지팡이"));
             session.Data.Items.Inventory.Add(ItemFactory.Create("장비.옷"));
+            _ = session.Send(Items.Bytes(session.Data.Items.Inventory.SelectMany(x => x.Value).Select(x => x.ItemFlatBuffer).ToList(),
+                session.Data.Items.Equipments.Values.Where(x => x != null).Select(x => x.EquipmentFlatBuffer).ToList()));
+
+            session.Data.Map = mapFirst;
         }
 
         protected override void OnDisconnected(Session<Character> session)

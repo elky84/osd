@@ -20,6 +20,8 @@ namespace TestServer.Model
         public FlatBuffers.Protocol.Object.Model FlatBuffer =>
             new FlatBuffers.Protocol.Object.Model(Sequence.Value, Name, (int)Type, Position.FlatBuffer);
 
+        public FlatBuffers.Protocol.Show.Model ShowFlatBuffer => new FlatBuffers.Protocol.Show.Model(Sequence.Value, Name, Position.FlatBuffer);
+
         public virtual string Name { get; set; }
         public Point Position { get; set; } = new Point();
 

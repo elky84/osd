@@ -92,14 +92,14 @@ namespace TestServer.Handler
                         if (File.Exists(npc.Master.Script) == false)
                             break;
 
-                        character.DialogThread = Static.Main.NewThread();
-                        character.DialogThread.Encoding = Encoding.UTF8;
-                        character.DialogThread.DoFile(npc.Master.Script);
-                        character.DialogThread.GetGlobal("func");
+                        character.LuaThread = Static.Main.NewThread();
+                        character.LuaThread.Encoding = Encoding.UTF8;
+                        character.LuaThread.DoFile(npc.Master.Script);
+                        character.LuaThread.GetGlobal("func");
 
-                        character.DialogThread.PushLuable(character);
-                        character.DialogThread.PushLuable(npc);
-                        character.DialogThread.Resume(2);
+                        character.LuaThread.PushLuable(character);
+                        character.LuaThread.PushLuable(npc);
+                        character.LuaThread.Resume(2);
                     }
                     break;
             }
@@ -110,11 +110,11 @@ namespace TestServer.Handler
         public bool OnDialog(Session<Character> session, ResponseDialog request)
         {
             var character = session.Data;
-            if (character.DialogThread == null)
+            if (character.LuaThread == null)
                 return false;
 
-            character.DialogThread.PushBoolean(request.Next);
-            var result = character.DialogThread.Resume(1);
+            character.LuaThread.PushBoolean(request.Next);
+            var result = character.LuaThread.Resume(1);
             return true;
         }
 
@@ -122,11 +122,11 @@ namespace TestServer.Handler
         public bool OnSelectListDialog(Session<Character> session, SelectListDialog request)
         {
             var character = session.Data;
-            if (character.DialogThread == null)
+            if (character.LuaThread == null)
                 return false;
 
-            character.DialogThread.PushInteger(request.Index);
-            character.DialogThread.Resume(1);
+            character.LuaThread.PushInteger(request.Index);
+            character.LuaThread.Resume(1);
             return true;
         }
 
@@ -169,6 +169,39 @@ namespace TestServer.Handler
             {
                 var life = target as Life;
                 life.Kill();
+            }
+
+            return true;
+        }
+
+        [FlatBufferEvent]
+        public bool OnActiveItem(Session<Character> session, ActiveItem request)
+        {
+            var character = session.Data;
+            var activatedItem = character.Items.Active(request.Id);
+            if (activatedItem != null)
+            {
+                Console.WriteLine($"activated item : {activatedItem.Id}({activatedItem.Name})");
+
+                // 장비 사용하면 외형변경 브로드캐스팅
+                if(activatedItem.Master.Type == ItemType.Equipment)
+                    _ = Broadcast(character, ShowCharacter.Bytes(character.ShowCharacterFlatBuffer), false);
+            }
+
+            return true;
+        }
+
+        [FlatBufferEvent]
+        public bool OnInactiveItem(Session<Character> session, InactiveItem request)
+        {
+            var character = session.Data;
+            var inactivatedItem = character.Items.Inactive(request.Id);
+            if (inactivatedItem != null)
+            {
+                Console.WriteLine($"inactivated item : {inactivatedItem.Id}({inactivatedItem.Name})");
+
+                // 장비 해제하면 외형변경 브로드캐스팅
+                _ = Broadcast(character, ShowCharacter.Bytes(character.ShowCharacterFlatBuffer), false);
             }
 
             return true;

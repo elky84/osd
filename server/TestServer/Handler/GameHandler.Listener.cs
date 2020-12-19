@@ -32,11 +32,17 @@ namespace TestServer.Handler
                     character.Map.FlatBuffer,
                     objects,
                     portals));
+                
+                _ = Broadcast(obj, ShowCharacter.Bytes(character.ShowCharacterFlatBuffer));
+            }
+            else
+            {
+                _ = Broadcast(obj, Show.Bytes(obj.Sequence.Value, obj.Name, obj.Position.FlatBuffer));
             }
             
 
             // 기존 유저들에게 정보 전송
-            _ = Broadcast(obj, Show.Bytes(obj.Sequence.Value, obj.Name, new FlatBuffers.Protocol.Position.Model { X = obj.Position.X, Y = obj.Position.Y }));
+            
         }
 
         public void OnSectorChanged(Model.Object obj)

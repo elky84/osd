@@ -6,6 +6,9 @@ namespace TestServer.Factory
 {
     public static class ItemFactory
     {
+        private static ulong _sequence = 0;
+        private static ulong Sequence => _sequence++;
+
         private static Model.Item Create(MasterData.Table.EquipmentOption equipmentOption)
         {
             var itemCase = MasterTable.From<TableItem>()[equipmentOption.Id];
@@ -15,19 +18,19 @@ namespace TestServer.Factory
             switch (equipmentOption.Type)
             {
                 case NetworkShared.EquipmentType.Weapon:
-                    return new Weapon(itemCase);
+                    return new Weapon(Sequence, itemCase);
 
                 case NetworkShared.EquipmentType.Shield:
-                    return new Shield(itemCase);
+                    return new Shield(Sequence, itemCase);
 
                 case NetworkShared.EquipmentType.Armor:
-                    return new Armor(itemCase);
+                    return new Armor(Sequence, itemCase);
 
                 case NetworkShared.EquipmentType.Shoes:
-                    return new Shoes(itemCase);
+                    return new Shoes(Sequence, itemCase);
 
                 case NetworkShared.EquipmentType.Helmet:
-                    return new Helmet(itemCase);
+                    return new Helmet(Sequence, itemCase);
 
                 default:
                     return null;
@@ -46,10 +49,10 @@ namespace TestServer.Factory
                     return Create(MasterTable.From<TableEquipmentOption>()[id]);
 
                 case NetworkShared.ItemType.Consume:
-                    return new Consume(itemCase);
+                    return new Consume(Sequence, itemCase);
 
                 default:
-                    return new Model.Item(itemCase);
+                    return new Model.Item(Sequence, itemCase);
             }
         }
     }

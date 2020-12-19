@@ -30,13 +30,14 @@ namespace FlatBuffers.Protocol
   #endif
     public byte[] GetNameArray() { return __p.__vector_as_array<byte>(6); }
     public Position? Position { get { int o = __p.__offset(8); return o != 0 ? (Position?)(new Position()).__assign(__p.__indirect(o + __p.bb_pos), __p.bb) : null; } }
-    public Equipment? Equipment { get { int o = __p.__offset(10); return o != 0 ? (Equipment?)(new Equipment()).__assign(__p.__indirect(o + __p.bb_pos), __p.bb) : null; } }
+    public Equipment? Equipment(int j) { int o = __p.__offset(10); return o != 0 ? (Equipment?)(new Equipment()).__assign(__p.__indirect(__p.__vector(o) + j * 4), __p.bb) : null; }
+    public int EquipmentLength { get { int o = __p.__offset(10); return o != 0 ? __p.__vector_len(o) : 0; } }
   
     public static Offset<ShowCharacter> CreateShowCharacter(FlatBufferBuilder builder,
         int sequence = 0,
         StringOffset nameOffset = default(StringOffset),
         Offset<Position> positionOffset = default(Offset<Position>),
-        Offset<Equipment> equipmentOffset = default(Offset<Equipment>)) {
+        VectorOffset equipmentOffset = default(VectorOffset)) {
       builder.StartTable(4);
       ShowCharacter.AddEquipment(builder, equipmentOffset);
       ShowCharacter.AddPosition(builder, positionOffset);
@@ -49,7 +50,10 @@ namespace FlatBuffers.Protocol
     public static void AddSequence(FlatBufferBuilder builder, int sequence) { builder.AddInt(0, sequence, 0); }
     public static void AddName(FlatBufferBuilder builder, StringOffset nameOffset) { builder.AddOffset(1, nameOffset.Value, 0); }
     public static void AddPosition(FlatBufferBuilder builder, Offset<Position> positionOffset) { builder.AddOffset(2, positionOffset.Value, 0); }
-    public static void AddEquipment(FlatBufferBuilder builder, Offset<Equipment> equipmentOffset) { builder.AddOffset(3, equipmentOffset.Value, 0); }
+    public static void AddEquipment(FlatBufferBuilder builder, VectorOffset equipmentOffset) { builder.AddOffset(3, equipmentOffset.Value, 0); }
+    public static VectorOffset CreateEquipmentVector(FlatBufferBuilder builder, Offset<Equipment>[] data) { builder.StartVector(4, data.Length, 4); for (int i = data.Length - 1; i >= 0; i--) builder.AddOffset(data[i].Value); return builder.EndVector(); }
+    public static VectorOffset CreateEquipmentVectorBlock(FlatBufferBuilder builder, Offset<Equipment>[] data) { builder.StartVector(4, data.Length, 4); builder.Add(data); return builder.EndVector(); }
+    public static void StartEquipmentVector(FlatBufferBuilder builder, int numElems) { builder.StartVector(4, numElems, 4); }
     public static Offset<ShowCharacter> EndShowCharacter(FlatBufferBuilder builder) {
       int o = builder.EndTable();
       return new Offset<ShowCharacter>(o);
@@ -60,9 +64,9 @@ namespace FlatBuffers.Protocol
       public int Sequence { get; set; }
       public string Name { get; set; }
       public FlatBuffers.Protocol.Position.Model Position { get; set; }
-      public FlatBuffers.Protocol.Equipment.Model Equipment { get; set; }
+      public List<FlatBuffers.Protocol.Equipment.Model> Equipment { get; set; }
     
-      public Model(int sequence, string name, FlatBuffers.Protocol.Position.Model position, FlatBuffers.Protocol.Equipment.Model equipment)
+      public Model(int sequence, string name, FlatBuffers.Protocol.Position.Model position, List<FlatBuffers.Protocol.Equipment.Model> equipment)
       {
         Sequence = sequence;
         Name = name;
@@ -71,11 +75,11 @@ namespace FlatBuffers.Protocol
       }
     }
   
-    public static byte[] Bytes(int sequence, string name, FlatBuffers.Protocol.Position.Model position, FlatBuffers.Protocol.Equipment.Model equipment) {
+    public static byte[] Bytes(int sequence, string name, FlatBuffers.Protocol.Position.Model position, List<FlatBuffers.Protocol.Equipment.Model> equipment) {
       var builder = new FlatBufferBuilder(512);
       var nameOffset = builder.CreateString(name);
       var positionOffset = FlatBuffers.Protocol.Position.CreatePosition(builder, position.X, position.Y);
-      var equipmentOffset = FlatBuffers.Protocol.Equipment.CreateEquipment(builder, equipment.Sequence, builder.CreateString(equipment.Weapon), builder.CreateString(equipment.Armor), builder.CreateString(equipment.Shoes), builder.CreateString(equipment.Helmet), builder.CreateString(equipment.Shield));
+      var equipmentOffset = CreateEquipmentVector(builder, equipment.Select(x => FlatBuffers.Protocol.Equipment.CreateEquipment(builder, x.Id, builder.CreateString(x.Name), x.Type)).ToArray());
       var offset = ShowCharacter.CreateShowCharacter(builder, sequence, nameOffset, positionOffset, equipmentOffset);
       builder.Finish(offset.Value);
       
@@ -92,6 +96,10 @@ namespace FlatBuffers.Protocol
           return mstream.ToArray();
         }
       }
+    }
+    
+    public static byte[] Bytes(Model model) {
+      return Bytes(model.Sequence, model.Name, model.Position, model.Equipment);
     }
   };
 }

@@ -89,6 +89,25 @@ namespace TestClient
             return true;
         }
 
+        [FlatBufferEvent]
+        public bool OnItems(Items response)
+        {
+            for (int i = 0; i < response.EquipmentLength; i++)
+            {
+                var equipment = response.Equipment(i);
+                var equipmentType = (EquipmentType)equipment?.Type;
+                Console.WriteLine($"{equipmentType} : {equipment?.Name}");
+            }
+
+            for (int i = 0; i < response.InventoryLength; i++)
+            {
+                var item = response.Inventory(i);
+                Console.WriteLine($"inventory {item?.Id} : {item?.Name}");
+            }
+
+            return true;
+        }
+
         protected override void OnConnected(IChannelHandlerContext context)
         {
             Character = new Character { Context = context };

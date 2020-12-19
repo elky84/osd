@@ -18,3 +18,7 @@ public static byte[] Bytes({{ parameters }}) {
     }
   }
 }
+
+public static byte[] Bytes(Model model) {
+  return Bytes({{ modelArguments }});
+}

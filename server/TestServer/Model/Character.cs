@@ -5,7 +5,9 @@ using NetworkShared;
 using ServerShared.NetworkHandler;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace TestServer.Model
 {
@@ -27,7 +29,7 @@ namespace TestServer.Model
                 Equipments.Add(equipmentType, null);
         }
 
-        public T Equip<T>(T equipment) where T : Equipment
+        public Equipment Equip(Equipment equipment)
         {
             var before = Equipments[equipment.EquipmentOption.Type];
             Equipments[equipment.EquipmentOption.Type] = equipment;
@@ -37,7 +39,18 @@ namespace TestServer.Model
             if (before != null)
                 Inventory.Add(before);
 
-            return before as T;
+            return before;
+        }
+
+        public Equipment Unequip(Equipment equipment)
+        {
+            var found = Equipments.Values.FirstOrDefault(x => x == equipment);
+            if (found == null)
+                return null;
+
+            Equipments[found.EquipmentOption.Type] = null;
+            Inventory.Add(found);
+            return found;
         }
 
         public Weapon Weapon
@@ -69,6 +82,53 @@ namespace TestServer.Model
             get => Equipments[EquipmentType.Helmet] as Helmet;
             set => Equip(value);
         }
+
+        public Item Active(ulong id)
+        {
+            var found = Inventory.SelectMany(x => x.Value).FirstOrDefault(x => x.Id == id);
+            if (found == null)
+                return null;
+
+            if (found.Master.Type == ItemType.Equipment)
+            {
+                var equipment = found as Equipment;
+                Equip(equipment);
+            }
+
+            if (File.Exists(found.Master.ActiveScript))
+            {
+                Owner.LuaThread = Static.Main.NewThread();
+                Owner.LuaThread.Encoding = Encoding.UTF8;
+                Owner.LuaThread.DoFile(found.Master.ActiveScript);
+                Owner.LuaThread.GetGlobal("func");
+
+                Owner.LuaThread.PushLuable(Owner);
+                Owner.LuaThread.PushLuable(found);
+                Owner.LuaThread.Resume(2);
+            }
+            return found;
+        }
+
+        public Item Inactive(ulong id)
+        {
+            var found = Equipments.Values.FirstOrDefault(x => x?.Id == id);
+            if (found == null)
+                return null;
+
+            Unequip(found);
+            if (File.Exists(found.Master.InactiveScript))
+            {
+                Owner.LuaThread = Static.Main.NewThread();
+                Owner.LuaThread.Encoding = Encoding.UTF8;
+                Owner.LuaThread.DoFile(found.Master.InactiveScript);
+                Owner.LuaThread.GetGlobal("func");
+
+                Owner.LuaThread.PushLuable(Owner);
+                Owner.LuaThread.PushLuable(found);
+                Owner.LuaThread.Resume(2);
+            }
+            return found;
+        }
     }
 
     public class Character : Life
@@ -82,11 +142,13 @@ namespace TestServer.Model
 
         public ItemCollection Items { get; private set; }
 
-        public Lua DialogThread { get; set; }
+        public Lua LuaThread { get; set; }
 
         public int Damage { get; set; } = 30;
 
         public override ObjectType Type => ObjectType.Character;
+        
+        public FlatBuffers.Protocol.ShowCharacter.Model ShowCharacterFlatBuffer => new ShowCharacter.Model(Sequence.Value, Name, Position.FlatBuffer, Items.Equipments.Values.Select(x => x.EquipmentFlatBuffer).ToList());
 
         public Character()
         {
@@ -158,6 +220,33 @@ namespace TestServer.Model
 
             character.Items.Inventory.Add(item);
             lua.PushLuable(item);
+            return 1;
+        }
+
+        public static int BuiltinItemRemove(IntPtr luaState)
+        {
+            var lua = Lua.FromIntPtr(luaState);
+            var character = lua.ToLuable<Character>(1);
+            var item = lua.ToLuable<Item>(2);
+
+            character.Items.Inventory.Remove(item);
+            lua.PushLuable(item);
+            return 1;
+        }
+
+        public static int BuiltinFindItem(IntPtr luaState)
+        {
+            var lua = Lua.FromIntPtr(luaState);
+            var character = lua.ToLuable<Character>(1);
+            var name = lua.ToString(2);
+
+            var found = character.Items.Inventory.SelectMany(x => x.Value).FirstOrDefault(x => x.Name == name) ??
+                character.Items.Equipments.Values.FirstOrDefault(x => x?.Name == name);
+            if (found != null)
+                lua.PushLuable(found);
+            else
+                lua.PushNil();
+
             return 1;
         }
 

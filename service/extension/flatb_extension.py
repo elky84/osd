@@ -31,10 +31,13 @@ def method(name, parameters):
     env = jinja2.Environment(loader=loader)
     method_template = env.get_template('method.txt')
 
+    model_arguments = ', '.join([f"model.{x['pure name'].capitalize()}" for x in parameters])
+
     code = method_template.render({'flatbName': name,
                                    'parameters': generator.parameter_str(parameters, METHOD_DICT),
                                    'arguments': generator.argument_str(parameters),
-                                   'offsets': generator.offset_code(parameters, METHOD_DICT)})
+                                   'offsets': generator.offset_code(parameters, METHOD_DICT),
+                                   'modelArguments': model_arguments})
     code = code.split('\n')
     code = [f'  {x}' for x in code]
     code = '\n'.join(code)
