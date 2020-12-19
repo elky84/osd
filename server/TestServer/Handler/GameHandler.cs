@@ -23,7 +23,6 @@ namespace TestServer.Handler
         private Dictionary<string, Model.Map> _maps;
         private Dictionary<string, Model.NPC> _npcs = new Dictionary<string, NPC>();
         private Dictionary<string, Model.Mob> _mobs;
-        public List<Session<Character>> _movingSessions = new List<Session<Character>>();
 
         private GameHandler()
         {
@@ -77,7 +76,7 @@ namespace TestServer.Handler
 
         private void Synchronize(DateTime now)
         {
-            _movingSessions.ForEach(x => x.Data?.Synchronize(now));
+            //_movingSessions.ForEach(x => x.Data?.Synchronize(now));
         }
 
         public async Task Broadcast(Model.Object pivot, byte[] bytes, bool exceptSelf = true, bool inSector = false)
@@ -124,7 +123,7 @@ namespace TestServer.Handler
 
         protected override void OnDisconnected(Session<Character> session)
         {
-            _movingSessions.Remove(session);
+            //_movingSessions.Remove(session);
 
             var character = session.Data;
             character.Map = null;

@@ -32,12 +32,7 @@ namespace TestServer.Handler
                 character.Direction = (Direction)request.Direction;
                 Console.WriteLine($"Client is moving now. ({request.Position?.X}, {request.Position?.Y})");
 
-                _movingSessions.Add(session);
-
-                //session.WriteAndFlushAsync(...);
-                //foreach (var s in this)
-                //    s.WriteAndFlushAsync(...);
-
+                _ = Broadcast(character, MoveStatus.Bytes(character.Position.FlatBuffer, true, (int)character.Direction));
                 return true;
             }
             catch (Exception e)
@@ -61,12 +56,11 @@ namespace TestServer.Handler
                 character.Time = null;
                 Console.WriteLine($"Stop position : {character.Position}");
 
-                _movingSessions.Remove(session);
-
                 if (character.Position.Delta(request.Position.Value) > 1)
                     throw new Exception("invalid");
 
                 Console.WriteLine("valid");
+                _ = Broadcast(character, MoveStatus.Bytes(character.Position.FlatBuffer, false, (int)character.Direction));
                 return true;
             }
             catch (Exception e)

@@ -14,6 +14,12 @@ table Stop {
 	now: long;
 }
 
+table MoveStatus {
+	position: Position;
+	moving: bool;
+	direction: int;
+}
+
 table ShowDialog {
 	message: string;
 	next: bool;
