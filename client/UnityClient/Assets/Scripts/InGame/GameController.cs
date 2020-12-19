@@ -61,6 +61,15 @@ public partial class GameController : MonoBehaviour
         Characters.Add(sequence, character);
     }
 
+    private void RemoveCharacter(int sequence)
+    {
+        if (Characters.TryGetValue(sequence, out var character))
+        {
+            Destroy(character.gameObject);
+            Characters.Remove(sequence);
+        }
+    }
+
     private void SetMyCharacter(int sequence)
     {
         if (Characters.TryGetValue(sequence, out var character))

@@ -77,6 +77,7 @@ public partial class GameController : MonoBehaviour
     public bool OnShow(Show response)
     {
         Debug.Log($"{response.Name}({response.Sequence}) is entered in current map.");
+        CreateCharacter(response.Name, response.Sequence, ObjectType.Character, response.Position.Value);
         return true;
     }
 
@@ -84,6 +85,7 @@ public partial class GameController : MonoBehaviour
     public bool OnLeave(Leave response)
     {
         Debug.Log($"{response.Sequence} is leave from current map.");
+        RemoveCharacter(response.Sequence);
         return true;
     }
 }
