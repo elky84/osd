@@ -1,10 +1,12 @@
-﻿using System.Collections;
+﻿using FlatBuffers.Protocol;
+using NetworkShared;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class GameController : MonoBehaviour
+public partial class GameController : MonoBehaviour
 {
     private Transform CharactersTransform { get; set; }
 
@@ -22,21 +24,18 @@ public class GameController : MonoBehaviour
     void Awake()
     {
         CharactersTransform = transform.Find("Characters");
-
         Camera = GameObject.Find("Main Camera").GetComponent<Camera>();
-
         TileMap = GameObject.Find("TileMap").GetComponent<TileMap>();
     }
 
     public void Start()
     {
+        NettyClient.Instance.Init(this);
+
         NettyClient.Instance.OnConnected += () =>
         {
             MainThreadDispatcher.Instance.Enqueue(() =>
             {
-                Createcharacter();
-                var textAsset = Resources.Load("MapFile/Town") as TextAsset;
-                TileMap.GenerateMap(textAsset.text);
             });
         };
         NettyClient.Instance.OnClose += () =>
@@ -48,13 +47,33 @@ public class GameController : MonoBehaviour
         };
     }
 
-    public void Createcharacter()
+    private void CreateCharacter(string name, int sequence, ObjectType objectType, Position position)
     {
-        var gameObj = Instantiate(Resources.Load("Prefabs/Character") as GameObject, new Vector3(0, 0), Quaternion.identity, CharactersTransform);
+        var gameObj = Instantiate(Resources.Load("Prefabs/Character") as GameObject, position.ToVector3(), Quaternion.identity, CharactersTransform);
         var character = gameObj.GetComponent<Character>();
+
+        character.name = name;
+        character.Name = name;
+
         character.SpriteSheetPath = "ArmoredKnight";
-        cineCamera.Follow = character.transform;
-        MyCharacter = character;
+        character.Type = objectType;
+
+        Characters.Add(sequence, character);
+    }
+
+    private void SetMyCharacter(int sequence)
+    {
+        if (Characters.TryGetValue(sequence, out var character))
+        {
+            cineCamera.Follow = character.transform;
+            MyCharacter = character;
+        }
+    }
+
+    private void LoadMap(string name)
+    {
+        var textAsset = Resources.Load($"MapFile/{name}") as TextAsset;
+        TileMap.GenerateMap(textAsset.text);
     }
 
     public void Clear()

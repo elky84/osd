@@ -64,14 +64,14 @@ namespace TestClient
 
             for (int i = 0; i < response.ObjectsLength; i++)
             {
-                var obj = response.Objects(i);
-                Console.WriteLine($"Object {i} : {obj?.Name}({obj?.Sequence}) => {(ObjectType)obj.Value.Type}");
+                var obj = response.Objects(i).Value;
+                Console.WriteLine($"Object {i} : {obj.Name}({obj.Sequence}) => {(ObjectType)obj.Type}");
             }
 
             Console.WriteLine($"My sequence : {response.Sequence}");
             Console.WriteLine($"After position : {response.Position.Value.X}, {response.Position.Value.Y}");
             Console.WriteLine($"After map name : {response.Map?.Name}");
-            
+
             return true;
         }
 

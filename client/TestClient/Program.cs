@@ -42,8 +42,15 @@ namespace TestClient
                     if (cmd.ToLower() == "quit")
                         break;
 
-                    var parameters = splitted.Skip(1).ToArray();
-                    handler.Command(cmd, parameters);
+                    try
+                    {
+                        var parameters = splitted.Skip(1).ToArray();
+                        handler.Command(cmd, parameters);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Logger.Information($"Command or Parameter Error. [Message:{ex.Message}] [Command:{cmd}]");
+                    }
                 }
 
                 await channel.CloseAsync();

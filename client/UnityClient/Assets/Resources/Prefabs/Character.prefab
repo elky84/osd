@@ -201,6 +201,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SpriteSheetPath: 
+  NickName: {fileID: 8417316800545919483}
+  TargetDirection: 0
 --- !u!212 &8042759663584449705
 SpriteRenderer:
   m_ObjectHideFlags: 0

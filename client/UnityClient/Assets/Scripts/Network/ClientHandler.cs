@@ -2,6 +2,7 @@
 using DotNetty.Transport.Channels;
 using FlatBuffers;
 using FlatBuffers.Protocol;
+using NetworkShared;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,13 +18,15 @@ public class ClientHandler : SimpleChannelInboundHandler<IByteBuffer>
 {
     public Action OnClose;
 
-    private Dictionary<Type, Delegate> _allocatorDict = new Dictionary<Type, Delegate>();
-    private Dictionary<string, Type> _flatBufferDict = new Dictionary<string, Type>();
-    private Dictionary<Type, Func<IFlatbufferObject, bool>> _bindedEventDict = new Dictionary<Type, Func<IFlatbufferObject, bool>>();
+    private readonly Dictionary<Type, Delegate> _allocatorDict = new Dictionary<Type, Delegate>();
+
+    private readonly Dictionary<string, Type> _flatBufferDict = new Dictionary<string, Type>();
+
+    private readonly Dictionary<Type, Func<IFlatbufferObject, bool>> _bindedEventDict = new Dictionary<Type, Func<IFlatbufferObject, bool>>();
+
     public ClientHandler()
     {
         BindFlatBufferAllocator("NetworkShared");
-        BindEventHandler();
     }
 
     private void BindFlatBufferAllocator(string assemblyName)
@@ -61,9 +64,9 @@ public class ClientHandler : SimpleChannelInboundHandler<IByteBuffer>
         }
     }
 
-    private void BindEventHandler()
+    public void BindEventHandler<T>(T t) where T : class
     {
-        var methods = this.GetType().GetMethods().Where(x =>
+        var methods = typeof(T).GetMethods().Where(x =>
         {
             if (x.GetCustomAttribute<FlatBufferEventAttribute>() == null)
                 return false;
@@ -83,13 +86,12 @@ public class ClientHandler : SimpleChannelInboundHandler<IByteBuffer>
 
         foreach (var method in methods)
         {
-
             try
             {
                 var parameters = method.GetParameters();
                 var flatBufferType = parameters[0].ParameterType;
                 var delegateType = Expression.GetDelegateType(parameters.Select(x => x.ParameterType).Concat(new[] { method.ReturnType }).ToArray());
-                var createdDelegate = method.CreateDelegate(delegateType, this);
+                var createdDelegate = method.CreateDelegate(delegateType, t);
                 _bindedEventDict.Add(flatBufferType, new Func<IFlatbufferObject, bool>((protocol) =>
                 {
                     return (bool)createdDelegate.DynamicInvoke(Convert.ChangeType(protocol, flatBufferType));
@@ -97,7 +99,7 @@ public class ClientHandler : SimpleChannelInboundHandler<IByteBuffer>
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                Debug.Log(e.Message);
             }
         }
     }
@@ -107,52 +109,6 @@ public class ClientHandler : SimpleChannelInboundHandler<IByteBuffer>
         base.ChannelInactive(context);
     }
 
-    [FlatBufferEvent]
-    public bool OnMove(Move x)
-    {
-        Debug.Log($"OnMove() {x.Position.Value.X} {x.Position.Value.Y} {x.Direction} {x.Now}");
-        return true;
-    }
-
-    [FlatBufferEvent]
-    public bool OnStop(Stop x)
-    {
-        Debug.Log($"OnStop() {x.Position.Value.X} {x.Position.Value.Y} {x.Now}");
-        return true;
-    }
-
-    [FlatBufferEvent]
-    public bool OnClick(Click x)
-    {
-        Debug.Log($"OnClick()");
-        return true;
-    }
-
-    [FlatBufferEvent]
-    public bool OnSelectListDialog(SelectListDialog x)
-    {
-        Debug.Log($"OnSelectListDialog()");
-        return true;
-    }
-
-    [FlatBufferEvent]
-    public bool OnShowList(ShowList x)
-    {
-        return true;
-    }
-
-    [FlatBufferEvent]
-    public bool OnShowListDialog(ShowListDialog x)
-    {
-        for (int i = 0; i < x.ListLength; i++)
-        {
-            Debug.Log($"{x.List(i)}");
-        }
-
-        var selection = ((int)(UnityEngine.Random.value * 100)) % x.ListLength;
-        NettyClient.Instance.Send(SelectListDialog.Bytes(selection));
-        return true;
-    }
 
 
     protected override void ChannelRead0(IChannelHandlerContext contex, IByteBuffer buffer)
@@ -187,8 +143,9 @@ public class ClientHandler : SimpleChannelInboundHandler<IByteBuffer>
 
             return bindedEvent.Invoke((FlatBufferType)allocator.DynamicInvoke(new ByteBuffer(bytes)));
         }
-        catch (Exception)
+        catch (Exception e)
         {
+            Debug.LogException(e);
             return false;
         }
     }
@@ -205,8 +162,9 @@ public class ClientHandler : SimpleChannelInboundHandler<IByteBuffer>
 
             return bindedEvent.Invoke(Convert.ChangeType(allocator.DynamicInvoke(new ByteBuffer(bytes)), type) as IFlatbufferObject);
         }
-        catch (Exception)
+        catch (Exception e)
         {
+            Debug.LogException(e);
             return false;
         }
     }

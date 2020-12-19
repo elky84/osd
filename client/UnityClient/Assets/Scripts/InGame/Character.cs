@@ -1,31 +1,9 @@
 ﻿using FlatBuffers.Protocol;
+using NetworkShared;
 using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
-
-public class Position
-{
-    public double X { get; set; }
-
-    public double Y { get; set; }
-
-    public Position()
-    {
-
-    }
-
-    public Position(double x, double y)
-    {
-        this.X = x;
-        this.Y = y;
-    }
-
-    public Vector3 ToVector3()
-    {
-        return new Vector3((float)X, (float)Y);
-    }
-}
 
 public enum Direction
 {
@@ -34,7 +12,7 @@ public enum Direction
 
 public class Character : SpriteObject
 {
-    public Text NickName { get; set; }
+    public Text NickName;
 
     public float Speed => 10;
 
@@ -42,15 +20,25 @@ public class Character : SpriteObject
 
     public CharacterStateType State { get; set; } = CharacterStateType.Idle;
 
-    public Position CurrentPosition { get; set; } = new Position();
+    public Position.Model CurrentPosition { get; set; } = new Position.Model();
 
     public Direction TargetDirection;
 
     public DateTime MoveDt { get; set; }
 
+    public ObjectType Type { get; set; }
+
+    public string Name { get; set; }
+
+
     public void Awake()
     {
         OnAwake();
+    }
+
+    public void Start()
+    {
+        NickName.text = Name;
     }
 
     public void Attacking()
@@ -86,21 +74,21 @@ public class Character : SpriteObject
             switch (TargetDirection)
             {
                 case Direction.Left:
-                    CurrentPosition = new Position(CurrentPosition.X - moved, CurrentPosition.Y);
+                    CurrentPosition = new Position.Model(CurrentPosition.X - moved, CurrentPosition.Y);
                     FlipX = true;
                     break;
 
                 case Direction.Top:
-                    CurrentPosition = new Position(CurrentPosition.X, CurrentPosition.Y + moved);
+                    CurrentPosition = new Position.Model(CurrentPosition.X, CurrentPosition.Y + moved);
                     break;
 
                 case Direction.Right:
-                    CurrentPosition = new Position(CurrentPosition.X + moved, CurrentPosition.Y);
+                    CurrentPosition = new Position.Model(CurrentPosition.X + moved, CurrentPosition.Y);
                     FlipX = false;
                     break;
 
                 case Direction.Bottom:
-                    CurrentPosition = new Position(CurrentPosition.X, CurrentPosition.Y - moved);
+                    CurrentPosition = new Position.Model(CurrentPosition.X, CurrentPosition.Y - moved);
                     break;
 
                 default:

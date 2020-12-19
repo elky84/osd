@@ -108,7 +108,7 @@ namespace NetworkShared.NetworkHandler
         public override void ChannelActive(IChannelHandlerContext context)
         {
             base.ChannelActive(context);
-            
+
             _context = context;
             OnConnected(context);
         }
@@ -165,8 +165,9 @@ namespace NetworkShared.NetworkHandler
 
                 return bindedEvent.Invoke((FlatBufferType)allocator.DynamicInvoke(new ByteBuffer(bytes)));
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Log.Logger.Error($"{e}");
                 return false;
             }
         }
@@ -183,8 +184,9 @@ namespace NetworkShared.NetworkHandler
 
                 return bindedEvent.Invoke(Convert.ChangeType(allocator.DynamicInvoke(new ByteBuffer(bytes)), type) as IFlatbufferObject);
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Log.Logger.Error($"{e}");
                 return false;
             }
         }

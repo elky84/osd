@@ -27,10 +27,9 @@ public class NettyClient
 
     public NettyClient()
     {
-        InitNetty();
     }
 
-    void InitNetty()
+    public void Init(GameController gameController)
     {
         group = new MultithreadEventLoopGroup();
         bootstrap = new Bootstrap();
@@ -45,7 +44,8 @@ public class NettyClient
                 pipeline.AddLast(new LengthFieldPrepender(ByteOrder.BigEndian, 4, 0, false));
 
                 pipeline.AddLast(new IdleStateHandler(0, 30, 0));
-                var handler = new ClientHandler { OnClose = OnCloseCallback };
+                var handler = new ClientHandler() { OnClose = OnCloseCallback };
+                handler.BindEventHandler(gameController);
                 pipeline.AddLast(handler);
             }));
     }

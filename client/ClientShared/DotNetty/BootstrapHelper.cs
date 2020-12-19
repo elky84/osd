@@ -1,5 +1,4 @@
-﻿using ClientShared.NetworkHandler;
-using DotNetty.Codecs;
+﻿using DotNetty.Codecs;
 using DotNetty.Handlers.Logging;
 using DotNetty.Handlers.Tls;
 using DotNetty.Transport.Channels;
