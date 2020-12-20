@@ -138,7 +138,6 @@ namespace TestServer.Model
                 return null;
 
             Objects.Remove(obj.Sequence.Value);
-            obj.Sequence = null;
             return Sectors.Remove(obj);
         }
 

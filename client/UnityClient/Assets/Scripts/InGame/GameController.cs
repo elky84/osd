@@ -47,10 +47,12 @@ public partial class GameController : MonoBehaviour
         };
     }
 
-    private void CreateCharacter(string name, int sequence, ObjectType objectType, Position position)
+    private void CreateCharacter(string name, int sequence, ObjectType objectType, FlatBuffers.Protocol.Position position)
     {
         var gameObj = Instantiate(Resources.Load("Prefabs/Character") as GameObject, position.ToVector3(), Quaternion.identity, CharactersTransform);
         var character = gameObj.GetComponent<Character>();
+
+        character.CurrentPosition = Position.FromFlatBuffer(position);
 
         character.name = name;
         character.Name = name;
@@ -63,11 +65,17 @@ public partial class GameController : MonoBehaviour
 
     private void RemoveCharacter(int sequence)
     {
-        if (Characters.TryGetValue(sequence, out var character))
+        var character = GetCharacter(sequence);
+        if (character != null)
         {
             Destroy(character.gameObject);
             Characters.Remove(sequence);
         }
+    }
+
+    private Character GetCharacter(int sequence)
+    {
+        return Characters.TryGetValue(sequence, out var character) ? character : null;
     }
 
     private void SetMyCharacter(int sequence)
@@ -92,6 +100,8 @@ public partial class GameController : MonoBehaviour
             GameObject.Destroy(child.gameObject);
         }
 
+        TileMap.Clear();
+
         Characters.Clear();
     }
 
@@ -107,19 +117,19 @@ public partial class GameController : MonoBehaviour
         {
             if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
             {
-                MyCharacter.MoveDirection(Direction.Top);
+                MyCharacter.MoveDirection(Direction.Top, true);
             }
             else if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
             {
-                MyCharacter.MoveDirection(Direction.Bottom);
+                MyCharacter.MoveDirection(Direction.Bottom, true);
             }
             else if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
             {
-                MyCharacter.MoveDirection(Direction.Left);
+                MyCharacter.MoveDirection(Direction.Left, true);
             }
             else if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
             {
-                MyCharacter.MoveDirection(Direction.Right);
+                MyCharacter.MoveDirection(Direction.Right, true);
             }
         }
         else if (e.type == EventType.KeyUp)

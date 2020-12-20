@@ -20,4 +20,9 @@ public class TileMap : MonoBehaviour
     {
         MapTool.LoadMapFromJsonText(json);
     }
+
+    public void Clear()
+    {
+        MapTool.clear();
+    }
 }

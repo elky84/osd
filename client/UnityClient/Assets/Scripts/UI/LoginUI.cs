@@ -6,11 +6,6 @@ public class LoginUI : MonoBehaviour
     public InputField IDInput;
     public InputField PasswordInput;
 
-    private void Awake()
-    {
-
-    }
-
     void Start()
     {
         IDInput.text = PlayerPrefs.GetString("ID", "");

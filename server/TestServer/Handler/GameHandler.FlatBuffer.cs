@@ -32,7 +32,7 @@ namespace TestServer.Handler
                 character.Direction = (Direction)request.Direction;
                 Console.WriteLine($"Client is moving now. ({request.Position?.X}, {request.Position?.Y})");
 
-                _ = Broadcast(character, MoveStatus.Bytes(character.Position.FlatBuffer, true, (int)character.Direction));
+                _ = Broadcast(character, MoveStatus.Bytes(character.Sequence.Value, character.Position.FlatBuffer, true, (int)character.Direction));
                 return true;
             }
             catch (Exception e)
@@ -60,7 +60,7 @@ namespace TestServer.Handler
                     throw new Exception("invalid");
 
                 Console.WriteLine("valid");
-                _ = Broadcast(character, MoveStatus.Bytes(character.Position.FlatBuffer, false, (int)character.Direction));
+                _ = Broadcast(character, MoveStatus.Bytes(character.Sequence.Value, character.Position.FlatBuffer, false, (int)character.Direction));
                 return true;
             }
             catch (Exception e)
@@ -178,7 +178,7 @@ namespace TestServer.Handler
                 Console.WriteLine($"activated item : {activatedItem.Id}({activatedItem.Name})");
 
                 // 장비 사용하면 외형변경 브로드캐스팅
-                if(activatedItem.Master.Type == ItemType.Equipment)
+                if (activatedItem.Master.Type == ItemType.Equipment)
                     _ = Broadcast(character, ShowCharacter.Bytes(character.ShowCharacterFlatBuffer), false);
             }
 

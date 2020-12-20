@@ -32,22 +32,22 @@ namespace TestServer.Handler
                     character.Map.FlatBuffer,
                     objects,
                     portals));
-                
+
                 _ = Broadcast(obj, ShowCharacter.Bytes(character.ShowCharacterFlatBuffer));
             }
             else
             {
                 _ = Broadcast(obj, Show.Bytes(obj.Sequence.Value, obj.Name, obj.Position.FlatBuffer));
             }
-            
+
 
             // 기존 유저들에게 정보 전송
-            
+
         }
 
         public void OnSectorChanged(Model.Object obj)
         {
-            Console.WriteLine($"Sector changed({obj.Sequence}, sector : {obj.Sector.Id})");
+            Console.WriteLine($"Sector changed({obj.Sequence}, sector : {obj.Sector?.Id})");
         }
 
         public void OnSpawned(Mob mob)

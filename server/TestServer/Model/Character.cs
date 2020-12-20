@@ -12,7 +12,7 @@ using System.Text;
 namespace TestServer.Model
 {
     public class ItemCollection
-    { 
+    {
         public Character Owner { get; private set; }
 
         public Dictionary<ItemType, List<Item>> Inventory { get; private set; } = new Dictionary<ItemType, List<Item>>();
@@ -25,6 +25,7 @@ namespace TestServer.Model
             foreach (var itemType in Enum.GetValues(typeof(ItemType)).Cast<ItemType>())
                 Inventory.Add(itemType, new List<Item>());
 
+            //TODO 승현님 Equipments.Add(equipmentType, null)에서 null로 인해 오류가 납니다.
             foreach (var equipmentType in Enum.GetValues(typeof(EquipmentType)).Cast<EquipmentType>())
                 Equipments.Add(equipmentType, null);
         }
@@ -58,25 +59,25 @@ namespace TestServer.Model
             get => Equipments[EquipmentType.Weapon] as Weapon;
             set => Equip(value);
         }
-        
+
         public Shield Shield
         {
             get => Equipments[EquipmentType.Shield] as Shield;
             set => Equip(value);
         }
-        
+
         public Armor Armor
         {
             get => Equipments[EquipmentType.Armor] as Armor;
             set => Equip(value);
         }
-        
+
         public Shoes Shoes
         {
             get => Equipments[EquipmentType.Shoes] as Shoes;
             set => Equip(value);
         }
-        
+
         public Helmet Helmet
         {
             get => Equipments[EquipmentType.Helmet] as Helmet;
@@ -147,8 +148,8 @@ namespace TestServer.Model
         public int Damage { get; set; } = 30;
 
         public override ObjectType Type => ObjectType.Character;
-        
-        public FlatBuffers.Protocol.ShowCharacter.Model ShowCharacterFlatBuffer => new ShowCharacter.Model(Sequence.Value, Name, Position.FlatBuffer, Items.Equipments.Values.Select(x => x.EquipmentFlatBuffer).ToList());
+
+        public FlatBuffers.Protocol.ShowCharacter.Model ShowCharacterFlatBuffer => new ShowCharacter.Model(Sequence.Value, Name, Position.FlatBuffer, Items.Equipments.Values.Where(x => x != null).Select(x => x.EquipmentFlatBuffer).ToList());
 
         public Character()
         {

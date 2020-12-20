@@ -22,8 +22,6 @@ namespace TestServer
             var bootstrapHelper = new BootstrapHelper();
             try
             {
-                ServerService.Register();
-
                 var bootstrap = bootstrapHelper.Create(GameHandler.Instance);
                 var channel = await bootstrap.BindAsync(ServerShared.Config.ServerSettings.Port);
                 Log.Logger.Information("Server Started");

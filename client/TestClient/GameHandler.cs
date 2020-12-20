@@ -31,6 +31,14 @@ namespace TestClient
             return true;
         }
 
+
+        [FlatBufferEvent]
+        public bool OnMoveStatus(MoveStatus response)
+        {
+            Log.Logger.Information($"OnMoveStatus() {response.Sequence} {response.Position.Value.X} {response.Position.Value.Y}");
+            return true;
+        }
+
         [FlatBufferEvent]
         public bool OnDialog(ShowDialog response)
         {
@@ -77,6 +85,14 @@ namespace TestClient
 
         [FlatBufferEvent]
         public bool OnShow(Show response)
+        {
+            Console.WriteLine($"{response.Name}({response.Sequence}) is entered in current map.");
+            return true;
+        }
+
+
+        [FlatBufferEvent]
+        public bool OnShowCharacter(ShowCharacter response)
         {
             Console.WriteLine($"{response.Name}({response.Sequence}) is entered in current map.");
             return true;

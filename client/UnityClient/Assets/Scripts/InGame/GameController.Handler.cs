@@ -8,7 +8,6 @@ using UnityEngine.EventSystems;
 
 public partial class GameController : MonoBehaviour
 {
-
     [FlatBufferEvent]
     public bool OnMove(Move x)
     {
@@ -20,6 +19,26 @@ public partial class GameController : MonoBehaviour
     public bool OnStop(Stop x)
     {
         Debug.Log($"OnStop() {x.Position.Value.X} {x.Position.Value.Y} {x.Now}");
+        return true;
+    }
+
+
+    [FlatBufferEvent]
+    public bool OnMoveStatus(MoveStatus x)
+    {
+        Debug.Log($"OnMoveStatus() {x.Sequence} {(Direction)x.Direction} {x.Position.Value.X} {x.Position.Value.Y}");
+        var character = GetCharacter(x.Sequence);
+        if (character != null)
+        {
+            if (x.Moving)
+            {
+                character.MoveDirection((Direction)x.Direction, false);
+            }
+            else
+            {
+                character.StopMove(false);
+            }
+        }
         return true;
     }
 
@@ -75,6 +94,15 @@ public partial class GameController : MonoBehaviour
 
     [FlatBufferEvent]
     public bool OnShow(Show response)
+    {
+        Debug.Log($"{response.Name}({response.Sequence}) is entered in current map.");
+        CreateCharacter(response.Name, response.Sequence, ObjectType.Character, response.Position.Value);
+        return true;
+    }
+
+
+    [FlatBufferEvent]
+    public bool OnShowCharacter(ShowCharacter response)
     {
         Debug.Log($"{response.Name}({response.Sequence}) is entered in current map.");
         CreateCharacter(response.Name, response.Sequence, ObjectType.Character, response.Position.Value);

@@ -15,6 +15,7 @@ table Stop {
 }
 
 table MoveStatus {
+    sequence: int;
 	position: Position;
 	moving: bool;
 	direction: int;

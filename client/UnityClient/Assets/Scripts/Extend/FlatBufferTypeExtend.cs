@@ -8,23 +8,14 @@ using UnityEngine;
 
 public static class FlatBufferTypeExtend
 {
-    public static Vector3 ToVector3(this Position position)
+    public static Vector3 ToVector3(this FlatBuffers.Protocol.Position position)
     {
-        return new Vector3((float)position.X, (float)position.Y);
+        return new Vector3((float)Math.Truncate(position.X * 100) / 100, (float)Math.Truncate(position.Y * 100) / 100);
     }
 
-    public static Vector2 ToVector2(this Position position)
+    public static Vector2 ToVector2(this FlatBuffers.Protocol.Position position)
     {
-        return new Vector3((float)position.X, (float)position.Y);
+        return new Vector2((float)Math.Truncate(position.X * 100) / 100, (float)Math.Truncate(position.Y * 100) / 100);
     }
 
-    public static Vector3 ToVector3(this Position.Model position)
-    {
-        return new Vector3((float)position.X, (float)position.Y);
-    }
-
-    public static Vector2 ToVector2(this Position.Model position)
-    {
-        return new Vector3((float)position.X, (float)position.Y);
-    }
 }
