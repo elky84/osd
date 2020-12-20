@@ -31,7 +31,7 @@ def method(name, parameters):
     env = jinja2.Environment(loader=loader)
     method_template = env.get_template('method.txt')
 
-    model_arguments = ', '.join([f"model.{x['pure name'].capitalize()}" for x in parameters])
+    model_arguments = ', '.join([f"model.{generator.to_upper_camel(x['pure name'])}" for x in parameters])
 
     code = method_template.render({'flatbName': name,
                                    'parameters': generator.parameter_str(parameters, METHOD_DICT),

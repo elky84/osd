@@ -30,22 +30,30 @@ namespace FlatBuffers.Protocol
   #endif
     public byte[] GetNameArray() { return __p.__vector_as_array<byte>(6); }
     public Position? Position { get { int o = __p.__offset(8); return o != 0 ? (Position?)(new Position()).__assign(__p.__indirect(o + __p.bb_pos), __p.bb) : null; } }
+    public bool Moving { get { int o = __p.__offset(10); return o != 0 ? 0!=__p.bb.Get(o + __p.bb_pos) : (bool)false; } }
+    public int Direction { get { int o = __p.__offset(12); return o != 0 ? __p.bb.GetInt(o + __p.bb_pos) : (int)0; } }
   
     public static Offset<Show> CreateShow(FlatBufferBuilder builder,
         int sequence = 0,
         StringOffset nameOffset = default(StringOffset),
-        Offset<Position> positionOffset = default(Offset<Position>)) {
-      builder.StartTable(3);
+        Offset<Position> positionOffset = default(Offset<Position>),
+        bool moving = false,
+        int direction = 0) {
+      builder.StartTable(5);
+      Show.AddDirection(builder, direction);
       Show.AddPosition(builder, positionOffset);
       Show.AddName(builder, nameOffset);
       Show.AddSequence(builder, sequence);
+      Show.AddMoving(builder, moving);
       return Show.EndShow(builder);
     }
   
-    public static void StartShow(FlatBufferBuilder builder) { builder.StartTable(3); }
+    public static void StartShow(FlatBufferBuilder builder) { builder.StartTable(5); }
     public static void AddSequence(FlatBufferBuilder builder, int sequence) { builder.AddInt(0, sequence, 0); }
     public static void AddName(FlatBufferBuilder builder, StringOffset nameOffset) { builder.AddOffset(1, nameOffset.Value, 0); }
     public static void AddPosition(FlatBufferBuilder builder, Offset<Position> positionOffset) { builder.AddOffset(2, positionOffset.Value, 0); }
+    public static void AddMoving(FlatBufferBuilder builder, bool moving) { builder.AddBool(3, moving, false); }
+    public static void AddDirection(FlatBufferBuilder builder, int direction) { builder.AddInt(4, direction, 0); }
     public static Offset<Show> EndShow(FlatBufferBuilder builder) {
       int o = builder.EndTable();
       return new Offset<Show>(o);
@@ -56,20 +64,24 @@ namespace FlatBuffers.Protocol
       public int Sequence { get; set; }
       public string Name { get; set; }
       public FlatBuffers.Protocol.Position.Model Position { get; set; }
+      public bool Moving { get; set; }
+      public int Direction { get; set; }
     
-      public Model(int sequence, string name, FlatBuffers.Protocol.Position.Model position)
+      public Model(int sequence, string name, FlatBuffers.Protocol.Position.Model position, bool moving, int direction)
       {
         Sequence = sequence;
         Name = name;
         Position = position;
+        Moving = moving;
+        Direction = direction;
       }
     }
   
-    public static byte[] Bytes(int sequence, string name, FlatBuffers.Protocol.Position.Model position) {
+    public static byte[] Bytes(int sequence, string name, FlatBuffers.Protocol.Position.Model position, bool moving, int direction) {
       var builder = new FlatBufferBuilder(512);
       var nameOffset = builder.CreateString(name);
       var positionOffset = FlatBuffers.Protocol.Position.CreatePosition(builder, position.X, position.Y);
-      var offset = Show.CreateShow(builder, sequence, nameOffset, positionOffset);
+      var offset = Show.CreateShow(builder, sequence, nameOffset, positionOffset, moving, direction);
       builder.Finish(offset.Value);
       
       var bytes = builder.DataBuffer.ToSizedArray();
@@ -88,7 +100,7 @@ namespace FlatBuffers.Protocol
     }
     
     public static byte[] Bytes(Model model) {
-      return Bytes(model.Sequence, model.Name, model.Position);
+      return Bytes(model.Sequence, model.Name, model.Position, model.Moving, model.Direction);
     }
   };
 }

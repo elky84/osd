@@ -31,25 +31,33 @@ namespace FlatBuffers.Protocol
     public byte[] GetNameArray() { return __p.__vector_as_array<byte>(6); }
     public int Type { get { int o = __p.__offset(8); return o != 0 ? __p.bb.GetInt(o + __p.bb_pos) : (int)0; } }
     public Position? Position { get { int o = __p.__offset(10); return o != 0 ? (Position?)(new Position()).__assign(__p.__indirect(o + __p.bb_pos), __p.bb) : null; } }
+    public bool Moving { get { int o = __p.__offset(12); return o != 0 ? 0!=__p.bb.Get(o + __p.bb_pos) : (bool)false; } }
+    public int Direction { get { int o = __p.__offset(14); return o != 0 ? __p.bb.GetInt(o + __p.bb_pos) : (int)0; } }
   
     public static Offset<Object> CreateObject(FlatBufferBuilder builder,
         int sequence = 0,
         StringOffset nameOffset = default(StringOffset),
         int type = 0,
-        Offset<Position> positionOffset = default(Offset<Position>)) {
-      builder.StartTable(4);
+        Offset<Position> positionOffset = default(Offset<Position>),
+        bool moving = false,
+        int direction = 0) {
+      builder.StartTable(6);
+      Object.AddDirection(builder, direction);
       Object.AddPosition(builder, positionOffset);
       Object.AddType(builder, type);
       Object.AddName(builder, nameOffset);
       Object.AddSequence(builder, sequence);
+      Object.AddMoving(builder, moving);
       return Object.EndObject(builder);
     }
   
-    public static void StartObject(FlatBufferBuilder builder) { builder.StartTable(4); }
+    public static void StartObject(FlatBufferBuilder builder) { builder.StartTable(6); }
     public static void AddSequence(FlatBufferBuilder builder, int sequence) { builder.AddInt(0, sequence, 0); }
     public static void AddName(FlatBufferBuilder builder, StringOffset nameOffset) { builder.AddOffset(1, nameOffset.Value, 0); }
     public static void AddType(FlatBufferBuilder builder, int type) { builder.AddInt(2, type, 0); }
     public static void AddPosition(FlatBufferBuilder builder, Offset<Position> positionOffset) { builder.AddOffset(3, positionOffset.Value, 0); }
+    public static void AddMoving(FlatBufferBuilder builder, bool moving) { builder.AddBool(4, moving, false); }
+    public static void AddDirection(FlatBufferBuilder builder, int direction) { builder.AddInt(5, direction, 0); }
     public static Offset<Object> EndObject(FlatBufferBuilder builder) {
       int o = builder.EndTable();
       return new Offset<Object>(o);
@@ -61,21 +69,25 @@ namespace FlatBuffers.Protocol
       public string Name { get; set; }
       public int Type { get; set; }
       public FlatBuffers.Protocol.Position.Model Position { get; set; }
+      public bool Moving { get; set; }
+      public int Direction { get; set; }
     
-      public Model(int sequence, string name, int type, FlatBuffers.Protocol.Position.Model position)
+      public Model(int sequence, string name, int type, FlatBuffers.Protocol.Position.Model position, bool moving, int direction)
       {
         Sequence = sequence;
         Name = name;
         Type = type;
         Position = position;
+        Moving = moving;
+        Direction = direction;
       }
     }
   
-    public static byte[] Bytes(int sequence, string name, int type, FlatBuffers.Protocol.Position.Model position) {
+    public static byte[] Bytes(int sequence, string name, int type, FlatBuffers.Protocol.Position.Model position, bool moving, int direction) {
       var builder = new FlatBufferBuilder(512);
       var nameOffset = builder.CreateString(name);
       var positionOffset = FlatBuffers.Protocol.Position.CreatePosition(builder, position.X, position.Y);
-      var offset = Object.CreateObject(builder, sequence, nameOffset, type, positionOffset);
+      var offset = Object.CreateObject(builder, sequence, nameOffset, type, positionOffset, moving, direction);
       builder.Finish(offset.Value);
       
       var bytes = builder.DataBuffer.ToSizedArray();
@@ -94,7 +106,7 @@ namespace FlatBuffers.Protocol
     }
     
     public static byte[] Bytes(Model model) {
-      return Bytes(model.Sequence, model.Name, model.Type, model.Position);
+      return Bytes(model.Sequence, model.Name, model.Type, model.Position, model.Moving, model.Direction);
     }
   };
 }

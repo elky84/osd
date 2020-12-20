@@ -15,7 +15,7 @@ table Stop {
 }
 
 table MoveStatus {
-    sequence: int;
+	sequence: int;
 	position: Position;
 	moving: bool;
 	direction: int;
@@ -50,10 +50,12 @@ table ResponseDialog {
 }
 
 table Object {
-sequence: int;
+	sequence: int;
 	name: string;
 	type: int;
 	position: Position;
+	moving: bool;
+	direction: int;
 }
 
 table Portal {
@@ -67,8 +69,9 @@ table Map {
 
 table Enter {
 	sequence: int;
-	position: Position;
 	map: Map;
+	position: Position;
+	direction: int;
 	objects: [Object];
 	portals: [Portal];
 }
@@ -77,12 +80,16 @@ table Show {
 	sequence: int;
 	name: string;
 	position: Position;
+	moving: bool;
+	direction: int;
 }
 
 table ShowCharacter {
 	sequence: int;
 	name: string;
 	position: Position;
+	moving: bool;
+	direction: int;
 	equipment: [Equipment];
 }
 

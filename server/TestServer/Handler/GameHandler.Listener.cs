@@ -28,8 +28,9 @@ namespace TestServer.Handler
             {
                 var character = obj as Character;
                 _ = character.Context.Send(Enter.Bytes(character.Sequence.Value,
-                    character.Position.FlatBuffer,
                     character.Map.FlatBuffer,
+                    character.Position.FlatBuffer,
+                    (int)character.Direction,
                     objects,
                     portals));
 
@@ -37,7 +38,7 @@ namespace TestServer.Handler
             }
             else
             {
-                _ = Broadcast(obj, Show.Bytes(obj.Sequence.Value, obj.Name, obj.Position.FlatBuffer));
+                _ = Broadcast(obj, Show.Bytes(obj.Sequence.Value, obj.Name, obj.Position.FlatBuffer, obj.Moving, (int)obj.Direction));
             }
 
 

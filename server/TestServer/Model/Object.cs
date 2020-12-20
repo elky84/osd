@@ -17,10 +17,14 @@ namespace TestServer.Model
 
         public abstract ObjectType Type { get; }
 
-        public FlatBuffers.Protocol.Object.Model FlatBuffer =>
-            new FlatBuffers.Protocol.Object.Model(Sequence.Value, Name, (int)Type, Position.FlatBuffer);
+        public virtual bool Moving => false;
 
-        public FlatBuffers.Protocol.Show.Model ShowFlatBuffer => new FlatBuffers.Protocol.Show.Model(Sequence.Value, Name, Position.FlatBuffer);
+        public Direction Direction { get; set; } = Direction.Bottom;
+
+        public FlatBuffers.Protocol.Object.Model FlatBuffer =>
+            new FlatBuffers.Protocol.Object.Model(Sequence.Value, Name, (int)Type, Position.FlatBuffer, Moving, (int)Direction);
+
+        public FlatBuffers.Protocol.Show.Model ShowFlatBuffer => new FlatBuffers.Protocol.Show.Model(Sequence.Value, Name, Position.FlatBuffer, Moving, (int)Direction);
 
         public virtual string Name { get; set; }
         public Point Position { get; set; } = new Point();

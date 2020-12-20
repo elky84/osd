@@ -47,7 +47,7 @@ public partial class GameController : MonoBehaviour
         };
     }
 
-    private void CreateCharacter(string name, int sequence, ObjectType objectType, FlatBuffers.Protocol.Position position)
+    private Character CreateCharacter(string name, int sequence, ObjectType objectType, FlatBuffers.Protocol.Position position)
     {
         var gameObj = Instantiate(Resources.Load("Prefabs/Character") as GameObject, position.ToVector3(), Quaternion.identity, CharactersTransform);
         var character = gameObj.GetComponent<Character>();
@@ -61,6 +61,7 @@ public partial class GameController : MonoBehaviour
         character.Type = objectType;
 
         Characters.Add(sequence, character);
+        return character;
     }
 
     private void RemoveCharacter(int sequence)

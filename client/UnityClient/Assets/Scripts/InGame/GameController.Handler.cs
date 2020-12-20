@@ -22,26 +22,6 @@ public partial class GameController : MonoBehaviour
         return true;
     }
 
-
-    [FlatBufferEvent]
-    public bool OnMoveStatus(MoveStatus x)
-    {
-        Debug.Log($"OnMoveStatus() {x.Sequence} {(Direction)x.Direction} {x.Position.Value.X} {x.Position.Value.Y}");
-        var character = GetCharacter(x.Sequence);
-        if (character != null)
-        {
-            if (x.Moving)
-            {
-                character.MoveDirection((Direction)x.Direction, false);
-            }
-            else
-            {
-                character.StopMove(false);
-            }
-        }
-        return true;
-    }
-
     [FlatBufferEvent]
     public bool OnDialog(ShowDialog response)
     {
@@ -95,8 +75,19 @@ public partial class GameController : MonoBehaviour
     [FlatBufferEvent]
     public bool OnShow(Show response)
     {
-        Debug.Log($"{response.Name}({response.Sequence}) is entered in current map.");
-        CreateCharacter(response.Name, response.Sequence, ObjectType.Character, response.Position.Value);
+        var character = GetCharacter(response.Sequence);
+        if (character == null)
+        {
+            Debug.Log($"{response.Name}({response.Sequence}) is entered in current map.");
+            character = CreateCharacter(response.Name, response.Sequence, ObjectType.Character, response.Position.Value);
+        }
+
+
+        if (response.Moving)
+            character.MoveDirection((Direction)response.Direction, false);
+        else
+            character.StopMove(false);
+
         return true;
     }
 
@@ -104,8 +95,19 @@ public partial class GameController : MonoBehaviour
     [FlatBufferEvent]
     public bool OnShowCharacter(ShowCharacter response)
     {
-        Debug.Log($"{response.Name}({response.Sequence}) is entered in current map.");
-        CreateCharacter(response.Name, response.Sequence, ObjectType.Character, response.Position.Value);
+        var character = GetCharacter(response.Sequence);
+        if (character == null)
+        {
+            Debug.Log($"{response.Name}({response.Sequence}) is entered in current map.");
+            character = CreateCharacter(response.Name, response.Sequence, ObjectType.Character, response.Position.Value);
+        }
+
+        
+        if (response.Moving)
+            character.MoveDirection((Direction)response.Direction, false);
+        else
+            character.StopMove(false);
+
         return true;
     }
 

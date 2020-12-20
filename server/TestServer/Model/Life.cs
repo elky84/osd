@@ -7,12 +7,23 @@ namespace TestServer.Model
 {
     public abstract class Life : Object
     {
+        // listener
         public new interface IListener : Object.IListener
         {
             public void OnDie(Life life);
         }
         public new IListener Listener { get; private set; }
 
+
+        // properties
+        public DateTime? MoveTime { get; set; }
+        public uint Speed { get; set; } = 10;
+        public bool IsAlive { get; set; }
+        public DateTime? DeadTime { get; private set; }
+        public void Kill() => Hp = 0;
+
+
+        // virtual
         private int _hp = 50;
         public virtual int Hp
         {
@@ -33,16 +44,14 @@ namespace TestServer.Model
                 }
             }
         }
-        public Direction Direction { get; set; }
-        public DateTime? Time { get; set; }
-        public uint Speed { get; set; } = 10;
-        public bool IsAlive { get; set; }
-        public DateTime? DeadTime { get; private set; }
 
+
+        // override 
         public override bool IsActive => IsAlive;
+        public override bool Moving => MoveTime.HasValue;
 
-        public void Kill() => Hp = 0;
 
+        // build-in functions
         public static int BuiltinHP(IntPtr luaState)
         {
             var lua = Lua.FromIntPtr(luaState);
@@ -52,12 +61,14 @@ namespace TestServer.Model
             return 1;
         }
 
+
+        // methods
         public Point Synchronize(DateTime time)
         {
-            if (Time == null)
+            if (MoveTime == null)
                 return Position;
 
-            var diff = time - Time.Value;
+            var diff = time - MoveTime.Value;
             var moved = diff.TotalMilliseconds * (Speed / 1000.0);
 
             switch (Direction)
@@ -86,7 +97,7 @@ namespace TestServer.Model
             return Position;
         }
 
-        public  void BindEvent(IListener listener)
+        public void BindEvent(IListener listener)
         {
             base.BindEvent(listener);
             Listener = listener;

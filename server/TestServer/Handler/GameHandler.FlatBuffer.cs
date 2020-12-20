@@ -28,11 +28,11 @@ namespace TestServer.Handler
                 if (character.Position.Delta(request.Position.Value) > 1)
                     throw new Exception("position is not matched.");
 
-                character.Time = new DateTime(request.Now);
+                character.MoveTime = new DateTime(request.Now);
                 character.Direction = (Direction)request.Direction;
                 Console.WriteLine($"Client is moving now. ({request.Position?.X}, {request.Position?.Y})");
 
-                _ = Broadcast(character, MoveStatus.Bytes(character.Sequence.Value, character.Position.FlatBuffer, true, (int)character.Direction));
+                _ = Broadcast(character, ShowCharacter.Bytes(character.ShowCharacterFlatBuffer));
                 return true;
             }
             catch (Exception e)
@@ -53,14 +53,14 @@ namespace TestServer.Handler
                     throw new Exception("...");
 
                 character.Synchronize(new DateTime(request.Now));
-                character.Time = null;
+                character.MoveTime = null;
                 Console.WriteLine($"Stop position : {character.Position}");
 
                 if (character.Position.Delta(request.Position.Value) > 1)
                     throw new Exception("invalid");
 
                 Console.WriteLine("valid");
-                _ = Broadcast(character, MoveStatus.Bytes(character.Sequence.Value, character.Position.FlatBuffer, false, (int)character.Direction));
+                _ = Broadcast(character, ShowCharacter.Bytes(character.ShowCharacterFlatBuffer));
                 return true;
             }
             catch (Exception e)
