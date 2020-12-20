@@ -1,10 +1,6 @@
 ﻿using FlatBuffers.Protocol;
 using NetworkShared;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 public partial class GameController : MonoBehaviour
 {
@@ -19,6 +15,25 @@ public partial class GameController : MonoBehaviour
     public bool OnStop(Stop x)
     {
         Debug.Log($"OnStop() {x.Position.Value.X} {x.Position.Value.Y} {x.Now}");
+        return true;
+    }
+
+    [FlatBufferEvent]
+    public bool OnMoveStatus(MoveStatus x)
+    {
+        Debug.Log($"OnMoveStatus() {x.Sequence} {(Direction)x.Direction} {x.Position.Value.X} {x.Position.Value.Y}");
+        var character = GetCharacter(x.Sequence);
+        if (character != null)
+        {
+            if (x.Moving)
+            {
+                character.MoveDirection((Direction)x.Direction, false);
+            }
+            else
+            {
+                character.StopMove(false);
+            }
+        }
         return true;
     }
 
@@ -82,7 +97,6 @@ public partial class GameController : MonoBehaviour
             character = CreateCharacter(response.Name, response.Sequence, ObjectType.Character, response.Position.Value);
         }
 
-
         if (response.Moving)
             character.MoveDirection((Direction)response.Direction, false);
         else
@@ -101,7 +115,6 @@ public partial class GameController : MonoBehaviour
             Debug.Log($"{response.Name}({response.Sequence}) is entered in current map.");
             character = CreateCharacter(response.Name, response.Sequence, ObjectType.Character, response.Position.Value);
         }
-
         
         if (response.Moving)
             character.MoveDirection((Direction)response.Direction, false);
