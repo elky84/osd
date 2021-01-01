@@ -5,3 +5,6 @@
 ~$*.xlsx
 __pycache__
 .ropeproject
+
+*.tiled-project
+*.tiled-session
