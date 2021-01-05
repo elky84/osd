@@ -95,10 +95,10 @@ namespace TestServer.Model
             var contents = File.ReadAllText(master.Data);
             var format = JsonConvert.DeserializeObject<MapData>(contents);
 
-            Name = format.StageFileName;
+            Name = master.Id;
             if (string.IsNullOrEmpty(Name))
                 throw new Exception("map name cannot be null or empty.");
-            Size = new Size { Width = format.MapTileSize.x, Height = format.MapTileSize.y };
+            Size = new Size { Width = format.Width, Height = format.Height };
             if (Size.IsEmpty)
                 throw new Exception($"map size cannot be empty : {Name}.");
 

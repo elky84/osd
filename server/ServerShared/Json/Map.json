@@ -1,22 +1,6 @@
 [
   {
     "Id": "Dungeon",
-    "Data": "Resources/Map/Dungeon.json"
-  },
-  {
-    "Id": "Field",
-    "Data": "Resources/Map/Field.json"
-  },
-  {
-    "Id": "test",
     "Data": "Resources/Map/test.json"
-  },
-  {
-    "Id": "test2",
-    "Data": "Resources/Map/test2.json"
-  },
-  {
-    "Id": "Town",
-    "Data": "Resources/Map/Town.json"
   }
 ]

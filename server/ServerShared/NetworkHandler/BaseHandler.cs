@@ -5,9 +5,11 @@ using Serilog;
 using ServerShared.Model;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ServerShared.NetworkHandler
@@ -16,6 +18,13 @@ namespace ServerShared.NetworkHandler
     public class FlatBufferEventAttribute : Attribute
     { }
 
+    public class Timer
+    { 
+        public long Interval { get; set; }
+        public Action<long> Callback { get; set; }
+        public long LastEventTick { get; set; }
+    }
+
     public abstract class BaseHandler<DataType> : ChannelHandlerAdapter, IEnumerable<Session<DataType>>
         where DataType : class, new()
     {
@@ -23,8 +32,13 @@ namespace ServerShared.NetworkHandler
         private Dictionary<string, Type> _flatBufferDict = new Dictionary<string, Type>();
         private Dictionary<Type, Func<Session<DataType>, IFlatbufferObject, bool>> _bindedEventDict = new Dictionary<Type, Func<Session<DataType>, IFlatbufferObject, bool>>();
         private Dictionary<IChannelHandlerContext, Session<DataType>> _sessionDict = new Dictionary<IChannelHandlerContext, Session<DataType>>();
+        private Thread _schedulerThread;
+        private Mutex _mutex = new Mutex();
+        private List<Timer> _timers = new List<Timer>();
 
         public override bool IsSharable => true;
+
+        public bool Running { get; private set; } = true;
 
         public List<Session<DataType>> Sessions => _sessionDict.Values.ToList();
 
@@ -32,6 +46,65 @@ namespace ServerShared.NetworkHandler
         {
             BindFlatBufferAllocator("NetworkShared");
             BindEventHandler();
+
+            _schedulerThread = new Thread(new ParameterizedThreadStart(SchedulerHandler));
+
+            _schedulerThread.Start();
+        }
+
+        private void SchedulerHandler(object param)
+        {
+            var stopWatch = new Stopwatch();
+            stopWatch.Start();
+            while (Running)
+            {
+                try
+                {
+                    stopWatch.Stop();
+                    _mutex.WaitOne();
+                    OnFrameMove(stopWatch.ElapsedMilliseconds);
+
+                    foreach (var timer in _timers)
+                    {
+                        var now = DateTime.Now.Ticks;
+                        var elapsedTime = new TimeSpan(now - timer.LastEventTick);
+                        if (elapsedTime.TotalMilliseconds < timer.Interval)
+                            continue;
+
+                        timer.LastEventTick = now;
+                        timer.Callback((long)elapsedTime.TotalMilliseconds);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Log.Logger.Error(e.Message);
+                }
+                finally
+                {
+                    _mutex.ReleaseMutex();
+                    stopWatch.Reset();
+                    stopWatch.Start();
+                }
+            }
+        }
+
+        public void SetTimer(long interval, Action<long> callback)
+        {
+            _timers.Add(new Timer
+            { 
+                Interval = interval,
+                Callback = callback,
+                LastEventTick = DateTime.Now.Ticks
+            });
+        }
+
+        public virtual void OnFrameMove(long ms)
+        { }
+
+        public void Release()
+        {
+            Running = false;
+            _schedulerThread.Join();
         }
 
         private void BindFlatBufferAllocator(string assemblyName)
@@ -108,26 +181,49 @@ namespace ServerShared.NetworkHandler
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e.Message);
+                    Log.Logger.Error(e.Message);
                 }
             }
         }
 
         public override void ChannelActive(IChannelHandlerContext context)
         {
-            base.ChannelActive(context);
-            _sessionDict.Add(context, new Session<DataType>(context));
-
-            OnConnected(_sessionDict[context]);
+            try
+            {
+                _mutex.WaitOne();
+                base.ChannelActive(context);
+                _sessionDict.Add(context, new Session<DataType>(context));
+                OnConnected(_sessionDict[context]);
+            }
+            catch (Exception e)
+            {
+                Log.Logger.Error(e.Message);
+            }
+            finally
+            {
+                _mutex.ReleaseMutex();
+            }
         }
 
         public override void ChannelInactive(IChannelHandlerContext context)
         {
-            base.ChannelInactive(context);
-            if (_sessionDict.ContainsKey(context))
+            try
             {
-                OnDisconnected(_sessionDict[context]);
-                _sessionDict.Remove(context);
+                _mutex.WaitOne();
+                base.ChannelInactive(context);
+                if (_sessionDict.ContainsKey(context))
+                {
+                    OnDisconnected(_sessionDict[context]);
+                    _sessionDict.Remove(context);
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Logger.Error(e.Message);
+            }
+            finally
+            {
+                _mutex.ReleaseMutex();
             }
         }
 
@@ -193,6 +289,7 @@ namespace ServerShared.NetworkHandler
         {
             try
             {
+                _mutex.WaitOne();
                 if (_bindedEventDict.TryGetValue(type, out var bindedEvent) == false)
                     return false;
 
@@ -204,6 +301,10 @@ namespace ServerShared.NetworkHandler
             catch (Exception)
             {
                 return false;
+            }
+            finally
+            {
+                _mutex.ReleaseMutex();
             }
         }
 
