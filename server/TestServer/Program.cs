@@ -1,7 +1,6 @@
 ﻿using MasterData;
 using Serilog;
 using ServerShared.DotNetty;
-using ServerShared.Util;
 using System;
 using System.Threading.Tasks;
 using TestServer.Handler;
@@ -26,6 +25,8 @@ namespace TestServer
                 var channel = await bootstrap.BindAsync(ServerShared.Config.ServerSettings.Port);
                 Log.Logger.Information("Server Started");
                 Console.ReadLine();
+
+                GameHandler.Instance.Release();
                 await channel.CloseAsync();
             }
             catch (Exception ex)

@@ -2,7 +2,6 @@
 using KeraLua;
 using MasterData;
 using MasterData.Table;
-using Serilog;
 using ServerShared.Model;
 using ServerShared.NetworkHandler;
 using System;
@@ -20,7 +19,6 @@ namespace TestServer.Handler
         private static readonly Lazy<GameHandler> _instance = new Lazy<GameHandler>(() => new GameHandler());
         public static GameHandler Instance => _instance.Value;
 
-        private Timer _rezenTimer = new Timer(1000);
         private Dictionary<string, Model.Map> _maps;
         private Dictionary<string, Model.NPC> _npcs = new Dictionary<string, NPC>();
         private Dictionary<string, Model.Mob> _mobs;
@@ -61,16 +59,12 @@ namespace TestServer.Handler
                 createdNPC.Map = map;
             }
 
-            _rezenTimer = new Timer(1000)
-            {
-                AutoReset = true,
-                Enabled = true
-            };
-            _rezenTimer.Elapsed += this._rezenTimer_Elapsed;
+            SetTimer(1000, OnRezen);
         }
 
-        private void _rezenTimer_Elapsed(object sender, ElapsedEventArgs e)
+        private void OnRezen(long ms)
         {
+            Console.WriteLine($"ms : {ms}");
             foreach (var map in _maps.Values.Where(x => x.IsActivated))
                 map.Zen();
         }
@@ -142,6 +136,11 @@ namespace TestServer.Handler
                 lua.PushLuable(item, item.GetType());
 
             return 1;
+        }
+
+        public override void OnFrameMove(long ms)
+        {
+            //Console.WriteLine($"milliseconds : {ms}");
         }
     }
 }
