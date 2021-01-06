@@ -1,7 +1,7 @@
 ﻿using KeraLua;
-using NetworkShared;
 using NetworkShared.Types;
 using System;
+using System.Numerics;
 
 namespace TestServer.Model
 {
@@ -17,7 +17,8 @@ namespace TestServer.Model
 
         // properties
         public DateTime? MoveTime { get; set; }
-        public uint Speed { get; set; } = 10;
+
+        public Vector2 Velocity { get; set; } = new Vector2();
         public bool IsAlive { get; set; }
         public DateTime? DeadTime { get; private set; }
         public void Kill() => Hp = 0;
@@ -61,6 +62,16 @@ namespace TestServer.Model
             return 1;
         }
 
+        public Point Synchronize(float elapsedMilliseconds)
+        {
+            var before = new Vector2((float)Position.X, (float)Position.Y);
+            var moved = Vector2.Multiply(Velocity, elapsedMilliseconds / 1000.0f);
+            var after = Vector2.Add(before, moved);
+
+            Position = new Point(after.X, after.Y);
+            return Position;
+        }
+
 
         // methods
         public Point Synchronize(DateTime time)
@@ -68,30 +79,7 @@ namespace TestServer.Model
             if (MoveTime == null)
                 return Position;
 
-            var diff = time - MoveTime.Value;
-            var moved = diff.TotalMilliseconds * (Speed / 1000.0);
-
-            switch (Direction)
-            {
-                case Direction.Left:
-                    Position.X -= moved;
-                    break;
-
-                case Direction.Top:
-                    Position.Y += moved;
-                    break;
-
-                case Direction.Right:
-                    Position.X += moved;
-                    break;
-
-                case Direction.Bottom:
-                    Position.Y -= moved;
-                    break;
-
-                default:
-                    throw new Exception("Invalid direction value");
-            }
+            Synchronize((float)(time - MoveTime.Value).TotalMilliseconds);
 
             Map.Update(this);
             return Position;

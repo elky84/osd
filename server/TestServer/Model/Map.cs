@@ -47,7 +47,7 @@ namespace TestServer.Model
 
         public FlatBuffers.Protocol.Map.Model FlatBuffer => new FlatBuffers.Protocol.Map.Model(Name);
 
-        public bool IsActivated => Objects.Values.FirstOrDefault(x => x.Type == NetworkShared.ObjectType.Character) != null;
+        public bool IsActivated { get; private set; }
 
         public List<Portal> Portals => MasterTable.From<TablePortal>().Nears(Name);
 
@@ -121,6 +121,12 @@ namespace TestServer.Model
             });
         }
 
+        private bool UpdateState()
+        {
+            IsActivated = Objects.Values.FirstOrDefault(x => x.Type == NetworkShared.ObjectType.Character) != null;
+            return IsActivated;
+        }
+
         public Sector Add(Object obj)
         {
             var sequence = NextSequence ??
@@ -129,6 +135,10 @@ namespace TestServer.Model
             Objects.Add(sequence, obj);
             obj.Sequence = sequence;
             obj.Sector = Sectors.Add(obj);
+
+            if (IsActivated == false && obj.Type == NetworkShared.ObjectType.Character)
+                IsActivated = true;
+
             return obj.Sector;
         }
 
@@ -138,6 +148,7 @@ namespace TestServer.Model
                 return null;
 
             Objects.Remove(obj.Sequence.Value);
+            UpdateState();
             return Sectors.Remove(obj);
         }
 

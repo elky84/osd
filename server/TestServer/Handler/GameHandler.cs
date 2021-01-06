@@ -7,8 +7,8 @@ using ServerShared.NetworkHandler;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Threading.Tasks;
-using System.Timers;
 using TestServer.Factory;
 using TestServer.Model;
 
@@ -16,6 +16,11 @@ namespace TestServer.Handler
 {
     public partial class GameHandler : BaseHandler<Character>
     {
+        // TODO: 다른곳으로 빼야함
+        public static readonly double GRAVITY = 5.0;
+        public static readonly double LIMIT_VELOCITY_Y = 10.0;
+
+
         private static readonly Lazy<GameHandler> _instance = new Lazy<GameHandler>(() => new GameHandler());
         public static GameHandler Instance => _instance.Value;
 
@@ -60,6 +65,7 @@ namespace TestServer.Handler
             }
 
             SetTimer(1000, OnRezen);
+            ExecuteScheduler();
         }
 
         private void OnRezen(long ms)
@@ -67,11 +73,6 @@ namespace TestServer.Handler
             Console.WriteLine($"ms : {ms}");
             foreach (var map in _maps.Values.Where(x => x.IsActivated))
                 map.Zen();
-        }
-
-        private void Synchronize(DateTime now)
-        {
-            //_movingSessions.ForEach(x => x.Data?.Synchronize(now));
         }
 
         public async Task Broadcast(Model.Object pivot, byte[] bytes, bool exceptSelf = true, bool inSector = false)
@@ -138,9 +139,20 @@ namespace TestServer.Handler
             return 1;
         }
 
-        public override void OnFrameMove(long ms)
+        public override void OnFrameMove(float ms)
         {
-            //Console.WriteLine($"milliseconds : {ms}");
+            var lives = _maps.Values.Where(x => x.IsActivated)
+                                    .SelectMany(x => x.Objects.Values.Select(x => x as Life).Where(x => x != null));
+
+            foreach (var life in lives)
+            {
+                life.Velocity = new Vector2
+                {
+                    X = 0,
+                    Y = (float)Math.Min(LIMIT_VELOCITY_Y, life.Velocity.Y + GRAVITY * (ms / 1000.0))
+                };
+                life.Synchronize(ms);
+            }
         }
     }
 }

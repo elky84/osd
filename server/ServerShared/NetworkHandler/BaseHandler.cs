@@ -46,10 +46,16 @@ namespace ServerShared.NetworkHandler
         {
             BindFlatBufferAllocator("NetworkShared");
             BindEventHandler();
+        }
+
+        public bool ExecuteScheduler()
+        {
+            if (_schedulerThread != null)
+                return false;
 
             _schedulerThread = new Thread(new ParameterizedThreadStart(SchedulerHandler));
-
             _schedulerThread.Start();
+            return true;
         }
 
         private void SchedulerHandler(object param)
@@ -62,7 +68,7 @@ namespace ServerShared.NetworkHandler
                 {
                     stopWatch.Stop();
                     _mutex.WaitOne();
-                    OnFrameMove(stopWatch.ElapsedMilliseconds);
+                    OnFrameMove((float)stopWatch.Elapsed.TotalMilliseconds);
 
                     foreach (var timer in _timers)
                     {
@@ -98,13 +104,13 @@ namespace ServerShared.NetworkHandler
             });
         }
 
-        public virtual void OnFrameMove(long ms)
+        public virtual void OnFrameMove(float ms)
         { }
 
         public void Release()
         {
             Running = false;
-            _schedulerThread.Join();
+            _schedulerThread?.Join();
         }
 
         private void BindFlatBufferAllocator(string assemblyName)
