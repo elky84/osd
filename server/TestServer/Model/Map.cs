@@ -14,8 +14,11 @@ namespace TestServer.Model
     public partial class Map : ILuable
     {
         private int _currentSequence = 0;
+        private MapData _format;
 
         public string Name { get; private set; }
+        public Size BlockSize { get; private set; }
+        public Size TileSize { get; private set; }
         public Size Size { get; private set; }
         public SectorContainer Sectors { get; private set; }
         public Dictionary<int, Object> Objects { get; private set; } = new Dictionary<int, Object>();
@@ -67,8 +70,8 @@ namespace TestServer.Model
             var lua = Lua.FromIntPtr(luaState);
             var map = lua.ToLuable<Map>(1);
 
-            lua.PushInteger(map.Size.Width);
-            lua.PushInteger(map.Size.Height);
+            lua.PushInteger(map.BlockSize.Width);
+            lua.PushInteger(map.BlockSize.Height);
             return 2;
         }
 
@@ -93,14 +96,21 @@ namespace TestServer.Model
                 throw new Exception($"cannot find map file : {master.Data}");
 
             var contents = File.ReadAllText(master.Data);
-            var format = JsonConvert.DeserializeObject<MapData>(contents);
+            _format = JsonConvert.DeserializeObject<MapData>(contents);
 
             Name = master.Id;
             if (string.IsNullOrEmpty(Name))
                 throw new Exception("map name cannot be null or empty.");
-            Size = new Size { Width = format.Width, Height = format.Height };
-            if (Size.IsEmpty)
+
+            BlockSize = new Size { Width = _format.Width, Height = _format.Height };
+            if (BlockSize.IsEmpty)
                 throw new Exception($"map size cannot be empty : {Name}.");
+
+            TileSize = new Size { Width = _format.TileWidth, Height = _format.TileHeight };
+            if (TileSize.IsEmpty)
+                throw new Exception($"map tile size cannot be empty : {Name}.");
+
+            Size = new Size { Width = BlockSize.Width * TileSize.Width, Height = BlockSize.Height * TileSize.Height };
 
 #if DEBUG
             Sectors = new SectorContainer(this, new Size { Width = 8, Height = 8 });
@@ -181,12 +191,29 @@ namespace TestServer.Model
 
                     var endPoint = spawnCase.End;
                     if (endPoint == null)
-                        endPoint = new Point { X = Size.Width, Y = Size.Height };
+                        endPoint = new Point { X = BlockSize.Width, Y = BlockSize.Height };
 
                     var randomPoint = new Point { X = random.Next((int)beginPoint.X, (int)endPoint.X), Y = random.Next((int)beginPoint.Y, (int)endPoint.Y) };
                     unspawned.Spawn(this, randomPoint);
                 }
             }
+        }
+
+        public byte Block(Point position, uint layer = 0)
+        {
+            var offsetX = Math.Clamp((int)(position.X / TileSize.Width), 0, BlockSize.Width);
+            var offsetY = Math.Clamp((int)(position.Y / TileSize.Height), 0, BlockSize.Height);
+
+            layer = Math.Max(0, layer);
+            if (layer > _format.Layers.Count)
+                throw new Exception($"Layer cannot be {layer}. (only available between 0 and {_format.Layers.Count})");
+
+            var selectedLayer = _format.Layers[(int)layer];
+            var offsetBlock = offsetY * BlockSize.Width + offsetX;
+            if (offsetBlock > selectedLayer.Data.Count)
+                throw new Exception($"block offset cannot be {offsetBlock}. (only available bettwen 0 and {selectedLayer.Data.Count})");
+
+            return selectedLayer.Data[offsetBlock];
         }
     }
 }

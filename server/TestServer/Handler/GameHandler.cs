@@ -30,7 +30,7 @@ namespace TestServer.Handler
 
         private GameHandler()
         {
-            foreach (var (name, func) in typeof(GameHandler).BindGlobalBuiltinFunctions())
+            foreach (var (name, func) in Static.BindGlobalBuiltinFunctions<GameHandler>())
                 Console.WriteLine($"{name} 함수가 전역으로 등록되었습니다.");
 
             _mobs = MasterTable.From<TableMob>().Select(x => new Model.Mob(x.Value)).ToDictionary(x => x.Master.Id, x => x);

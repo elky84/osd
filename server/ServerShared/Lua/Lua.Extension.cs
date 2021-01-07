@@ -164,8 +164,9 @@ namespace KeraLua
                               x => x.CreateDelegate(typeof(LuaFunction)) as LuaFunction);
         }
 
-        public static Dictionary<string, LuaFunction> BindGlobalBuiltinFunctions(this Type type)
+        public static Dictionary<string, LuaFunction> BindGlobalBuiltinFunctions<T>()
         {
+            var type = typeof(T);
             var builtinFunctions = type.BuiltinFunctions();
             foreach (var (name, func) in builtinFunctions)
                 Main.Register(name, func);

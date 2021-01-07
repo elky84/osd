@@ -25,12 +25,12 @@ namespace TestServer.Model
                 _owner = owner;
                 _sectorSize = sectorSize;
 
-                Rows = (uint)(_owner.Size.Height / sectorSize.Height);
-                if (_owner.Size.Height % sectorSize.Height > 0)
+                Rows = (uint)(_owner.BlockSize.Height / sectorSize.Height);
+                if (_owner.BlockSize.Height % sectorSize.Height > 0)
                     Rows++;
 
-                Columns = (uint)(_owner.Size.Width / sectorSize.Width);
-                if (_owner.Size.Width % sectorSize.Width > 0)
+                Columns = (uint)(_owner.BlockSize.Width / sectorSize.Width);
+                if (_owner.BlockSize.Width % sectorSize.Width > 0)
                     Columns++;
 
                 Count = Rows * Columns;
