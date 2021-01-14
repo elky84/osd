@@ -42,7 +42,7 @@ public class Character : SpriteObject
 {
     public Text NickName;
 
-    public float Speed => 10;
+    public float Speed => 1;
 
     private IEnumerator MoveCoroutine { get; set; }
 
@@ -139,10 +139,16 @@ public class Character : SpriteObject
 
         if (packetSend)
         {
-            NettyClient.Instance.Send(Move.Bytes(new FlatBuffers.Protocol.Position.Model(CurrentPosition.X, CurrentPosition.Y), MoveDt.Ticks, (int)direction));
+            //NettyClient.Instance.Send(Move.Bytes(new FlatBuffers.Protocol.Position.Model(CurrentPosition.X, CurrentPosition.Y), MoveDt.Ticks, (int)direction));
         }
 
         MoveStart();
+    }
+
+    public void Jump()
+    {
+        var rigidBody2D = this.gameObject.GetComponent<Rigidbody2D>();
+        rigidBody2D.AddForce(Vector3.up * 10);
     }
 
     public void StopMove(bool packetSend)

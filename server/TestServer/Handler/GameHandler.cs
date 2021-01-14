@@ -70,7 +70,7 @@ namespace TestServer.Handler
 
         private void OnRezen(long ms)
         {
-            Console.WriteLine($"ms : {ms}");
+            //Console.WriteLine($"ms : {ms}");
             foreach (var map in _maps.Values.Where(x => x.IsActivated))
                 map.Zen();
         }

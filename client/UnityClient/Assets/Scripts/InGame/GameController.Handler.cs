@@ -82,8 +82,6 @@ public partial class GameController : MonoBehaviour
         Debug.Log($"After position : {response.Position.Value.X}, {response.Position.Value.Y}");
         Debug.Log($"After map name : {response.Map?.Name}");
 
-        LoadMap(response.Map.Value.Name);
-
         return true;
     }
 
@@ -115,7 +113,7 @@ public partial class GameController : MonoBehaviour
             Debug.Log($"{response.Name}({response.Sequence}) is entered in current map.");
             character = CreateCharacter(response.Name, response.Sequence, ObjectType.Character, response.Position.Value);
         }
-        
+
         if (response.Moving)
             character.MoveDirection((Direction)response.Direction, false);
         else

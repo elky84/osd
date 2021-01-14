@@ -10,8 +10,6 @@ public partial class GameController : MonoBehaviour
 {
     private Transform CharactersTransform { get; set; }
 
-    private TileMap TileMap { get; set; }
-
     private Character MyCharacter { get; set; }
 
     private Dictionary<int, Character> Characters { get; set; } = new Dictionary<int, Character>();
@@ -25,7 +23,6 @@ public partial class GameController : MonoBehaviour
     {
         CharactersTransform = transform.Find("Characters");
         Camera = GameObject.Find("Main Camera").GetComponent<Camera>();
-        TileMap = GameObject.Find("TileMap").GetComponent<TileMap>();
     }
 
     public void Start()
@@ -88,20 +85,12 @@ public partial class GameController : MonoBehaviour
         }
     }
 
-    private void LoadMap(string name)
-    {
-        var textAsset = Resources.Load($"MapFile/{name}") as TextAsset;
-        TileMap.GenerateMap(textAsset.text);
-    }
-
     public void Clear()
     {
         foreach (Transform child in CharactersTransform)
         {
             GameObject.Destroy(child.gameObject);
         }
-
-        TileMap.Clear();
 
         Characters.Clear();
     }
@@ -150,6 +139,10 @@ public partial class GameController : MonoBehaviour
             else if (Input.GetKeyUp(KeyCode.D) || Input.GetKeyUp(KeyCode.RightArrow))
             {
                 MyCharacter.KeyUp(Direction.Right);
+            }
+            else if (Input.GetKey(KeyCode.Space))
+            {
+                MyCharacter.Jump();
             }
         }
     }

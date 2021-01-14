@@ -149,7 +149,7 @@ namespace TestServer.Model
 
         public override ObjectType Type => ObjectType.Character;
 
-        public FlatBuffers.Protocol.ShowCharacter.Model ShowCharacterFlatBuffer => new ShowCharacter.Model(Sequence.Value, Name, Position.FlatBuffer, Moving, (int)Direction, Items.Equipments.Values.Select(x => x.EquipmentFlatBuffer).ToList());
+        public FlatBuffers.Protocol.ShowCharacter.Model ShowCharacterFlatBuffer => new ShowCharacter.Model(Sequence.Value, Name, Position.FlatBuffer, Moving, (int)Direction, Items.Equipments.Values.Where(x => x != null).Select(x => x.EquipmentFlatBuffer).ToList());
 
         public Character()
         {
