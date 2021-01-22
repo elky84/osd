@@ -60,7 +60,7 @@ namespace NetworkShared.NetworkHandler
 
                 var method = allocator.CreateDelegate(typeof(Func<,>).MakeGenericType(typeof(ByteBuffer), flatbType));
                 _allocatorDict.Add(flatbType, method);
-                _flatBufferDict.Add(flatbType.Name, flatbType);
+                _flatBufferDict.Add(flatbType.FullName, flatbType);
             }
         }
 

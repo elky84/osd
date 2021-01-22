@@ -1,4 +1,0 @@
-table Position {
-	x: double;
-	y: double;
-}

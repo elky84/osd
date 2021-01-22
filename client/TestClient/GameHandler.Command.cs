@@ -1,4 +1,5 @@
 ﻿using FlatBuffers.Protocol;
+using FlatBuffers.Protocol.Request;
 using NetworkShared;
 using System;
 using System.Collections.Generic;
@@ -89,13 +90,13 @@ namespace TestClient
         [CommandEvent("dialog/next")]
         public void OnDialogNext()
         {
-            Send(ResponseDialog.Bytes(true));
+            Send(DialogResult.Bytes(true));
         }
 
         [CommandEvent("dialog/quit")]
         public void OnDialogQuit()
         {
-            Send(ResponseDialog.Bytes(false));
+            Send(DialogResult.Bytes(false));
         }
 
         /// <summary>
@@ -105,7 +106,7 @@ namespace TestClient
         [CommandEvent("dialog/select")]
         public void OnDialogSelect(int index)
         {
-            Send(SelectListDialog.Bytes(index));
+            Send(DialogIndexResult.Bytes(index));
         }
 
         [CommandEvent("kill")]

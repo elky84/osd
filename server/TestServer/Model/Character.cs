@@ -155,7 +155,7 @@ namespace TestServer.Model
                 obj.Position,
                 obj.Moving,
                 (int)obj.Direction,
-                obj.Items.Equipments.Values.Select(x => (FlatBuffers.Protocol.Response.Equipment.Model)x).ToList());
+                obj.Items.Equipments.Values.Where(x => x != null).Select(x => (FlatBuffers.Protocol.Response.Equipment.Model)x).ToList());
 
         public Character()
         {

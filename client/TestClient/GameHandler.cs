@@ -1,5 +1,5 @@
 ﻿using DotNetty.Transport.Channels;
-using FlatBuffers.Protocol;
+using FlatBuffers.Protocol.Response;
 using NetworkShared;
 using NetworkShared.NetworkHandler;
 using Serilog;
@@ -16,21 +16,6 @@ namespace TestClient
         {
             base.ChannelInactive(context);
         }
-
-        [FlatBufferEvent]
-        public bool OnMove(Move response)
-        {
-            Log.Logger.Information($"OnMove() {response.Position.Value.X} {response.Position.Value.Y} {response.Direction} {response.Now}");
-            return true;
-        }
-
-        [FlatBufferEvent]
-        public bool OnStop(Stop response)
-        {
-            Log.Logger.Information($"OnStop() {response.Position.Value.X} {response.Position.Value.Y} {response.Now}");
-            return true;
-        }
-
 
         [FlatBufferEvent]
         public bool OnMoveStatus(MoveStatus response)
