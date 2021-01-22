@@ -9,7 +9,7 @@ using global::System.Linq;
 using global::System.IO;
 using global::System.Text;
 
-namespace FlatBuffers.Protocol
+namespace {{ namespace }}
 {
 {{ code }}
 }

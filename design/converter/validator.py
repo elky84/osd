@@ -1,38 +1,61 @@
+#-*- encoding: utf-8 -*-
+
 import extractor
 import converter
-import re
+import logger
+import config
 
 def supportedType(type, schemaDict, enumDict):
-    PRIMITIVE_TYPES = ['int', 'double', 'float', 'string', 'bool', 'DateTime', 'TimeSpan']
-    CUSTOM_TYPES = ['Point']
-    
-    type = type.replace('*', '').replace('?', '')
+    groupType = extractor.groupType(type)
+    if groupType:
+        return supportedType(groupType, schemaDict, enumDict)
+
+    type = converter.remove(type, relation=False, percentage=False, unknown=False)
+    if isRelation(type):
+        type = extractor.relationshipType(type, schemaDict)
     type = converter.pureSchema(type, schemaDict)
 
-    for customKeyword in converter.CUSTOM_KEYWORDS:
-        if type.startswith(customKeyword):
-            return True
+    if any([type.startswith(x) for x in config.customs.values()]):
+        return True
 
     if type in enumDict:
         return True
 
-    if type in PRIMITIVE_TYPES or type in CUSTOM_TYPES:
+    if type in config.primitives:
         return True
 
-    match = re.match(r'^List<(?P<type>\w+)>$', type)
-    if match and supportedType(match.groupdict()['type'], schemaDict, enumDict):
-        return True
+    listType = extractor.listType(type)
+    if listType:
+        return supportedType(listType, schemaDict, enumDict)
 
     return False
 
+
 def supportedTypeDict(schemaDict, enumDict):
-    for name, schema in schemaDict.items():
-        for type in [x['type'] for x in schema]:
-            if not supportedType(type, schemaDict, enumDict):
-                raise f'{type} not supported. ({name})'
+    for name, schemaSet in schemaDict.items():
+        logger.currentTableName(name)
+
+        for x in schemaSet:
+            logger.currentColumnName(x['name'])
+
+            if not supportedType(x['type'], schemaDict, enumDict):
+                raise Exception(f"{x['type']}은 지원되지 않는 타입입니다.")
+
+def multipleDefinedIndex(schemaDict):
+    for name, schemaSet in schemaDict.items():
+        logger.currentTableName(name)
+        primaryKey = extractor.primaryKey(schemaSet)
+        indexKey = extractor.indexKey(schemaSet)
+
+        if primaryKey and indexKey:
+            stringify = ', '.join([x['name'] for x in (primaryKey, indexKey)])
+            raise Exception(f'기본키와 그룹키는 중복으로 사용할 수 없습니다. ({stringify})')
 
 def conflictIndex(schemaSet, dataSet):
-    id = extractor.primary(schemaSet)
+    if not schemaSet or not dataSet:
+        return True
+
+    id = extractor.primaryKey(schemaSet)
     if not id:
         return True
 
@@ -40,7 +63,7 @@ def conflictIndex(schemaSet, dataSet):
     dataBuffer = {}
     for data in dataSet:
         if data[id] in dataBuffer:
-            return 'asd'
+            raise Exception(f"키({id})의 값 {data[id]}가 중복됩니다.")
 
         dataBuffer[data[id]] = data
 
@@ -60,24 +83,38 @@ def relationship(schemaSetDict):
 
     return True
 
-def dataType(pureSchemaSet, dataSet, enumDict):
-    dataTypeSet = {x['name']: x['type'].replace('*', '') for x in pureSchemaSet}
+def dataType(pureSchemaSet, dataSet, schemaDict, enumDict):
+    dataTypeSet = {x['name']: converter.remove(x['type'], nullable=False, relation=False) for x in pureSchemaSet}
     for data in dataSet:
         for name, value in data.items():
-            try:
-                converter.cast(dataTypeSet[name], value, enumDict)
-            except Exception as e:
-                return str(e)
+            logger.currentColumnName(name)
+            converter.cast(dataTypeSet[name], value, schemaDict, enumDict)
     return True
 
 def dataTypeDict(pureSchemaDict, dataDict, enumDict, callback=None):
     progress = 0
     size = len(pureSchemaDict)
     for name, schemaSet in pureSchemaDict.items():
-        dataType(schemaSet, dataDict[name], enumDict)
+        logger.currentTableName(name)
+
+        dataType(schemaSet, dataDict[name], pureSchemaDict, enumDict)
 
         progress = progress + 1
         percentage = int((progress * 100) / size)
 
         if callback:
             callback(name, percentage)
+
+def isPrimaryKey(type):
+    return type.startswith(config.customs['key'])
+
+def isNullable(type):
+    return type.endswith(config.customs['nullable'])
+
+def isRelation(type):
+    type = converter.remove(type, relation=False)
+    return type.startswith(config.customs['relation'])
+
+def isInteger(type):
+    type = converter.remove(type, percentage=False, unknown=False)
+    return type.startswith(config.customs['unknown']) or type.startswith(config.customs['percentage'])

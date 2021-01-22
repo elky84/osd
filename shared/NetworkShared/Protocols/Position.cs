@@ -65,8 +65,8 @@ namespace FlatBuffers.Protocol
         using (var writer = new BinaryWriter(mstream))
         {
           writer.Write(BitConverter.ToInt32(BitConverter.GetBytes(bytes.Length).Reverse().ToArray(), 0));
-          writer.Write((byte)(nameof(Position).Length));
-          writer.Write(Encoding.Default.GetBytes(nameof(Position)));
+          writer.Write((byte)(typeof(Position).FullName.Length));
+          writer.Write(Encoding.Default.GetBytes(typeof(Position).FullName));
           writer.Write(bytes);
           writer.Flush();
           return mstream.ToArray();

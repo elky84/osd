@@ -11,10 +11,15 @@ namespace MasterData.Table
     {
         [Key]
         public string Id { get; set; }
+
         [JsonConverter(typeof(JsonEnumConverter<EquipmentType>))]
         public EquipmentType Type { get; set; }
+
         public int HP { get; set; }
+
         public int MP { get; set; }
+
         public int Defence { get; set; }
+
     }
 }

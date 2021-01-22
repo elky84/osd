@@ -1,5 +1,5 @@
-[
-  {
+{
+  "포탈1": {
     "Id": "포탈1",
     "BeforeMap": "Dungeon",
     "BeforePosition": {
@@ -12,7 +12,7 @@
       "y": 2
     }
   },
-  {
+  "포탈2": {
     "Id": "포탈2",
     "BeforeMap": "Field",
     "BeforePosition": {
@@ -25,4 +25,4 @@
       "y": 1
     }
   }
-]
+}

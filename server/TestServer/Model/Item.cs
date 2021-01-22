@@ -13,7 +13,7 @@ namespace TestServer.Model
 
         public override ObjectType Type => ObjectType.Item;
 
-        public FlatBuffers.Protocol.Item.Model ItemFlatBuffer => new FlatBuffers.Protocol.Item.Model(Id, Name);
+        public static implicit operator FlatBuffers.Protocol.Response.Item.Model(Item item) => new FlatBuffers.Protocol.Response.Item.Model(item.Id, item.Name);
 
         public override string Name => Master.Id;
 
@@ -35,7 +35,7 @@ namespace TestServer.Model
 
     public class Equipment : Item
     {
-        public FlatBuffers.Protocol.Equipment.Model EquipmentFlatBuffer => new FlatBuffers.Protocol.Equipment.Model(Id, Name, (int)EquipmentOption.Type);
+        public static implicit operator FlatBuffers.Protocol.Response.Equipment.Model(Equipment e) => new FlatBuffers.Protocol.Response.Equipment.Model(e.Id, e.Name, (int)e.EquipmentOption.Type);
         public MasterData.Table.EquipmentOption EquipmentOption { get; private set; }
 
         public Equipment(ulong id, MasterData.Table.Item master) : base(id, master)

@@ -7,7 +7,9 @@ namespace NetworkShared
     {
         [Description("선공")]
         Preemptive,
+
         [Description("후공")]
         Reactive,
+
     }
 }

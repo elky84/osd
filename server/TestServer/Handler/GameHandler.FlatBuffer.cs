@@ -15,7 +15,7 @@ namespace TestServer.Handler
     public partial class GameHandler
     {
         [FlatBufferEvent]
-        public bool OnMove(Session<Character> session, Move request)
+        public bool OnMove(Session<Character> session, FlatBuffers.Protocol.Request.Move request)
         {
             var character = session.Data;
 
@@ -32,7 +32,7 @@ namespace TestServer.Handler
                 character.Direction = (Direction)request.Direction;
                 Console.WriteLine($"Client is moving now. ({request.Position?.X}, {request.Position?.Y})");
 
-                _ = Broadcast(character, ShowCharacter.Bytes(character.ShowCharacterFlatBuffer));
+                _ = Broadcast(character, FlatBuffers.Protocol.Response.ShowCharacter.Bytes(character));
                 return true;
             }
             catch (Exception e)
@@ -43,7 +43,7 @@ namespace TestServer.Handler
         }
 
         [FlatBufferEvent]
-        public bool OnStop(Session<Character> session, Stop request)
+        public bool OnStop(Session<Character> session, FlatBuffers.Protocol.Request.Stop request)
         {
             var character = session.Data;
 
@@ -60,7 +60,7 @@ namespace TestServer.Handler
                     throw new Exception("invalid");
 
                 Console.WriteLine("valid");
-                _ = Broadcast(character, ShowCharacter.Bytes(character.ShowCharacterFlatBuffer));
+                _ = Broadcast(character, FlatBuffers.Protocol.Response.ShowCharacter.Bytes(character));
                 return true;
             }
             catch (Exception e)
@@ -71,7 +71,7 @@ namespace TestServer.Handler
         }
 
         [FlatBufferEvent]
-        public bool OnClick(Session<Character> session, Click request)
+        public bool OnClick(Session<Character> session, FlatBuffers.Protocol.Request.Click request)
         {
             var character = session.Data;
             var target = character.Map.Objects[request.Sequence];
@@ -101,7 +101,7 @@ namespace TestServer.Handler
         }
 
         [FlatBufferEvent]
-        public bool OnDialog(Session<Character> session, ResponseDialog request)
+        public bool OnDialog(Session<Character> session, FlatBuffers.Protocol.Request.DialogResult request)
         {
             var character = session.Data;
             if (character.LuaThread == null)
@@ -113,7 +113,7 @@ namespace TestServer.Handler
         }
 
         [FlatBufferEvent]
-        public bool OnSelectListDialog(Session<Character> session, SelectListDialog request)
+        public bool OnSelectListDialog(Session<Character> session, FlatBuffers.Protocol.Request.DialogIndexResult request)
         {
             var character = session.Data;
             if (character.LuaThread == null)
@@ -125,17 +125,17 @@ namespace TestServer.Handler
         }
 
         [FlatBufferEvent]
-        public bool OnCheatPosition(Session<Character> session, CheatPosition request)
+        public bool OnCheatPosition(Session<Character> session, FlatBuffers.Protocol.Request.CheatPosition request)
         {
             var character = session.Data;
             character.Position = new NetworkShared.Types.Point { X = request.Position.Value.X, Y = request.Position.Value.Y };
 
-            _ = Broadcast(session.Data, PositionChanged.Bytes(character.Sequence.Value, character.Position.FlatBuffer));
+            _ = Broadcast(session.Data, FlatBuffers.Protocol.Response.PositionChanged.Bytes(character.Sequence.Value, character.Position));
             return true;
         }
 
         [FlatBufferEvent]
-        public bool OnWarp(Session<Character> session, Warp request)
+        public bool OnWarp(Session<Character> session, FlatBuffers.Protocol.Request.Warp request)
         {
             var character = session.Data;
             character.Synchronize(new DateTime(request.Now));
@@ -155,7 +155,7 @@ namespace TestServer.Handler
         }
 
         [FlatBufferEvent]
-        public bool OnCheatKill(Session<Character> session, CheatKill request)
+        public bool OnCheatKill(Session<Character> session, FlatBuffers.Protocol.Request.CheatKill request)
         {
             var character = session.Data;
             var target = character.Map.Objects[request.Sequence];
@@ -169,7 +169,7 @@ namespace TestServer.Handler
         }
 
         [FlatBufferEvent]
-        public bool OnActiveItem(Session<Character> session, ActiveItem request)
+        public bool OnActiveItem(Session<Character> session, FlatBuffers.Protocol.Request.ActiveItem request)
         {
             var character = session.Data;
             var activatedItem = character.Items.Active(request.Id);
@@ -179,14 +179,14 @@ namespace TestServer.Handler
 
                 // 장비 사용하면 외형변경 브로드캐스팅
                 if (activatedItem.Master.Type == ItemType.Equipment)
-                    _ = Broadcast(character, ShowCharacter.Bytes(character.ShowCharacterFlatBuffer), false);
+                    _ = Broadcast(character, FlatBuffers.Protocol.Response.ShowCharacter.Bytes(character), false);
             }
 
             return true;
         }
 
         [FlatBufferEvent]
-        public bool OnInactiveItem(Session<Character> session, InactiveItem request)
+        public bool OnInactiveItem(Session<Character> session, FlatBuffers.Protocol.Request.InactiveItem request)
         {
             var character = session.Data;
             var inactivatedItem = character.Items.Inactive(request.Id);
@@ -195,7 +195,7 @@ namespace TestServer.Handler
                 Console.WriteLine($"inactivated item : {inactivatedItem.Id}({inactivatedItem.Name})");
 
                 // 장비 해제하면 외형변경 브로드캐스팅
-                _ = Broadcast(character, ShowCharacter.Bytes(character.ShowCharacterFlatBuffer), false);
+                _ = Broadcast(character, FlatBuffers.Protocol.Response.ShowCharacter.Bytes(character), false);
             }
 
             return true;

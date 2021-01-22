@@ -1,5 +1,5 @@
-[
-  {
+{
+  "김성훈": {
     "Id": "김성훈",
     "Sprite": "Resources/Sprite/NPC/1",
     "Position": {
@@ -7,7 +7,7 @@
       "y": 0
     }
   },
-  {
+  "김호정": {
     "Id": "김호정",
     "Sprite": "Resources/Sprite/NPC/2",
     "Position": {
@@ -15,7 +15,7 @@
       "y": 1
     }
   },
-  {
+  "채승현": {
     "Id": "채승현",
     "Sprite": "Resources/Sprite/NPC/3",
     "Position": {
@@ -23,4 +23,4 @@
       "y": 2
     }
   }
-]
+}

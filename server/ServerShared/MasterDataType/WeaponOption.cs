@@ -11,9 +11,14 @@ namespace MasterData.Table
     {
         [Key]
         public string Id { get; set; }
+
         public int PhysicalDamage { get; set; }
+
         public int MagicalDamage { get; set; }
+
         public double CriticalDamage { get; set; }
+
         public double AttackSpeed { get; set; }
+
     }
 }

@@ -1,0 +1,101 @@
+table Position {
+	x: double;
+	y: double;
+}
+
+table MoveStatus {
+	sequence: int;
+	position: Position;
+	moving: bool;
+	direction: int;
+}
+
+table ShowDialog {
+	message: string;
+	next: bool;
+	quit: bool;
+}
+
+table ShowListDialog {
+	message: string;
+	list: [string];
+}
+
+table ShowConfirmDialog {
+	message: string;
+	icon: string;
+}
+
+table Object {
+	sequence: int;
+	name: string;
+	type: int;
+	position: Position;
+	moving: bool;
+	direction: int;
+}
+
+table Portal {
+	position: Position;
+	map: string;
+}
+
+table Map {
+	name: string;
+}
+
+table Enter {
+	sequence: int;
+	map: Map;
+	position: Position;
+	direction: int;
+	objects: [Object];
+	portals: [Portal];
+}
+
+table Show {
+	sequence: int;
+	name: string;
+	position: Position;
+	moving: bool;
+	direction: int;
+}
+
+table ShowCharacter {
+	sequence: int;
+	name: string;
+	position: Position;
+	moving: bool;
+	direction: int;
+	equipment: [Equipment];
+}
+
+table Leave {
+	sequence: int;
+}
+
+table PositionChanged {
+	sequence: int;
+	position: Position;
+}
+
+table Warp {
+	position: Position;
+	now: long;
+}
+
+table Item {
+	id: ulong;
+	name: string;
+}
+
+table Equipment {
+	id: ulong;
+	name: string;
+	type: int;
+}
+
+table Items {
+	inventory: [Item];
+	equipment: [Equipment];
+}

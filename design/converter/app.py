@@ -9,10 +9,12 @@ import json
 import argparse
 import shutil
 import zlib
+import logger
+import sys
 
 
-def onLoadExcelFile(sheet, percentage):
-    print(f'[{percentage}%] {sheet.title} 엑셀 시트를 읽었습니다.')
+def onLoadExcelFile(name, percentage):
+    print(f'[{percentage}%] {name} 파일을 읽었습니다.')
 
 def onConvertPureType(name, percentage):
     print(f'[{percentage}%] {name}의 타입을 변환했습니다.')
@@ -20,12 +22,7 @@ def onConvertPureType(name, percentage):
 def onValidDataType(name, percentage):
     print(f'[{percentage}%] {name}의 타입을 검증했습니다.')
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Excel table converter')
-    parser.add_argument('--dir', default='../')
-    parser.add_argument('--out', default='output')
-    args = parser.parse_args()
-
+def execute(args):
     if os.path.isdir(args.out):
         shutil.rmtree(args.out)
 
@@ -37,6 +34,9 @@ if __name__ == '__main__':
     # 엑셀 파일 로드
     schemaDict, dataDict = extractor.loads(args.dir, onLoadExcelFile)
 
+    # 키 검증
+    validator.multipleDefinedIndex(schemaDict)
+
     # 지원 타입 검증
     validator.supportedTypeDict(schemaDict, enumDict)
     
@@ -47,20 +47,31 @@ if __name__ == '__main__':
     validator.dataTypeDict(pureSchemaDict, dataDict, enumDict)
 
     # 파이썬 타입 변환
-    dataSet = {'server': {}, 'client': {}}
-    for name, schema in schemaDict.items():
+    dataSet = {x: {} for x in usages}
+    for name in schemaDict:
+        logger.currentTableName(name)
+
         for usage in usages:
             dataSet[usage][name] = converter.convert(usage, name, pureSchemaDict, dataDict, enumDict)
 
     # 관계 타입 검증
-    validator.relationship(schemaDict)
-    for name, schema in schemaDict.items():
+    for name in schemaDict:
+        logger.currentTableName(name)
+
         for usage in usages:
-            if not dataSet[usage][name]:
-                continue
+            if dataSet[usage][name]:
+                validator.conflictIndex(schemaDict[name], dataSet[usage][name])
+        
+    validator.relationship(schemaDict)
 
-            validator.conflictIndex(schemaDict[name], dataSet[usage][name])
 
+    # 딕셔너리 형태로 변경 가능하면 변경
+    for name, schemaSet in schemaDict.items():
+        logger.currentTableName(name)
+
+        for usage in usages:
+            if dataSet[usage][name]:
+                dataSet[usage][name] = converter.toDictionary(schemaSet, dataSet[usage][name])
 
 
     # C# 마스터데이터 코드 생성
@@ -68,13 +79,14 @@ if __name__ == '__main__':
     progress = 0
     size = len(pureSchemaDict)
     for name, schemaSet in pureSchemaDict.items():
+        logger.currentTableName(name)
+
         for usage in usages:
             os.makedirs(f'{output}/{usage}', exist_ok=True)
             code = generator.classStringify(name, schemaSet, enumDict, usage)
-
             if not code:
                 continue
-            
+
             with open(f'{output}/{usage}/{name}.cs', 'w', encoding='utf8') as f:
                 f.write(code)
 
@@ -115,7 +127,7 @@ if __name__ == '__main__':
     for usage in usages:
         os.makedirs(f'{output}/{usage}', exist_ok=True)
 
-    for name, schema in schemaDict.items():
+    for name in schemaDict:
         for usage in usages:
             os.makedirs(f'{output}/{usage}', exist_ok=True)
 
@@ -129,15 +141,40 @@ if __name__ == '__main__':
         percentage = int((progress * 100) / size)
         print(f'[{percentage}%] {name}.json 코드 생성')
 
+
+    crc32Table = {'client': {}, 'server': {}}
+    # 엑셀 파일 경로에 있는 json 파일은 클라/서버 공용으로 사용됨
+    for file in [x for x in os.listdir(args.dir) if x.endswith('.json')]:
+        with open(os.path.join(args.dir, file), 'rb+') as f:
+            data = f.read()
+            for usage in usages:
+                crc32Table[usage][file] = zlib.crc32(data)
+
     
     # JSON 파일 CRC 계산
     for usage in usages:
-        crc32Table = {}
         root = f'{output}/{usage}'
         for file in [x for x in os.listdir(root) if x.endswith('.json')]:
             with open(os.path.join(root, file), 'rb+') as f:
                 data = f.read()
-                crc32Table[file] = zlib.crc32(data)
+                crc32Table[usage][file] = zlib.crc32(data)
 
         with open(f'{root}/Crc.txt', 'w', encoding='utf8') as f:
-            f.write(json.dumps(crc32Table, ensure_ascii=False))
+            f.write(json.dumps(crc32Table[usage], ensure_ascii=False))
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Excel table converter')
+    parser.add_argument('--dir', default='../')
+    parser.add_argument('--out', default='output')
+    parser.add_argument('--debug', default='true')
+    args = parser.parse_args()
+
+    if args.debug.lower() == 'true':
+        execute(args)
+    else:
+        try:
+            os.system('color')
+            execute(args)
+            sys.exit(0)
+        except Exception as e:
+            logger.error(e)

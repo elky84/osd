@@ -91,9 +91,7 @@ namespace MasterData
         protected override void Load()
         {
             var property = typeof(T).GetProperties().FirstOrDefault(x => x.GetCustomAttribute<KeyAttribute>() != null);
-            
-            _dictionary = JsonConvert.DeserializeObject<List<T>>(File.ReadAllText(Path))
-                .ToDictionary(x => (K)property.GetValue(x), x => x);
+            _dictionary = JsonConvert.DeserializeObject<Dictionary<K, T>>(File.ReadAllText(Path));
         }
 
         IEnumerator IEnumerable.GetEnumerator() => _dictionary.GetEnumerator();

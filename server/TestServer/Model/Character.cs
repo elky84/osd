@@ -149,7 +149,13 @@ namespace TestServer.Model
 
         public override ObjectType Type => ObjectType.Character;
 
-        public FlatBuffers.Protocol.ShowCharacter.Model ShowCharacterFlatBuffer => new ShowCharacter.Model(Sequence.Value, Name, Position.FlatBuffer, Moving, (int)Direction, Items.Equipments.Values.Where(x => x != null).Select(x => x.EquipmentFlatBuffer).ToList());
+        public static implicit operator FlatBuffers.Protocol.Response.ShowCharacter.Model(Character obj) =>
+            new FlatBuffers.Protocol.Response.ShowCharacter.Model(obj.Sequence.Value,
+                obj.Name,
+                obj.Position,
+                obj.Moving,
+                (int)obj.Direction,
+                obj.Items.Equipments.Values.Select(x => (FlatBuffers.Protocol.Response.Equipment.Model)x).ToList());
 
         public Character()
         {
@@ -182,7 +188,7 @@ namespace TestServer.Model
             var next = argc >= 4 ? lua.ToBoolean(4) : true;
             var quit = argc >= 5 ? lua.ToBoolean(5) : true;
 
-            _ = character.Context.Send(ShowDialog.Bytes(message, next, quit));
+            _ = character.Context.Send(FlatBuffers.Protocol.Response.ShowDialog.Bytes(message, next, quit));
             return lua.Yield(1);
         }
 
@@ -194,7 +200,7 @@ namespace TestServer.Model
             var message = lua.ToString(3);
             var list = lua.ToStringList(4);
 
-            _ = character.Context.Send(ShowListDialog.Bytes(message, list));
+            _ = character.Context.Send(FlatBuffers.Protocol.Response.ShowListDialog.Bytes(message, list));
             return lua.Yield(1);
         }
 

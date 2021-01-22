@@ -7,9 +7,12 @@ namespace NetworkShared
     {
         [Description("검")]
         Sword,
+
         [Description("활")]
         Arrow,
+
         [Description("지팡이")]
         Staff,
+
     }
 }

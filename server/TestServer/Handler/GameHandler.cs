@@ -111,10 +111,13 @@ namespace TestServer.Handler
             session.Data.Items.Inventory.Add(ItemFactory.Create("무기.활"));
             session.Data.Items.Inventory.Add(ItemFactory.Create("무기.지팡이"));
             session.Data.Items.Inventory.Add(ItemFactory.Create("장비.옷"));
-            _ = session.Send(Items.Bytes(session.Data.Items.Inventory.SelectMany(x => x.Value).Select(x => x.ItemFlatBuffer).ToList(),
-                session.Data.Items.Equipments.Values.Where(x => x != null).Select(x => x.EquipmentFlatBuffer).ToList()));
+            _ = session.Send(FlatBuffers.Protocol.Response.Items.Bytes(session.Data.Items.Inventory.SelectMany(x => x.Value).Select(x => (FlatBuffers.Protocol.Response.Item.Model)x).ToList(),
+                session.Data.Items.Equipments.Values.Where(x => x != null).Select(x => (FlatBuffers.Protocol.Response.Equipment.Model)x).ToList()));
 
             session.Data.Map = mapFirst;
+
+            var collision = MasterTable.From<TableCollision>()["캐릭터"];
+            session.Data.CollisionSize = new NetworkShared.Types.Size { Width = collision.Width, Height = collision.Height };
         }
 
         protected override void OnDisconnected(Session<Character> session)

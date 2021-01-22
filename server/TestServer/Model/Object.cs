@@ -21,10 +21,9 @@ namespace TestServer.Model
 
         public Direction Direction { get; set; } = Direction.Bottom;
 
-        public FlatBuffers.Protocol.Object.Model FlatBuffer =>
-            new FlatBuffers.Protocol.Object.Model(Sequence.Value, Name, (int)Type, Position.FlatBuffer, Moving, (int)Direction);
+        public static implicit operator FlatBuffers.Protocol.Response.Object.Model(Object obj) => new FlatBuffers.Protocol.Response.Object.Model(obj.Sequence.Value, obj.Name, (int)obj.Type, obj.Position, obj.Moving, (int)obj.Direction);
 
-        public FlatBuffers.Protocol.Show.Model ShowFlatBuffer => new FlatBuffers.Protocol.Show.Model(Sequence.Value, Name, Position.FlatBuffer, Moving, (int)Direction);
+        public static implicit operator FlatBuffers.Protocol.Response.Show.Model(Object obj) => new FlatBuffers.Protocol.Response.Show.Model(obj.Sequence.Value, obj.Name, obj.Position, obj.Moving, (int)obj.Direction);
 
         public virtual string Name { get; set; }
         public Point Position { get; set; } = new Point();

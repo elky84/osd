@@ -8,15 +8,15 @@ import generator
 
 METHOD_DICT = {}
 
-def model(parameters):
+def model(namespace, parameters):
     global METHOD_DICT
 
     loader = jinja2.FileSystemLoader('templates')
     env = jinja2.Environment(loader=loader)
     model_template = env.get_template('model.txt')
 
-    code = model_template.render({'properties': generator.property_str(parameters, METHOD_DICT),
-                                  'parameters': generator.parameter_str(parameters, METHOD_DICT),
+    code = model_template.render({'properties': generator.property_str(namespace, parameters, METHOD_DICT),
+                                  'parameters': generator.parameter_str(namespace, parameters, METHOD_DICT),
                                   'binding': generator.binding_str(parameters)})
     
     code = code.split('\n')
@@ -24,7 +24,7 @@ def model(parameters):
     code = '\n'.join(code)
     return code
 
-def method(name, parameters):
+def method(namespace, name, parameters):
     global METHOD_DICT
 
     loader = jinja2.FileSystemLoader('templates')
@@ -34,9 +34,9 @@ def method(name, parameters):
     model_arguments = ', '.join([f"model.{generator.to_upper_camel(x['pure name'])}" for x in parameters])
 
     code = method_template.render({'flatbName': name,
-                                   'parameters': generator.parameter_str(parameters, METHOD_DICT),
+                                   'parameters': generator.parameter_str(namespace, parameters, METHOD_DICT),
                                    'arguments': generator.argument_str(parameters),
-                                   'offsets': generator.offset_code(parameters, METHOD_DICT),
+                                   'offsets': generator.offset_code(namespace, parameters, METHOD_DICT),
                                    'modelArguments': model_arguments})
     code = code.split('\n')
     code = [f'  {x}' for x in code]
@@ -51,6 +51,7 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='Excel table converter')
     parser.add_argument('--dir', default='../Protocols')
+    parser.add_argument('--namespace', default='FlatBuffers.Protocol.Unknown')
     args = parser.parse_args()
 
     os.makedirs(args.dir, exist_ok=True)
@@ -72,10 +73,10 @@ if __name__ == '__main__':
         name = os.path.splitext(os.path.basename(file))[0]
         parameters = METHOD_DICT[name]
 
-        model_code = model(parameters)
-        method_code = method(name, parameters)
+        model_code = model(args.namespace, parameters)
+        method_code = method(args.namespace, name, parameters)
         data = f"{data[:-3]}\n\n{model_code}\n\n{method_code}{data[-3:]}"
         data = '\n'.join([f'  {x}' for x in data.split('\n')])
 
         with open(file, 'w', encoding='utf8') as f:
-            f.write(flatbuffer_template.render({'code': data}))
+            f.write(flatbuffer_template.render({'code': data, 'namespace': args.namespace}))

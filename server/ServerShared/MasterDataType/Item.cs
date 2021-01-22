@@ -11,9 +11,13 @@ namespace MasterData.Table
     {
         [Key]
         public string Id { get; set; }
+
         [JsonConverter(typeof(JsonEnumConverter<ItemType>))]
         public ItemType Type { get; set; }
+
         public string ActiveScript { get; set; }
+
         public string InactiveScript { get; set; }
+
     }
 }

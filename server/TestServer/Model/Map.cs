@@ -48,7 +48,7 @@ namespace TestServer.Model
             }
         }
 
-        public FlatBuffers.Protocol.Map.Model FlatBuffer => new FlatBuffers.Protocol.Map.Model(Name);
+        public static implicit operator FlatBuffers.Protocol.Response.Map.Model(Map map) => new FlatBuffers.Protocol.Response.Map.Model(map.Name);
 
         public bool IsActivated { get; private set; }
 
@@ -110,12 +110,12 @@ namespace TestServer.Model
             if (TileSize.IsEmpty)
                 throw new Exception($"map tile size cannot be empty : {Name}.");
 
-            Size = new Size { Width = BlockSize.Width * TileSize.Width, Height = BlockSize.Height * TileSize.Height };
+            Size = new Size(BlockSize.Width * TileSize.Width, BlockSize.Height * TileSize.Height);
 
 #if DEBUG
-            Sectors = new SectorContainer(this, new Size { Width = 8, Height = 8 });
+            Sectors = new SectorContainer(this, new Size(400, 400));
 #else
-            Sectors = new SectorContainer(this, new Size { Width = 64, Height = 64 });
+            Sectors = new SectorContainer(this, new Size(800, 800));
 #endif
 
             MobSpawns = mobSpawns.ToDictionary(x => x, x =>

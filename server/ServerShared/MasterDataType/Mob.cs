@@ -11,11 +11,17 @@ namespace MasterData.Table
     {
         [Key]
         public string Id { get; set; }
+
         [JsonConverter(typeof(JsonEnumConverter<AttackType>))]
         public AttackType AttackType { get; set; }
+
         public int HP { get; set; }
+
         public int MP { get; set; }
+
         public double Speed { get; set; }
+
         public List<string> Rewards { get; set; }
+
     }
 }

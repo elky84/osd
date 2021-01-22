@@ -9,7 +9,8 @@ namespace NetworkShared.Types
         public double X { get; set; }
         public double Y { get; set; }
 
-        public FlatBuffers.Protocol.Position.Model FlatBuffer => new FlatBuffers.Protocol.Position.Model(X, Y);
+        public static implicit operator FlatBuffers.Protocol.Request.Position.Model(Point p) => new FlatBuffers.Protocol.Request.Position.Model(p.X, p.Y);
+        public static implicit operator FlatBuffers.Protocol.Response.Position.Model(Point p) => new FlatBuffers.Protocol.Response.Position.Model(p.X, p.Y);
 
         public Point()
         { }
@@ -25,7 +26,12 @@ namespace NetworkShared.Types
             return Math.Abs(X - p.X) + Math.Abs(p.Y - p.Y);
         }
 
-        public double Delta(FlatBuffers.Protocol.Position p)
+        public double Delta(FlatBuffers.Protocol.Request.Position p)
+        {
+            return Delta(new Point { X = p.X, Y = p.Y });
+        }
+
+        public double Delta(FlatBuffers.Protocol.Response.Position p)
         {
             return Delta(new Point { X = p.X, Y = p.Y });
         }

@@ -11,9 +11,14 @@ namespace MasterData.Table
     {
         [Key]
         public string Id { get; set; }
+
         public string BeforeMap { get; set; }
+
         public Point BeforePosition { get; set; }
+
         public string AfterMap { get; set; }
+
         public Point AfterPosition { get; set; }
+
     }
 }

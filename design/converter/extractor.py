@@ -1,55 +1,93 @@
 import openpyxl as Excel
 import jinja2
 import os
+import re
+import converter
+import config
+import validator
 
-def primary(schemaSet):
+def primaryKey(schemaSet):
     id = [x for x in schemaSet if x['type'].startswith('*')]
     if not id:
         return None
+    elif len(id) > 1:
+        stringify = ', '.join([x['name'] for x in id])
+        raise Exception(f"기본키는 2개 이상 존재할 수 없습니다. ({stringify})")
     else:
         return id[0]
 
-def load(sheet):
-    schema = []
-    data = []
-    commentColumns = []
-    for row in sheet[1]:
-        columnName = row.value
-        if columnName is None or columnName.startswith('!'):
-            break
+def indexKey(schemaSet):
+    matches = {x['name']: re.match(r'^\((?P<type>.*)\)$', x['type']) for x in schemaSet}
+    id = [x for x, match in matches.items() if match is not None]
+    id = [x for x in schemaSet if x['name'] in id]
+    if not id:
+        return None
+    elif len(id) > 1:
+        stringify = ', '.join([x['name'] for x in id])
+        raise Exception(f"그룹키는 2개 이상 존재할 수 없습니다. ({stringify})")
+    else:
+        return id[0]
 
-        if columnName.startswith('#'):
-            commentColumns.append(row.column)
+def load(path):
+    schemaDict = {}
+    dataDict = {}
+
+    workbook = Excel.load_workbook(path, data_only=True)
+    for sheet in workbook.worksheets:
+        sheetName = sheet.title
+        if sheetName.startswith('#'):
             continue
 
-        dtype = sheet[2][row.column-1].value
-        usage = sheet[3][row.column-1].value
+        beginIndex = 1
+        while sheet[beginIndex][0].value.startswith('#'):
+            beginIndex = beginIndex + 1
 
-        schema.append({'name': columnName, 'type': dtype, 'usage': usage})
+        schema = []
+        data = []
+        commentColumns = []
+        for col in sheet[beginIndex]:
+            columnName = col.value
+            if columnName is None or columnName.startswith('!'):
+                break
 
-    
-    data = []
-    for row in range(sheet.max_row - 3):
-        additionalColumn = 0
-        dataSet = {}
-        for column, columnName in enumerate([x['name'] for x in schema]):
-            while column+additionalColumn+1 in commentColumns:
-                additionalColumn = additionalColumn + 1
+            if columnName.startswith('#'):
+                commentColumns.append(col.column)
+                continue
 
-            columnName = schema[column]['name']
-            dataSet[columnName] = sheet.cell(row+4, column+1+additionalColumn).value
+            dtype = sheet[beginIndex+1][col.column-1].value
+            usage = sheet[beginIndex+2][col.column-1].value
 
-        if all([x is None for x in dataSet.values()]):
-            continue
+            schema.append({'name': columnName, 'type': dtype, 'usage': usage})
 
-        data.append(dataSet)
+        
+        data = []
+        for row in range(sheet.max_row - (beginIndex+2)):
+            additionalColumn = 0
+            dataSet = {}
+            for column, columnName in enumerate([x['name'] for x in schema]):
+                while column+additionalColumn+1 in commentColumns:
+                    additionalColumn = additionalColumn + 1
 
-    return schema, data
+                columnName = schema[column]['name']
+                dataSet[columnName] = sheet.cell(row+beginIndex+3, column+1+additionalColumn).value
+
+            if all([x is None for x in dataSet.values()]):
+                break
+            
+            data.append(dataSet)
+
+        schemaDict[sheetName] = schema
+        dataDict[sheetName] = data
+
+    return schemaDict, dataDict
 
 def loadEnum(path):
     workbook = Excel.load_workbook(path, data_only=True)
     enumSet = {}
     for sheet in workbook.worksheets:
+        if sheet.title.startswith('#'):
+            continue
+        
         enumSet[sheet.title] = {}
 
         for row in range(sheet.max_row):
@@ -63,20 +101,19 @@ def loads(directory, callback=None):
     schemaDict = {}
     dataDict = {}
     files = [x for x in os.listdir(directory) if x.endswith('.xlsx') and not x.startswith('~') and not x.lower().startswith('enum.')]
-    sheets = [sheet for file in files for sheet in Excel.load_workbook(os.path.join(directory, file), data_only=True).worksheets]
-    size = len(sheets)
+    size = len(files)
+
     progress = 0
+    for file in files:
+        path = os.path.join(directory, file)
 
-    for sheet in [x for x in sheets if not x.title.startswith('#')]:
-        schema, data = load(sheet)
-
-        schemaDict[sheet.title] = schema
-        dataDict[sheet.title] = data
-
+        schema, data = load(path)
+        schemaDict.update(schema)
+        dataDict.update(data)
         progress = progress + 1
 
         if callback:
-            callback(sheet, int(progress * 100 / size))
+            callback(file, int(progress * 100 / size))
 
     return schemaDict, dataDict
 
@@ -88,46 +125,63 @@ def loadEnums(directory, callback=None):
 
         for enumName, enumSet in loadEnum(path).items():
             if enumName in enumDict:
-                raise 'zzasdqwe'
+                raise Exception(f'{enumName}은 중복 정의되었습니다.')
             enumDict[enumName] = enumSet
 
     return enumDict
 
 def relationshipType(type, schemaSetDict):
-    type = type.replace('*', '')
-    if not type.startswith('$'):
+    if not validator.isRelation(type):
         return None
 
-    schemaSetDict = {name.split('_')[1] if '_' in name else name: schemaSet for name, schemaSet in schemaSetDict.items()}
-    type = type.replace('$', '').replace('?', '')
+    schemaSetDict = {name: schemaSet for name, schemaSet in schemaSetDict.items()}
+    type = converter.remove(type)
     splitted = type.split('.')
-    
-    id = None
     if len(splitted) == 1:
         if type not in schemaSetDict:
-            raise Exception(f'{type} is not contained any excel schema.')
+            raise Exception(f'{type}은 정의되지 않은 테이블입니다.')
 
-        id = primary(schemaSetDict[type])
+        id = primaryKey(schemaSetDict[type])
         if not id:
-            raise Exception(f'{type} does not have primary key.')
+            raise Exception('{type}은 기본키가 정의되지 않은 타입입니다.')
 
-        id = id['type']
+        relation = relationshipType(id['type'], schemaSetDict)
+        return relation if relation is not None else id['type']
     elif len(splitted) == 2:
         namespace, member = splitted
         if namespace not in schemaSetDict:
-            raise Exception(f'{namespace} is not valid schema.')
+            raise Exception(f'{namespace}은 정의되지 않은 테이블입니다.')
 
-        member = [x for x in schemaSetDict[namespace] if x['name'] == member]
-        if not member:
-            raise Exception(f'{member} is not a member of {namespace}')
+        found = [x for x in schemaSetDict[namespace] if x['name'] == member]
+        if not found:
+            raise Exception(f"{member}은 {namespace}에 존재하지 않는 컬럼입니다.")
 
-        member = member[0]
-        id = member['type']
+        member = found[0]
+        relation = relationshipType(member['type'], schemaSetDict)
+        return relation if relation is not None else member['type']
     else:
-        raise Exception(f'{type} cannot parse relationship type.')
+        raise Exception(f'{type}는 올바른 관계형식이 아닙니다.')
 
-    id = id.replace('*', '')
-    if id.startswith('$'):
-        return relationshipType(id, schemaSetDict)
-    
-    return id
+# (...)
+def groupType(type):
+    match = re.match(config.regex['group'], type)
+    if match:
+        return match.groupdict()['type']
+
+    return None
+
+# List<...>
+def listType(type):
+    match = re.match(config.regex['list'], type)
+    if match:
+        return match.groupdict()['type']
+
+    return None
+
+# [...]
+def arrayType(type):
+    match = re.match(config.regex['array'], type)
+    if match:
+        return match.groupdict()['type']
+
+    return None

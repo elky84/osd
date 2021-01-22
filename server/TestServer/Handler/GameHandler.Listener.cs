@@ -1,5 +1,4 @@
-﻿using FlatBuffers.Protocol;
-using ServerShared.NetworkHandler;
+﻿using ServerShared.NetworkHandler;
 using System;
 using System.Linq;
 using TestServer.Model;
@@ -10,35 +9,36 @@ namespace TestServer.Handler
     {
         public void OnLeave(Model.Object obj)
         {
-            _ = Broadcast(obj, Leave.Bytes(obj.Sequence.Value));
+            _ = Broadcast(obj, FlatBuffers.Protocol.Response.Leave.Bytes(obj.Sequence.Value));
         }
 
         public void OnEnter(Model.Object obj)
         {
             // 현재 맵에 있는 모든 오브젝트
             var objects = obj.Map.Objects
-                .Select(x => x.Value.FlatBuffer)
+                .Select(x => (FlatBuffers.Protocol.Response.Object.Model)x.Value)
                 .ToList();
 
-            // 현재 맵의 모든 포탈
-            var portals = obj.Map.Portals.ConvertAll(x => x.FlatBuffer);
+            var portals = obj.Map.Portals
+                .ConvertAll(x => (FlatBuffers.Protocol.Response.Portal.Model)x)
+                .ToList();
 
             // 입장한 유저에게 정보 전송
             if (obj is Character)
             {
                 var character = obj as Character;
-                _ = character.Context.Send(Enter.Bytes(character.Sequence.Value,
-                    character.Map.FlatBuffer,
-                    character.Position.FlatBuffer,
+                _ = character.Context.Send(FlatBuffers.Protocol.Response.Enter.Bytes(character.Sequence.Value,
+                    character.Map,
+                    character.Position,
                     (int)character.Direction,
                     objects,
                     portals));
 
-                _ = Broadcast(obj, ShowCharacter.Bytes(character.ShowCharacterFlatBuffer));
+                _ = Broadcast(obj, FlatBuffers.Protocol.Response.ShowCharacter.Bytes(character));
             }
             else
             {
-                _ = Broadcast(obj, Show.Bytes(obj.Sequence.Value, obj.Name, obj.Position.FlatBuffer, obj.Moving, (int)obj.Direction));
+                _ = Broadcast(obj, FlatBuffers.Protocol.Response.Show.Bytes(obj.Sequence.Value, obj.Name, obj.Position, obj.Moving, (int)obj.Direction));
             }
 
 

@@ -6,9 +6,8 @@ namespace MasterData.Table
 {
     public partial class Portal
     {
-        public FlatBuffers.Protocol.Portal.Model FlatBuffer => new FlatBuffers.Protocol.Portal.Model(BeforePosition.FlatBuffer, AfterMap);
+        public static implicit operator FlatBuffers.Protocol.Response.Portal.Model(Portal p) => new FlatBuffers.Protocol.Response.Portal.Model(p.BeforePosition, p.AfterMap);
     }
-
 
 
     public partial class TablePortal : BaseDict<string, Portal>

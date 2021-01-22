@@ -1,0 +1,21 @@
+{
+    "primitive": 
+    [
+        "int", "double", "float", "string", "bool", "DateTime", "TimeSpan", "Point"
+    ],
+    "custom":
+    {
+        "key": "*",
+        "nullable": "?",
+        "relation": "$",
+        "percentage": "%",
+        "unknown": "~"
+    },
+    "regex":
+    {
+        "group": "^\\((?P<type>.+)\\)$",
+        "list": "^List<(?P<type>.+)>$",
+        "array": "^\\[(?P<type>.*)\\]$",
+        "point": "^\\((?P<x>\\d),\\s?(?P<y>\\d)\\)$"
+    }
+}

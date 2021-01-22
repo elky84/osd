@@ -1,109 +1,138 @@
 import datetime
 import extractor
+import validator
 import re
+import config
 
-CUSTOM_KEYWORDS = ['$', '%', '~']
+def remove(type, nullable=True, key=True, relation=True, percentage=True, unknown=True):
+    if key:
+        converted = extractor.groupType(type)
+        if converted:
+            type = converted
 
-def removeKeyword(type):
-    for kw in CUSTOM_KEYWORDS:
-        type = type.replace(kw, '')
+        type = type.replace(config.customs['key'], '')
+
+    if nullable:
+        type = type.replace(config.customs['nullable'], '')
+
+    if relation:
+        type = type.replace(config.customs['relation'], '')
+
+    if percentage:
+        type = type.replace(config.customs['percentage'], '')
+
+    if unknown: # 이거뭐임
+        type = type.replace(config.customs['unknown'], '')
 
     return type
 
 def cast(dtype, value, schemaDict, enumDict):
-    baseType = removeKeyword(dtype.replace('?', '').replace('*', ''))
+    baseType = remove(dtype, relation=False)
 
     if value == '' or value is None:
-        if dtype.endswith('?') or baseType == 'string':
+        if validator.isNullable(dtype) or baseType == 'string':
             return value
 
-        raise Exception('{dtype} cannot be null or empty')
+        raise Exception(f'{dtype} 타입은 빈 데이터를 가질 수 없습니다.')
 
-    if dtype.startswith('$'):
+    if validator.isRelation(dtype):
         return cast(extractor.relationshipType(dtype, schemaDict), value, schemaDict, enumDict)
     
-    if dtype.startswith('~') or dtype.startswith('%'):
+    if validator.isInteger(dtype):
         baseType = 'int'
 
     if baseType == 'string':
         return value
 
     if baseType == 'int':
-        return int(value)
+        try:
+            return int(value)
+        except:
+            raise Exception(f'{baseType} 형식으로 변환될 수 없는 데이터가 존재합니다. ({value})')
 
     if baseType == 'double' or baseType == 'float':
-        return float(value)
+        try:
+            return float(value)
+        except:
+            raise Exception(f'{baseType} 형식으로 변환될 수 없는 데이터가 존재합니다. ({value})')
 
     if baseType == 'DateTime':
-        if type(value) is datetime.time:
-            return value.strftime('%Y-%m-%d %H:%M:%S')
-        elif type(value) is str:
+        try:
             datetime.datetime.strptime(value, '%Y-%m-%d %H:%M:%S')
             return value
-        else:
-            raise Exception(f'{value} cannot be convert to \'DateTime\' type')
+        except:
+            raise Exception(f'{baseType} 형식으로 변환될 수 없는 데이터가 존재합니다. ({value})')
 
     if baseType == 'TimeSpan':
-        if type(value) is datetime.time:
-            return value.strftime('%H:%M:%S')
-        elif type(value) is str:
-            datetime.datetime.strptime(value, '%H:%M:%S')
-            return value
-        else:
-            raise Exception(f'{value} cannot be convert to \'TimeSpan\' type')
+        try:
+            if type(value) is datetime.time:
+                return str(value)
+            else:
+                datetime.datetime.strptime(value, '%H:%M:%S')
+                return value
+        except:
+            raise Exception(f'{baseType} 형식으로 변환될 수 없는 데이터가 존재합니다. ({value})')
 
     if baseType == 'bool':
         if type(value) is bool:
             return value
-
         if value.lower() == 'true':
             return True
         if value.lower() == 'false':
             return False
-        raise Exception(f'{value} is not a boolean type.')
+        raise Exception(f'{baseType} 형식으로 변환될 수 없는 데이터가 존재합니다. ({value})')
 
     if baseType == 'Point':
-        result = re.search(r'^\((?P<x>\d),\s?(?P<y>\d)\)$', value)
-        if not result:
-            raise Exception(f'{value} cannot convert to point type.')
+        match = re.match(config.regex['point'], value)
+        if not match:
+            raise Exception(f'{baseType} 형식으로 변환될 수 없는 데이터가 존재합니다. ({value})')
 
-        group = result.groupdict()
+        group = match.groupdict()
         return {'x': int(group['x']), 'y': int(group['y'])}
 
     if baseType in enumDict:
         return value
 
-    match = re.match(r'^List<(?P<type>\w+)>$', baseType)
-    if match:
+    converted = extractor.listType(dtype)
+    if converted:
         value = value.replace(' ', '')
-        value = [f'({x})' for x in re.compile(r'\),\(|\)|\(').split(value) if x] if '(' in value and ')' in value else value.split(',')
-        value = [cast(match.groupdict()['type'], x, schemaDict, enumDict) for x in value]
+        value = [cast(converted, x, schemaDict, enumDict) for x in value.split(',')]
         return value
 
-    print(f'invalid type {baseType}')
-    return value
+    converted = extractor.groupType(dtype)
+    if converted:
+        value = cast(converted, value, schemaDict, enumDict)
+        return value
 
-def pureSchema(dtype, schemaDict):
-    isKey = dtype.startswith('*')
-    dtype = dtype.replace('*', '')
-    if dtype.startswith('$'):
-        dtype = extractor.relationshipType(dtype, schemaDict).replace('*', '')
+    raise Exception(f'{baseType}는 올바른 타입이 아닙니다.')
+
+def pureSchema(type, schemaDict):
+    converted = extractor.groupType(type)
+    if converted:
+        return f"({pureSchema(converted, schemaDict)})"
+
+    isKey = validator.isPrimaryKey(type)
+
+    if validator.isRelation(type):
+        type = remove(extractor.relationshipType(type, schemaDict), nullable=False)
+        if isKey:
+            type = config.customs['key'] + type
         
-    if dtype.startswith('%') or dtype.startswith('~'):
-        dtype = 'int'
+    if validator.isInteger(type):
+        type = 'int'
 
-    match = re.match(r'^\[(?P<type>.*)\]$', dtype)
-    if match:
-        inner = match.groupdict()['type']
-        inner = pureSchema(inner, schemaDict)
-        dtype = f'List<{inner}>'
+    converted = extractor.arrayType(type)
+    if converted:
+        converted = pureSchema(converted, schemaDict)
+        type = f'List<{converted}>'
 
     if isKey:
-        dtype = f'*{dtype}'
-        
-    return dtype
+        return config.customs['key'] + remove(type)
+    else:
+        return type
 
 def pureSchemaSet(schemaSet, schemaDict):
+    schemaDict = {x: y for x, y in schemaDict.items()}
     convertedSet = []
     for x in schemaSet:
         name, type, usage = x['name'], x['type'], x['usage']
@@ -124,7 +153,7 @@ def convert(usage, name, schemaDict, dataDict, enumDict):
     for data in dataSet:
         dataBuffer = {}
         for name, value in data.items():
-            if schemaSet[name]['usage'] not in [usage, 'common']:
+            if schemaSet[name]['usage'] not in (usage, 'common'):
                 continue
 
             dataBuffer[name] = cast(schemaSet[name]['type'], value, schemaDict, enumDict)
@@ -135,3 +164,14 @@ def convert(usage, name, schemaDict, dataDict, enumDict):
         return None
 
     return result
+
+def toDictionary(schemaSet, dataSet):
+    primary = extractor.primaryKey(schemaSet)
+    index = extractor.indexKey(schemaSet)
+    if primary:
+        return {data[primary['name']]:data for data in dataSet}
+    elif index:
+        groupNames = set([x[index['name']] for x in dataSet])
+        return {groupName:[data for data in dataSet if data[index['name']] == groupName] for groupName in groupNames}
+    else:
+        return dataSet

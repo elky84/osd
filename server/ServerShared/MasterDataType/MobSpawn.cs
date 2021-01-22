@@ -10,10 +10,16 @@ namespace MasterData.Table
     public partial class MobSpawn
     {
         public string Mob { get; set; }
+
         public string Map { get; set; }
+
         public Point? Begin { get; set; }
+
         public Point? End { get; set; }
+
         public int Count { get; set; }
+
         public TimeSpan ZenTime { get; set; }
+
     }
 }

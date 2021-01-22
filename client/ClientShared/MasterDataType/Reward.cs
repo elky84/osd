@@ -11,8 +11,12 @@ namespace MasterData.Table
     {
         [Key]
         public string Id { get; set; }
+
         public string Group { get; set; }
+
         public string Item { get; set; }
+
         public int Weight { get; set; }
+
     }
 }

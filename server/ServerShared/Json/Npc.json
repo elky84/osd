@@ -1,5 +1,5 @@
-[
-  {
+{
+  "김성훈": {
     "Id": "김성훈",
     "Sprite": "Resources/Sprite/NPC/1",
     "Map": "Dungeon",
@@ -9,7 +9,7 @@
     },
     "Script": "Scripts/1.lua"
   },
-  {
+  "김호정": {
     "Id": "김호정",
     "Sprite": "Resources/Sprite/NPC/2",
     "Map": "Dungeon",
@@ -19,7 +19,7 @@
     },
     "Script": "Scripts/2.lua"
   },
-  {
+  "채승현": {
     "Id": "채승현",
     "Sprite": "Resources/Sprite/NPC/3",
     "Map": "Dungeon",
@@ -29,4 +29,4 @@
     },
     "Script": "Scripts/3.lua"
   }
-]
+}

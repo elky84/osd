@@ -11,7 +11,10 @@ namespace MasterData.Table
     {
         [Key]
         public string Id { get; set; }
+
         public string Sprite { get; set; }
+
         public Point Position { get; set; }
+
     }
 }

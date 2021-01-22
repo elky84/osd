@@ -15,6 +15,16 @@ namespace TestServer.Model
         public new IListener Listener { get; private set; }
 
 
+        public Size CollisionSize { get; set; }
+        public Rect CollisionBox => new Rect
+        {
+            X = (int)Position.X,
+            Y = (int)Position.Y,
+            Width = (uint)CollisionSize.Width,
+            Height = (uint)CollisionSize.Height
+        };
+
+
         // properties
         public DateTime? MoveTime { get; set; }
 
