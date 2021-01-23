@@ -1,5 +1,4 @@
 ﻿using DotNetty.Transport.Channels;
-using FlatBuffers.Protocol;
 using KeraLua;
 using NetworkShared;
 using ServerShared.NetworkHandler;
@@ -25,7 +24,6 @@ namespace TestServer.Model
             foreach (var itemType in Enum.GetValues(typeof(ItemType)).Cast<ItemType>())
                 Inventory.Add(itemType, new List<Item>());
 
-            //TODO 승현님 Equipments.Add(equipmentType, null)에서 null로 인해 오류가 납니다.
             foreach (var equipmentType in Enum.GetValues(typeof(EquipmentType)).Cast<EquipmentType>())
                 Equipments.Add(equipmentType, null);
         }

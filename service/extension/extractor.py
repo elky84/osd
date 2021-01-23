@@ -19,7 +19,7 @@ def root(code):
     groups = extract(r'public static Offset<.+> Create(?P<name>.+)\(FlatBufferBuilder builder,\s*(?P<params>[\w\s=,().<>]*)\)', code)
     name = groups['name']
 
-    pairs = re.finditer(r'(?P<type>[\w=,().<>]+) (?P<name>\b\w+) = .+', groups['params'])
+    pairs = re.finditer(r'(?P<type>[\w()<>]+) (?P<name>\w+)([.,]+)?', groups['params'])
     parameters = [{'type': x['type'], 'name': x['name'], 'pure name': x['name'].replace('Offset', '')} for x in pairs]
     for parameter in parameters:
         if parameter['type'] in COMMON_FLATBUFFER_TYPES:

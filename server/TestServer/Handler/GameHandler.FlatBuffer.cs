@@ -1,5 +1,4 @@
-﻿using FlatBuffers.Protocol;
-using KeraLua;
+﻿using KeraLua;
 using NetworkShared;
 using ServerShared.Model;
 using ServerShared.NetworkHandler;
@@ -7,7 +6,6 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Text;
-using TestServer.Extension;
 using TestServer.Model;
 
 namespace TestServer.Handler
@@ -21,18 +19,15 @@ namespace TestServer.Handler
 
             try
             {
-                if (request.Now.Validate() == false)
-                    throw new Exception("...");
+                if (character.Position.Delta(request.Position.Value) > 1.0)
+                    throw new Exception("위치가 올바르지 않습니다.");
 
-                character.Synchronize(new DateTime(request.Now));
-                if (character.Position.Delta(request.Position.Value) > 1)
-                    throw new Exception("position is not matched.");
-
-                character.MoveTime = new DateTime(request.Now);
+                character.Position = new NetworkShared.Types.Point(request.Position.Value.X, request.Position.Value.Y);
                 character.Direction = (Direction)request.Direction;
-                Console.WriteLine($"Client is moving now. ({request.Position?.X}, {request.Position?.Y})");
+                character.Velocity = new NetworkShared.Types.Point(10.0 * (request.Direction == (int)Direction.Left ? -1 : 1), character.Velocity.Y);
+                _ = Broadcast(character, FlatBuffers.Protocol.Response.State.Bytes(character));
 
-                _ = Broadcast(character, FlatBuffers.Protocol.Response.ShowCharacter.Bytes(character));
+                Console.WriteLine($"캐릭터가 이동 ({request.Position?.X}, {request.Position?.Y})");
                 return true;
             }
             catch (Exception e)
@@ -49,18 +44,110 @@ namespace TestServer.Handler
 
             try
             {
-                if (request.Now.Validate() == false)
-                    throw new Exception("...");
+                // TODO: 캐릭터의 위치가 이동 가능한 범위에 있는지 검사
 
-                character.Synchronize(new DateTime(request.Now));
-                character.MoveTime = null;
-                Console.WriteLine($"Stop position : {character.Position}");
+                character.Position = new NetworkShared.Types.Point(request.Position.Value.X, request.Position.Value.Y);
+                character.Velocity = new NetworkShared.Types.Point(0, character.Velocity.Y);
+                _ = Broadcast(character, FlatBuffers.Protocol.Response.State.Bytes(character));
+                Console.WriteLine($"캐릭터가 멈춤 : {character.Position}");
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return false;
+            }
+        }
 
-                if (character.Position.Delta(request.Position.Value) > 1)
-                    throw new Exception("invalid");
+        [FlatBufferEvent]
+        public bool OnJump(Session<Character> session, FlatBuffers.Protocol.Request.Jump request)
+        {
+            var character = session.Data;
 
-                Console.WriteLine("valid");
-                _ = Broadcast(character, FlatBuffers.Protocol.Response.ShowCharacter.Bytes(character));
+            try
+            {
+                // TODO: 캐릭터의 위치가 이동 가능한 범위에 있는지 검사, 업데이트
+
+                if (character.Jumping)
+                    throw new Exception("점프 혹은 낙하중에 점프하려고 함");
+
+                character.Position = new NetworkShared.Types.Point(request.Position.Value.X, request.Position.Value.Y);
+                character.Velocity = new NetworkShared.Types.Point(character.Velocity.X, -10.0);
+                _ = Broadcast(character, FlatBuffers.Protocol.Response.State.Bytes(character));
+                Console.WriteLine($"캐릭터가 점프함 : {character.Position}");
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return false;
+            }
+        }
+
+        [FlatBufferEvent]
+        public bool OnFall(Session<Character> session, FlatBuffers.Protocol.Request.Fall request)
+        {
+            var character = session.Data;
+
+            try
+            {
+                // TODO: 캐릭터의 위치가 이동 가능한 범위에 있는지 검사, 업데이트
+                if (character.Jumping)
+                    throw new Exception("점프 혹은 낙하중에 낙하될 순 없음");
+
+                character.Position = new NetworkShared.Types.Point(request.Position.Value.X, request.Position.Value.Y);
+                character.Velocity = new NetworkShared.Types.Point(character.Velocity.X, 0.0);
+                _ = Broadcast(character, FlatBuffers.Protocol.Response.State.Bytes(character));
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return false;
+            }
+        }
+
+        [FlatBufferEvent]
+        public bool OnCollision(Session<Character> session, FlatBuffers.Protocol.Request.Collision request)
+        {
+            var character = session.Data;
+
+            try
+            {
+                
+
+                switch ((Axis)request.Axis)
+                {
+                    case Axis.X:
+                        {
+                            // TODO: 캐릭터의 위치가 이동 가능한 범위에 있는지 검사, 업데이트
+
+                            character.Position = new NetworkShared.Types.Point(request.Position.Value.X, request.Position.Value.Y);
+                            character.Velocity = new NetworkShared.Types.Point(0, character.Velocity.Y);
+                            _ = Broadcast(character, FlatBuffers.Protocol.Response.State.Bytes(character));
+                        }
+                        break;
+
+                    case Axis.Y:
+                        {
+                            if (character.Jumping == false)
+                                throw new Exception("점프 혹은 낙하상태가 아닌 경우 Y축 충돌은 안일어남");
+
+                            // TODO: 점프 최대위치와 현재 갱신하려는 위치를 비교하여 올바른 위치인지 검사
+
+                            // TODO: 캐릭터의 위치가 이동 가능한 범위에 있는지 검사, 업데이트
+
+                            character.Position = new NetworkShared.Types.Point(request.Position.Value.X, request.Position.Value.Y);
+                            character.Velocity = new NetworkShared.Types.Point(character.Velocity.X, 0.0);
+                            _ = Broadcast(character, FlatBuffers.Protocol.Response.State.Bytes(character));
+                        }
+                        break;
+
+                    default:
+                        throw new Exception("잘못된 요청");
+                }
+
                 return true;
             }
             catch (Exception e)
@@ -138,7 +225,6 @@ namespace TestServer.Handler
         public bool OnWarp(Session<Character> session, FlatBuffers.Protocol.Request.Warp request)
         {
             var character = session.Data;
-            character.Synchronize(new DateTime(request.Now));
             if (character.Position.Delta(request.Position.Value) > 1)
                 throw new Exception("invalid");
 

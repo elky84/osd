@@ -1,3 +1,3 @@
-pyinstaller --onefile flatb_extension.py
-COPY dist\flatb_extension.exe .
+pyinstaller --onefile app.py
+COPY dist\app.exe .
 PAUSE

@@ -21,7 +21,7 @@ namespace FlatBuffers.Protocol.Response
     public void __init(int _i, ByteBuffer _bb) { __p = new Table(_i, _bb); }
     public Portal __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
   
-    public Position? Position { get { int o = __p.__offset(4); return o != 0 ? (Position?)(new Position()).__assign(__p.__indirect(o + __p.bb_pos), __p.bb) : null; } }
+    public Vector2? Position { get { int o = __p.__offset(4); return o != 0 ? (Vector2?)(new Vector2()).__assign(__p.__indirect(o + __p.bb_pos), __p.bb) : null; } }
     public string Map { get { int o = __p.__offset(6); return o != 0 ? __p.__string(o + __p.bb_pos) : null; } }
   #if ENABLE_SPAN_T
     public Span<byte> GetMapBytes() { return __p.__vector_as_span<byte>(6, 1); }
@@ -31,7 +31,7 @@ namespace FlatBuffers.Protocol.Response
     public byte[] GetMapArray() { return __p.__vector_as_array<byte>(6); }
   
     public static Offset<Portal> CreatePortal(FlatBufferBuilder builder,
-        Offset<Position> positionOffset = default(Offset<Position>),
+        Offset<Vector2> positionOffset = default(Offset<Vector2>),
         StringOffset mapOffset = default(StringOffset)) {
       builder.StartTable(2);
       Portal.AddMap(builder, mapOffset);
@@ -40,7 +40,7 @@ namespace FlatBuffers.Protocol.Response
     }
   
     public static void StartPortal(FlatBufferBuilder builder) { builder.StartTable(2); }
-    public static void AddPosition(FlatBufferBuilder builder, Offset<Position> positionOffset) { builder.AddOffset(0, positionOffset.Value, 0); }
+    public static void AddPosition(FlatBufferBuilder builder, Offset<Vector2> positionOffset) { builder.AddOffset(0, positionOffset.Value, 0); }
     public static void AddMap(FlatBufferBuilder builder, StringOffset mapOffset) { builder.AddOffset(1, mapOffset.Value, 0); }
     public static Offset<Portal> EndPortal(FlatBufferBuilder builder) {
       int o = builder.EndTable();
@@ -49,19 +49,19 @@ namespace FlatBuffers.Protocol.Response
   
     public struct Model
     {
-      public FlatBuffers.Protocol.Response.Position.Model Position { get; set; }
+      public FlatBuffers.Protocol.Response.Vector2.Model Position { get; set; }
       public string Map { get; set; }
     
-      public Model(FlatBuffers.Protocol.Response.Position.Model position, string map)
+      public Model(FlatBuffers.Protocol.Response.Vector2.Model position, string map)
       {
         Position = position;
         Map = map;
       }
     }
   
-    public static byte[] Bytes(FlatBuffers.Protocol.Response.Position.Model position, string map) {
+    public static byte[] Bytes(FlatBuffers.Protocol.Response.Vector2.Model position, string map) {
       var builder = new FlatBufferBuilder(512);
-      var positionOffset = FlatBuffers.Protocol.Response.Position.CreatePosition(builder, position.X, position.Y);
+      var positionOffset = FlatBuffers.Protocol.Response.Vector2.CreateVector2(builder, position.X, position.Y);
       var mapOffset = builder.CreateString(map);
       var offset = Portal.CreatePortal(builder, positionOffset, mapOffset);
       builder.Finish(offset.Value);

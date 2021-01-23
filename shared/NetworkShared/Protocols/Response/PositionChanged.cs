@@ -22,11 +22,11 @@ namespace FlatBuffers.Protocol.Response
     public PositionChanged __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
   
     public int Sequence { get { int o = __p.__offset(4); return o != 0 ? __p.bb.GetInt(o + __p.bb_pos) : (int)0; } }
-    public Position? Position { get { int o = __p.__offset(6); return o != 0 ? (Position?)(new Position()).__assign(__p.__indirect(o + __p.bb_pos), __p.bb) : null; } }
+    public Vector2? Position { get { int o = __p.__offset(6); return o != 0 ? (Vector2?)(new Vector2()).__assign(__p.__indirect(o + __p.bb_pos), __p.bb) : null; } }
   
     public static Offset<PositionChanged> CreatePositionChanged(FlatBufferBuilder builder,
         int sequence = 0,
-        Offset<Position> positionOffset = default(Offset<Position>)) {
+        Offset<Vector2> positionOffset = default(Offset<Vector2>)) {
       builder.StartTable(2);
       PositionChanged.AddPosition(builder, positionOffset);
       PositionChanged.AddSequence(builder, sequence);
@@ -35,7 +35,7 @@ namespace FlatBuffers.Protocol.Response
   
     public static void StartPositionChanged(FlatBufferBuilder builder) { builder.StartTable(2); }
     public static void AddSequence(FlatBufferBuilder builder, int sequence) { builder.AddInt(0, sequence, 0); }
-    public static void AddPosition(FlatBufferBuilder builder, Offset<Position> positionOffset) { builder.AddOffset(1, positionOffset.Value, 0); }
+    public static void AddPosition(FlatBufferBuilder builder, Offset<Vector2> positionOffset) { builder.AddOffset(1, positionOffset.Value, 0); }
     public static Offset<PositionChanged> EndPositionChanged(FlatBufferBuilder builder) {
       int o = builder.EndTable();
       return new Offset<PositionChanged>(o);
@@ -44,18 +44,18 @@ namespace FlatBuffers.Protocol.Response
     public struct Model
     {
       public int Sequence { get; set; }
-      public FlatBuffers.Protocol.Response.Position.Model Position { get; set; }
+      public FlatBuffers.Protocol.Response.Vector2.Model Position { get; set; }
     
-      public Model(int sequence, FlatBuffers.Protocol.Response.Position.Model position)
+      public Model(int sequence, FlatBuffers.Protocol.Response.Vector2.Model position)
       {
         Sequence = sequence;
         Position = position;
       }
     }
   
-    public static byte[] Bytes(int sequence, FlatBuffers.Protocol.Response.Position.Model position) {
+    public static byte[] Bytes(int sequence, FlatBuffers.Protocol.Response.Vector2.Model position) {
       var builder = new FlatBufferBuilder(512);
-      var positionOffset = FlatBuffers.Protocol.Response.Position.CreatePosition(builder, position.X, position.Y);
+      var positionOffset = FlatBuffers.Protocol.Response.Vector2.CreateVector2(builder, position.X, position.Y);
       var offset = PositionChanged.CreatePositionChanged(builder, sequence, positionOffset);
       builder.Finish(offset.Value);
       

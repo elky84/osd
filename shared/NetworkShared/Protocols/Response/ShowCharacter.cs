@@ -29,7 +29,7 @@ namespace FlatBuffers.Protocol.Response
     public ArraySegment<byte>? GetNameBytes() { return __p.__vector_as_arraysegment(6); }
   #endif
     public byte[] GetNameArray() { return __p.__vector_as_array<byte>(6); }
-    public Position? Position { get { int o = __p.__offset(8); return o != 0 ? (Position?)(new Position()).__assign(__p.__indirect(o + __p.bb_pos), __p.bb) : null; } }
+    public Vector2? Position { get { int o = __p.__offset(8); return o != 0 ? (Vector2?)(new Vector2()).__assign(__p.__indirect(o + __p.bb_pos), __p.bb) : null; } }
     public bool Moving { get { int o = __p.__offset(10); return o != 0 ? 0!=__p.bb.Get(o + __p.bb_pos) : (bool)false; } }
     public int Direction { get { int o = __p.__offset(12); return o != 0 ? __p.bb.GetInt(o + __p.bb_pos) : (int)0; } }
     public Equipment? Equipment(int j) { int o = __p.__offset(14); return o != 0 ? (Equipment?)(new Equipment()).__assign(__p.__indirect(__p.__vector(o) + j * 4), __p.bb) : null; }
@@ -38,7 +38,7 @@ namespace FlatBuffers.Protocol.Response
     public static Offset<ShowCharacter> CreateShowCharacter(FlatBufferBuilder builder,
         int sequence = 0,
         StringOffset nameOffset = default(StringOffset),
-        Offset<Position> positionOffset = default(Offset<Position>),
+        Offset<Vector2> positionOffset = default(Offset<Vector2>),
         bool moving = false,
         int direction = 0,
         VectorOffset equipmentOffset = default(VectorOffset)) {
@@ -55,7 +55,7 @@ namespace FlatBuffers.Protocol.Response
     public static void StartShowCharacter(FlatBufferBuilder builder) { builder.StartTable(6); }
     public static void AddSequence(FlatBufferBuilder builder, int sequence) { builder.AddInt(0, sequence, 0); }
     public static void AddName(FlatBufferBuilder builder, StringOffset nameOffset) { builder.AddOffset(1, nameOffset.Value, 0); }
-    public static void AddPosition(FlatBufferBuilder builder, Offset<Position> positionOffset) { builder.AddOffset(2, positionOffset.Value, 0); }
+    public static void AddPosition(FlatBufferBuilder builder, Offset<Vector2> positionOffset) { builder.AddOffset(2, positionOffset.Value, 0); }
     public static void AddMoving(FlatBufferBuilder builder, bool moving) { builder.AddBool(3, moving, false); }
     public static void AddDirection(FlatBufferBuilder builder, int direction) { builder.AddInt(4, direction, 0); }
     public static void AddEquipment(FlatBufferBuilder builder, VectorOffset equipmentOffset) { builder.AddOffset(5, equipmentOffset.Value, 0); }
@@ -71,12 +71,12 @@ namespace FlatBuffers.Protocol.Response
     {
       public int Sequence { get; set; }
       public string Name { get; set; }
-      public FlatBuffers.Protocol.Response.Position.Model Position { get; set; }
+      public FlatBuffers.Protocol.Response.Vector2.Model Position { get; set; }
       public bool Moving { get; set; }
       public int Direction { get; set; }
       public List<FlatBuffers.Protocol.Response.Equipment.Model> Equipment { get; set; }
     
-      public Model(int sequence, string name, FlatBuffers.Protocol.Response.Position.Model position, bool moving, int direction, List<FlatBuffers.Protocol.Response.Equipment.Model> equipment)
+      public Model(int sequence, string name, FlatBuffers.Protocol.Response.Vector2.Model position, bool moving, int direction, List<FlatBuffers.Protocol.Response.Equipment.Model> equipment)
       {
         Sequence = sequence;
         Name = name;
@@ -87,10 +87,10 @@ namespace FlatBuffers.Protocol.Response
       }
     }
   
-    public static byte[] Bytes(int sequence, string name, FlatBuffers.Protocol.Response.Position.Model position, bool moving, int direction, List<FlatBuffers.Protocol.Response.Equipment.Model> equipment) {
+    public static byte[] Bytes(int sequence, string name, FlatBuffers.Protocol.Response.Vector2.Model position, bool moving, int direction, List<FlatBuffers.Protocol.Response.Equipment.Model> equipment) {
       var builder = new FlatBufferBuilder(512);
       var nameOffset = builder.CreateString(name);
-      var positionOffset = FlatBuffers.Protocol.Response.Position.CreatePosition(builder, position.X, position.Y);
+      var positionOffset = FlatBuffers.Protocol.Response.Vector2.CreateVector2(builder, position.X, position.Y);
       var equipmentOffset = CreateEquipmentVector(builder, equipment.Select(x => FlatBuffers.Protocol.Response.Equipment.CreateEquipment(builder, x.Id, builder.CreateString(x.Name), x.Type)).ToArray());
       var offset = ShowCharacter.CreateShowCharacter(builder, sequence, nameOffset, positionOffset, moving, direction, equipmentOffset);
       builder.Finish(offset.Value);

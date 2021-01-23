@@ -4,8 +4,8 @@ RMDIR Protocols /s /q
 flatc --csharp -o Protocols\Request request.fbs
 flatc --csharp -o Protocols\Response response.fbs
 PUSHD extension
-CALL flatb_extension.exe --dir=..\Protocols\Request --namespace FlatBuffers.Protocol.Request
-CALL flatb_extension.exe --dir=..\Protocols\Response --namespace FlatBuffers.Protocol.Response
+CALL app.exe --dir=..\Protocols\Request --namespace FlatBuffers.Protocol.Request
+CALL app.exe --dir=..\Protocols\Response --namespace FlatBuffers.Protocol.Response
 POPD
 
 RMDIR ..\shared\NetworkShared\Protocols /s /q

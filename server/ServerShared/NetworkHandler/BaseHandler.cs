@@ -68,7 +68,6 @@ namespace ServerShared.NetworkHandler
                 {
                     stopWatch.Stop();
                     _mutex.WaitOne();
-                    OnFrameMove((float)stopWatch.Elapsed.TotalMilliseconds);
 
                     foreach (var timer in _timers)
                     {
@@ -103,9 +102,6 @@ namespace ServerShared.NetworkHandler
                 LastEventTick = DateTime.Now.Ticks
             });
         }
-
-        public virtual void OnFrameMove(float ms)
-        { }
 
         public void Release()
         {

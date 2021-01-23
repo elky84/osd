@@ -21,21 +21,17 @@ namespace FlatBuffers.Protocol.Request
     public void __init(int _i, ByteBuffer _bb) { __p = new Table(_i, _bb); }
     public Stop __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
   
-    public Position? Position { get { int o = __p.__offset(4); return o != 0 ? (Position?)(new Position()).__assign(__p.__indirect(o + __p.bb_pos), __p.bb) : null; } }
-    public long Now { get { int o = __p.__offset(6); return o != 0 ? __p.bb.GetLong(o + __p.bb_pos) : (long)0; } }
+    public Vector2? Position { get { int o = __p.__offset(4); return o != 0 ? (Vector2?)(new Vector2()).__assign(__p.__indirect(o + __p.bb_pos), __p.bb) : null; } }
   
     public static Offset<Stop> CreateStop(FlatBufferBuilder builder,
-        Offset<Position> positionOffset = default(Offset<Position>),
-        long now = 0) {
-      builder.StartTable(2);
-      Stop.AddNow(builder, now);
+        Offset<Vector2> positionOffset = default(Offset<Vector2>)) {
+      builder.StartTable(1);
       Stop.AddPosition(builder, positionOffset);
       return Stop.EndStop(builder);
     }
   
-    public static void StartStop(FlatBufferBuilder builder) { builder.StartTable(2); }
-    public static void AddPosition(FlatBufferBuilder builder, Offset<Position> positionOffset) { builder.AddOffset(0, positionOffset.Value, 0); }
-    public static void AddNow(FlatBufferBuilder builder, long now) { builder.AddLong(1, now, 0); }
+    public static void StartStop(FlatBufferBuilder builder) { builder.StartTable(1); }
+    public static void AddPosition(FlatBufferBuilder builder, Offset<Vector2> positionOffset) { builder.AddOffset(0, positionOffset.Value, 0); }
     public static Offset<Stop> EndStop(FlatBufferBuilder builder) {
       int o = builder.EndTable();
       return new Offset<Stop>(o);
@@ -43,20 +39,18 @@ namespace FlatBuffers.Protocol.Request
   
     public struct Model
     {
-      public FlatBuffers.Protocol.Request.Position.Model Position { get; set; }
-      public long Now { get; set; }
+      public FlatBuffers.Protocol.Request.Vector2.Model Position { get; set; }
     
-      public Model(FlatBuffers.Protocol.Request.Position.Model position, long now)
+      public Model(FlatBuffers.Protocol.Request.Vector2.Model position)
       {
         Position = position;
-        Now = now;
       }
     }
   
-    public static byte[] Bytes(FlatBuffers.Protocol.Request.Position.Model position, long now) {
+    public static byte[] Bytes(FlatBuffers.Protocol.Request.Vector2.Model position) {
       var builder = new FlatBufferBuilder(512);
-      var positionOffset = FlatBuffers.Protocol.Request.Position.CreatePosition(builder, position.X, position.Y);
-      var offset = Stop.CreateStop(builder, positionOffset, now);
+      var positionOffset = FlatBuffers.Protocol.Request.Vector2.CreateVector2(builder, position.X, position.Y);
+      var offset = Stop.CreateStop(builder, positionOffset);
       builder.Finish(offset.Value);
       
       var bytes = builder.DataBuffer.ToSizedArray();
@@ -75,7 +69,7 @@ namespace FlatBuffers.Protocol.Request
     }
     
     public static byte[] Bytes(Model model) {
-      return Bytes(model.Position, model.Now);
+      return Bytes(model.Position);
     }
   };
 }

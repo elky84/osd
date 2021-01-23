@@ -21,12 +21,20 @@ namespace TestServer.Model
 
         public Direction Direction { get; set; } = Direction.Bottom;
 
-        public static implicit operator FlatBuffers.Protocol.Response.Object.Model(Object obj) => new FlatBuffers.Protocol.Response.Object.Model(obj.Sequence.Value, obj.Name, (int)obj.Type, obj.Position, obj.Moving, (int)obj.Direction);
+        public static implicit operator FlatBuffers.Protocol.Response.Object.Model(Object obj) => 
+            new FlatBuffers.Protocol.Response.Object.Model(obj.Sequence.Value, obj.Name, (int)obj.Type, obj.Position, obj.Moving, (int)obj.Direction);
 
-        public static implicit operator FlatBuffers.Protocol.Response.Show.Model(Object obj) => new FlatBuffers.Protocol.Response.Show.Model(obj.Sequence.Value, obj.Name, obj.Position, obj.Moving, (int)obj.Direction);
+        public static implicit operator FlatBuffers.Protocol.Response.Show.Model(Object obj) => 
+            new FlatBuffers.Protocol.Response.Show.Model(obj.Sequence.Value, obj.Name, obj.Position, obj.Moving, (int)obj.Direction);
+
+        public static implicit operator FlatBuffers.Protocol.Response.State.Model(Object obj) =>
+            new FlatBuffers.Protocol.Response.State.Model(obj.Sequence.Value, obj.Position, obj.Velocity, (int)obj.Direction, obj.Jumping);
 
         public virtual string Name { get; set; }
         public Point Position { get; set; } = new Point();
+        public Point Velocity { get; set; } = new Point();
+        public bool Jumping => (int)Velocity.Y != 0;
+        public bool Falling => (int)Velocity.Y > 0;
 
         private Map _map;
         public Map Map

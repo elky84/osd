@@ -26,9 +26,6 @@ namespace TestServer.Model
 
 
         // properties
-        public DateTime? MoveTime { get; set; }
-
-        public Vector2 Velocity { get; set; } = new Vector2();
         public bool IsAlive { get; set; }
         public DateTime? DeadTime { get; private set; }
         public void Kill() => Hp = 0;
@@ -59,7 +56,6 @@ namespace TestServer.Model
 
         // override 
         public override bool IsActive => IsAlive;
-        public override bool Moving => MoveTime.HasValue;
 
 
         // build-in functions
@@ -72,28 +68,7 @@ namespace TestServer.Model
             return 1;
         }
 
-        public Point Synchronize(float elapsedMilliseconds)
-        {
-            var before = new Vector2((float)Position.X, (float)Position.Y);
-            var moved = Vector2.Multiply(Velocity, elapsedMilliseconds / 1000.0f);
-            var after = Vector2.Add(before, moved);
-
-            Position = new Point(after.X, after.Y);
-            return Position;
-        }
-
-
         // methods
-        public Point Synchronize(DateTime time)
-        {
-            if (MoveTime == null)
-                return Position;
-
-            Synchronize((float)(time - MoveTime.Value).TotalMilliseconds);
-
-            Map.Update(this);
-            return Position;
-        }
 
         public void BindEvent(IListener listener)
         {

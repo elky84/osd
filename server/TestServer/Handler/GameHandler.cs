@@ -1,5 +1,4 @@
-﻿using FlatBuffers.Protocol;
-using KeraLua;
+﻿using KeraLua;
 using MasterData;
 using MasterData.Table;
 using ServerShared.Model;
@@ -7,7 +6,6 @@ using ServerShared.NetworkHandler;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
 using System.Threading.Tasks;
 using TestServer.Factory;
 using TestServer.Model;
@@ -140,22 +138,6 @@ namespace TestServer.Handler
                 lua.PushLuable(item, item.GetType());
 
             return 1;
-        }
-
-        public override void OnFrameMove(float ms)
-        {
-            var lives = _maps.Values.Where(x => x.IsActivated)
-                                    .SelectMany(x => x.Objects.Values.Select(x => x as Life).Where(x => x != null));
-
-            foreach (var life in lives)
-            {
-                life.Velocity = new Vector2
-                {
-                    X = 0,
-                    Y = (float)Math.Min(LIMIT_VELOCITY_Y, life.Velocity.Y + GRAVITY * (ms / 1000.0))
-                };
-                life.Synchronize(ms);
-            }
         }
     }
 }

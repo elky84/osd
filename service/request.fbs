@@ -1,34 +1,44 @@
-table Position {
+table Vector2 {
 	x: double;
 	y: double;
 }
 
 table Move {
-	position: Position;
-	now: long;
+	position: Vector2;
 	direction: int;
 }
 
 table Stop {
-	position: Position;
-	now: long;
+	position: Vector2;
+}
+
+table Jump {
+	position: Vector2;
+}
+
+table Fall {
+	position: Vector2;
+}
+
+table Collision {
+	position: Vector2;
+	axis: int;
 }
 
 table Click {
 	sequence: int;
 }
 
-table DialogIndexResult {
-	index: int;
-}
-
 table DialogResult {
 	next: bool;
 }
 
+table DialogIndexResult {
+	index: int;
+}
+
 table Warp {
-	position: Position;
-	now: long;
+	position: Vector2;
 }
 
 table ActiveItem {
@@ -51,8 +61,7 @@ table InactiveItem {
 
 
 table CheatPosition {
-	position: Position;
-	now: long;
+	position: Vector2;
 }
 
 table CheatKill {
