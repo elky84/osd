@@ -44,7 +44,8 @@ namespace TestServer.Handler
 
             try
             {
-                // TODO: 캐릭터의 위치가 이동 가능한 범위에 있는지 검사
+                if (character.ValidPosition(new NetworkShared.Types.Point(request.Position.Value.X, request.Position.Value.Y)) == false)
+                    throw new Exception("올바른 위치가 아님");
 
                 character.Position = new NetworkShared.Types.Point(request.Position.Value.X, request.Position.Value.Y);
                 character.Velocity = new NetworkShared.Types.Point(0, character.Velocity.Y);
@@ -66,7 +67,8 @@ namespace TestServer.Handler
 
             try
             {
-                // TODO: 캐릭터의 위치가 이동 가능한 범위에 있는지 검사, 업데이트
+                if (character.ValidPosition(new NetworkShared.Types.Point(request.Position.Value.X, request.Position.Value.Y)) == false)
+                    throw new Exception("올바른 위치가 아님");
 
                 if (character.Jumping)
                     throw new Exception("점프 혹은 낙하중에 점프하려고 함");
@@ -91,7 +93,9 @@ namespace TestServer.Handler
 
             try
             {
-                // TODO: 캐릭터의 위치가 이동 가능한 범위에 있는지 검사, 업데이트
+                if (character.ValidPosition(new NetworkShared.Types.Point(request.Position.Value.X, request.Position.Value.Y)) == false)
+                    throw new Exception("올바른 위치가 아님");
+
                 if (character.Jumping)
                     throw new Exception("점프 혹은 낙하중에 낙하될 순 없음");
 
@@ -115,13 +119,12 @@ namespace TestServer.Handler
 
             try
             {
-                
-
                 switch ((Axis)request.Axis)
                 {
                     case Axis.X:
                         {
-                            // TODO: 캐릭터의 위치가 이동 가능한 범위에 있는지 검사, 업데이트
+                            if (character.ValidPosition(new NetworkShared.Types.Point(request.Position.Value.X, request.Position.Value.Y)) == false)
+                                throw new Exception("올바른 위치가 아님");
 
                             character.Position = new NetworkShared.Types.Point(request.Position.Value.X, request.Position.Value.Y);
                             character.Velocity = new NetworkShared.Types.Point(0, character.Velocity.Y);
@@ -134,9 +137,8 @@ namespace TestServer.Handler
                             if (character.Jumping == false)
                                 throw new Exception("점프 혹은 낙하상태가 아닌 경우 Y축 충돌은 안일어남");
 
-                            // TODO: 점프 최대위치와 현재 갱신하려는 위치를 비교하여 올바른 위치인지 검사
-
-                            // TODO: 캐릭터의 위치가 이동 가능한 범위에 있는지 검사, 업데이트
+                            if (character.ValidPosition(new NetworkShared.Types.Point(request.Position.Value.X, request.Position.Value.Y)) == false)
+                                throw new Exception("올바른 위치가 아님");
 
                             character.Position = new NetworkShared.Types.Point(request.Position.Value.X, request.Position.Value.Y);
                             character.Velocity = new NetworkShared.Types.Point(character.Velocity.X, 0.0);

@@ -14,11 +14,6 @@ namespace TestServer.Handler
 {
     public partial class GameHandler : BaseHandler<Character>
     {
-        // TODO: 다른곳으로 빼야함
-        public static readonly double GRAVITY = 5.0;
-        public static readonly double LIMIT_VELOCITY_Y = 10.0;
-
-
         private static readonly Lazy<GameHandler> _instance = new Lazy<GameHandler>(() => new GameHandler());
         public static GameHandler Instance => _instance.Value;
 
