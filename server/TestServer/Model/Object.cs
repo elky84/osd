@@ -7,7 +7,7 @@ namespace TestServer.Model
 {
     public abstract class Object : ILuable
     {
-        private Point _position;
+        private Point _position = new Point();
 
         public interface IListener
         {
@@ -28,12 +28,12 @@ namespace TestServer.Model
             {
                 _position = value;
                 UpdatedPositionTime = DateTime.Now;
-                MaxJumpY = value.Y;
+                JumpLimit = value.Y;
             }
         }
         public Point Velocity { get; set; } = new Point();
         public DateTime UpdatedPositionTime { get; private set; } = DateTime.Now;
-        public double MaxJumpY = 0;
+        public double JumpLimit = 0;
         
 
         public bool Jumping => (int)Velocity.Y != 0;
@@ -92,22 +92,26 @@ namespace TestServer.Model
 
         public bool ValidPosition(Point position)
         {
-            var elapsed = (DateTime.Now - UpdatedPositionTime).TotalMilliseconds;
+            var elapsed = (DateTime.Now - UpdatedPositionTime).Ticks;
             var diff = new Point(position.X - Position.X, position.Y - Position.Y);
 
-            var calculatedX = (elapsed * Velocity.X) / 1000.0;
+            var calculatedX = (elapsed * Velocity.X) / 1000000.0;
             if (diff.X > calculatedX)
                 return false;
 
-            if (Jumping)
+            if (Jumping == false)
             {
-                // TODO: 점프할 때 최대위치 계산하고 그 위치보다 높은 곳에 있으면 false
-                if (MaxJumpY < position.Y)
+                if ((int)position.Y != Position.Y)
+                    return false;
+            }
+            else if (position.Y < Position.Y)
+            {
+                if (JumpLimit < position.Y)
                     return false;
             }
             else
             {
-                var calculatedY = (elapsed * 10.0) / 1000.0;
+                var calculatedY = (elapsed * 10.0) / 1000000.0;
                 if (diff.Y > calculatedY)
                     return false;
             }

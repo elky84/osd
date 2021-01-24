@@ -1,6 +1,8 @@
 ﻿using DotNetty.Transport.Channels;
 using NetworkShared;
+using System;
 using System.Drawing;
+using System.Numerics;
 
 namespace TestClient.Model
 {
@@ -9,6 +11,8 @@ namespace TestClient.Model
         public IChannelHandlerContext Context { get; set; }
 
         public Direction Direction { get; set; }
-        public Point Position { get; set; }
+        public Vector2 Position { get; set; }
+        public DateTime? BeginMoveTime { get; set; }
+        public Vector2 Velocity { get; set; }
     }
 }

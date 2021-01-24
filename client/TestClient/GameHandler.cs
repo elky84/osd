@@ -18,9 +18,9 @@ namespace TestClient
         }
 
         [FlatBufferEvent]
-        public bool OnMoveStatus(MoveStatus response)
+        public bool OnState(State response)
         {
-            Log.Logger.Information($"OnMoveStatus() {response.Sequence} {response.Position.Value.X} {response.Position.Value.Y}");
+            Log.Logger.Information($"OnState() {response.Sequence} {response.Position} {response.Jumping} {response.Velocity}");
             return true;
         }
 

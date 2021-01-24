@@ -1,5 +1,4 @@
-﻿using FlatBuffers.Protocol;
-using FlatBuffers.Protocol.Request;
+﻿using FlatBuffers.Protocol.Request;
 using NetworkShared;
 using System;
 using System.Collections.Generic;
@@ -60,25 +59,47 @@ namespace TestClient
         [CommandEvent("move")]
         public void OnMove(Direction direction)
         {
-            Send(Move.Bytes(new Position.Model(Character.Position.X, Character.Position.Y), DateTime.Now.Ticks, (int)Character.Direction));
+            Character.Direction = direction;
+            Character.BeginMoveTime = DateTime.Now;
+            switch (direction)
+            {
+                case Direction.Left:
+                    Character.Velocity = new System.Numerics.Vector2(-10.0f, 0);
+                    break;
+
+                case Direction.Right:
+                    Character.Velocity = new System.Numerics.Vector2(10.0f, 0);
+                    break;
+
+                default:
+                    return;
+            }
+            Send(Move.Bytes(new Vector2.Model(Character.Position.X, Character.Position.Y), (int)Character.Direction));
         }
 
         [CommandEvent("stop")]
         public void OnStop()
         {
-            Send(Stop.Bytes(new Position.Model(Character.Position.X, Character.Position.Y), DateTime.Now.Ticks));
+            if (Character.BeginMoveTime == null)
+                return;
+
+            var elapsed = (DateTime.Now - Character.BeginMoveTime.Value).Ticks;
+            var diff = elapsed / 1000000 * Character.Velocity.X;
+            Character.Position = new System.Numerics.Vector2(Character.Position.X + diff, 0);
+            Character.Velocity = new System.Numerics.Vector2(0, 0);
+            Send(Stop.Bytes(new Vector2.Model(Character.Position.X, Character.Position.Y)));
         }
 
         [CommandEvent("warp")]
         public void OnWarp()
         {
-            Send(Warp.Bytes(new Position.Model(Character.Position.X, Character.Position.Y), DateTime.Now.Ticks));
+            Send(Warp.Bytes(new Vector2.Model(Character.Position.X, Character.Position.Y)));
         }
 
         [CommandEvent("cheat/position")]
         public void Cheat_OnPosition()
         { 
-            Send(CheatPosition.Bytes(new Position.Model(Character.Position.X, Character.Position.Y), DateTime.Now.Ticks));
+            Send(CheatPosition.Bytes(new Vector2.Model(Character.Position.X, Character.Position.Y)));
         }
 
         [CommandEvent("click")]

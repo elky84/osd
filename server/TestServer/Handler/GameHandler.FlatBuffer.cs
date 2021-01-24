@@ -142,6 +142,7 @@ namespace TestServer.Handler
 
                             character.Position = new NetworkShared.Types.Point(request.Position.Value.X, request.Position.Value.Y);
                             character.Velocity = new NetworkShared.Types.Point(character.Velocity.X, 0.0);
+                            character.JumpLimit = character.Position.Y;
                             _ = Broadcast(character, FlatBuffers.Protocol.Response.State.Bytes(character));
                         }
                         break;
