@@ -96,7 +96,9 @@ namespace TestServer.Model
             var diff = new Point(position.X - Position.X, position.Y - Position.Y);
 
             var calculatedX = (elapsed * Velocity.X) / 1000000.0;
-            if (diff.X > calculatedX)
+            var isLimitRangeOut = Math.Abs(diff.X) > Math.Abs(calculatedX); // 최대 이동범위 초과
+            var isErrorRangeOut = Math.Abs(diff.X - calculatedX) > calculatedX * 0.1; // 오차 범위 초과
+            if (isLimitRangeOut && isErrorRangeOut)
                 return false;
 
             if (Jumping == false)

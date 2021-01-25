@@ -53,6 +53,8 @@ public class Character : SpriteObject
 
     public Direction TargetDirection;
 
+    public bool Moving => (int)Velocity.x != 0;
+
     public DateTime MoveDt { get; set; }
 
     public ObjectType Type { get; set; }
@@ -97,8 +99,9 @@ public class Character : SpriteObject
             var diff = end - MoveDt;
             MoveDt = end;
 
-            var moved = Velocity * (diff.Ticks / 1000000);
+            var moved = (Velocity * diff.Ticks) / 1000000;
             CurrentPosition = new Position(CurrentPosition.X + moved.x, CurrentPosition.Y + moved.y);
+            UnityEngine.Debug.Log(CurrentPosition);
             transform.localPosition = CurrentPosition.ToVector3();
             yield return new WaitForSeconds(0.01f);
         }
@@ -106,18 +109,20 @@ public class Character : SpriteObject
 
     public void MoveDirection(Direction direction, bool packetSend)
     {
-        if (this.TargetDirection == direction)
+        if (Moving && this.TargetDirection == direction)
         {
             return;
         }
 
         this.TargetDirection = direction;
         StopMove(packetSend);
+
+        this.Velocity = new Vector2(10.0f * (direction == Direction.Left ? -1 : 1), 0);
         MoveDt = DateTime.Now;
 
         if (packetSend)
         {
-            //NettyClient.Instance.Send(Move.Bytes(new FlatBuffers.Protocol.Position.Model(CurrentPosition.X, CurrentPosition.Y), MoveDt.Ticks, (int)direction));
+            NettyClient.Instance.Send(FlatBuffers.Protocol.Request.Move.Bytes(new FlatBuffers.Protocol.Request.Vector2.Model { X = CurrentPosition.X, Y = CurrentPosition.Y }, (int)direction));
         }
 
         MoveStart();
@@ -135,13 +140,11 @@ public class Character : SpriteObject
         {
             StopCoroutine(MoveCoroutine);
             MoveCoroutine = null;
+            Velocity = new Vector2(0, 0);
             Animator.SetBool("Walking", false);
 
             if (packetSend)
-            {
-                var end = DateTime.Now;
                 NettyClient.Instance.Send(FlatBuffers.Protocol.Request.Stop.Bytes(new FlatBuffers.Protocol.Request.Vector2.Model { X = CurrentPosition.X, Y = CurrentPosition.Y }));
-            }
         }
     }
 

@@ -104,11 +104,11 @@ public partial class GameController : MonoBehaviour
         {
             if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
             {
-                MyCharacter.MoveDirection(Direction.Top, true);
+                //MyCharacter.MoveDirection(Direction.Top, true);
             }
             else if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
             {
-                MyCharacter.MoveDirection(Direction.Bottom, true);
+                //MyCharacter.MoveDirection(Direction.Bottom, true);
             }
             else if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
             {
