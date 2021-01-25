@@ -1,8 +1,5 @@
-﻿using FlatBuffers.Protocol;
-using NetworkShared;
-using System.Collections;
+﻿using NetworkShared;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -44,7 +41,7 @@ public partial class GameController : MonoBehaviour
         };
     }
 
-    private Character CreateCharacter(string name, int sequence, ObjectType objectType, FlatBuffers.Protocol.Position position)
+    private Character CreateCharacter(string name, int sequence, ObjectType objectType, FlatBuffers.Protocol.Response.Vector2 position)
     {
         var gameObj = Instantiate(Resources.Load("Prefabs/Character") as GameObject, position.ToVector3(), Quaternion.identity, CharactersTransform);
         var character = gameObj.GetComponent<Character>();

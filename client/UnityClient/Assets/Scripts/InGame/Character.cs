@@ -27,7 +27,7 @@ public class Position
         return new Vector3(X, Y);
     }
 
-    public static Position FromFlatBuffer(FlatBuffers.Protocol.Position position)
+    public static Position FromFlatBuffer(FlatBuffers.Protocol.Response.Vector2 position)
     {
         return new Position { X = (float)position.X, Y = (float)position.Y };
     }
@@ -43,6 +43,7 @@ public class Character : SpriteObject
     public Text NickName;
 
     public float Speed => 1;
+    public Vector2 Velocity { get; set; }
 
     private IEnumerator MoveCoroutine { get; set; }
 
@@ -96,31 +97,8 @@ public class Character : SpriteObject
             var diff = end - MoveDt;
             MoveDt = end;
 
-            //Debug.Log($"Current: {CurrentPosition.X} {CurrentPosition.Y} Diff:{diff.TotalMilliseconds}");
-
-            float moved = (float)(diff.TotalMilliseconds * (Speed / 1000.0));
-            switch (TargetDirection)
-            {
-                case Direction.Left:
-                    CurrentPosition = new Position(CurrentPosition.X - moved, CurrentPosition.Y);
-                    FlipX = true;
-                    break;
-                case Direction.Top:
-                    CurrentPosition = new Position(CurrentPosition.X, CurrentPosition.Y + moved);
-                    break;
-                case Direction.Right:
-                    CurrentPosition = new Position(CurrentPosition.X + moved, CurrentPosition.Y);
-                    FlipX = false;
-                    break;
-                case Direction.Bottom:
-                    CurrentPosition = new Position(CurrentPosition.X, CurrentPosition.Y - moved);
-                    break;
-                default:
-                    throw new Exception("Invalid direction value");
-            }
-
-            //Debug.Log($"Move: {CurrentPosition.X} {CurrentPosition.Y}");
-
+            var moved = Velocity * (diff.Ticks / 1000000);
+            CurrentPosition = new Position(CurrentPosition.X + moved.x, CurrentPosition.Y + moved.y);
             transform.localPosition = CurrentPosition.ToVector3();
             yield return new WaitForSeconds(0.01f);
         }
@@ -162,7 +140,7 @@ public class Character : SpriteObject
             if (packetSend)
             {
                 var end = DateTime.Now;
-                NettyClient.Instance.Send(Stop.Bytes(new FlatBuffers.Protocol.Position.Model(CurrentPosition.X, CurrentPosition.Y), end.Ticks));
+                NettyClient.Instance.Send(FlatBuffers.Protocol.Request.Stop.Bytes(new FlatBuffers.Protocol.Request.Vector2.Model { X = CurrentPosition.X, Y = CurrentPosition.Y }));
             }
         }
     }

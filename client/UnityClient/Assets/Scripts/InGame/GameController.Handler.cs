@@ -1,39 +1,25 @@
-﻿using FlatBuffers.Protocol;
+﻿using FlatBuffers.Protocol.Response;
 using NetworkShared;
 using UnityEngine;
 
 public partial class GameController : MonoBehaviour
 {
     [FlatBufferEvent]
-    public bool OnMove(Move x)
+    public bool OnState(State x)
     {
-        Debug.Log($"OnMove() {x.Position.Value.X} {x.Position.Value.Y} {x.Direction} {x.Now}");
-        return true;
-    }
-
-    [FlatBufferEvent]
-    public bool OnStop(Stop x)
-    {
-        Debug.Log($"OnStop() {x.Position.Value.X} {x.Position.Value.Y} {x.Now}");
-        return true;
-    }
-
-    [FlatBufferEvent]
-    public bool OnMoveStatus(MoveStatus x)
-    {
-        Debug.Log($"OnMoveStatus() {x.Sequence} {(Direction)x.Direction} {x.Position.Value.X} {x.Position.Value.Y}");
-        var character = GetCharacter(x.Sequence);
-        if (character != null)
-        {
-            if (x.Moving)
-            {
-                character.MoveDirection((Direction)x.Direction, false);
-            }
-            else
-            {
-                character.StopMove(false);
-            }
-        }
+        //Debug.Log($"OnMoveStatus() {x.Sequence} {(Direction)x.Direction} {x.Position.Value.X} {x.Position.Value.Y}");
+        //var character = GetCharacter(x.Sequence);
+        //if (character != null)
+        //{
+        //    if (x.Moving)
+        //    {
+        //        character.MoveDirection((Direction)x.Direction, false);
+        //    }
+        //    else
+        //    {
+        //        character.StopMove(false);
+        //    }
+        //}
         return true;
     }
 
@@ -48,7 +34,7 @@ public partial class GameController : MonoBehaviour
     }
 
     [FlatBufferEvent]
-    public bool OnSelectListDialog(ShowListDialog response)
+    public bool OnShowListDialog(ShowListDialog response)
     {
         Debug.Log($"Message : {response.Message}");
         for (int i = 0; i < response.ListLength; i++)
