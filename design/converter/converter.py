@@ -91,6 +91,8 @@ def cast(dtype, value, schemaDict, enumDict):
         return {'x': int(group['x']), 'y': int(group['y'])}
 
     if baseType in enumDict:
+        if value not in enumDict[baseType]:
+            raise Exception(f'{value}는 {baseType}에 존재하지 않습니다.')
         return value
 
     converted = extractor.listType(dtype)

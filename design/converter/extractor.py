@@ -92,6 +92,9 @@ def loadEnum(path):
 
         for row in range(sheet.max_row):
             name = sheet.cell(row+1, 1).value
+            if not name:
+                continue
+
             desc = sheet.cell(row+1, 2).value
             enumSet[sheet.title][name] = desc
 
@@ -141,9 +144,9 @@ def relationshipType(type, schemaSetDict):
         if type not in schemaSetDict:
             raise Exception(f'{type}은 정의되지 않은 테이블입니다.')
 
-        id = primaryKey(schemaSetDict[type])
+        id = primaryKey(schemaSetDict[type]) or indexKey(schemaSetDict[type])
         if not id:
-            raise Exception('{type}은 기본키가 정의되지 않은 타입입니다.')
+            raise Exception(f'{type}은 기본키가 정의되지 않은 타입입니다.')
 
         relation = relationshipType(id['type'], schemaSetDict)
         return relation if relation is not None else id['type']
