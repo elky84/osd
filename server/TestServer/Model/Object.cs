@@ -13,7 +13,6 @@ namespace TestServer.Model
         {
             public void OnLeave(Object obj);
             public void OnEnter(Object obj);
-            public void OnSectorChanged(Object obj);
         }
         public IListener Listener { get; set; }
 
@@ -75,19 +74,6 @@ namespace TestServer.Model
         }
         public int? Sequence { get; set; }
 
-        private Map.Sector _sector;
-        public Map.Sector Sector
-        {
-            get => _sector;
-            set
-            {
-                if (_sector == value)
-                    return;
-
-                _sector = value;
-                Listener?.OnSectorChanged(this);
-            }
-        }
         public virtual bool IsActive => true;
 
         public bool ValidPosition(Point position)

@@ -40,15 +40,6 @@ namespace TestServer.Handler
             {
                 _ = Broadcast(obj, FlatBuffers.Protocol.Response.Show.Bytes(obj.Sequence.Value, obj.Name, obj.Position, obj.Moving, (int)obj.Direction));
             }
-
-
-            // 기존 유저들에게 정보 전송
-
-        }
-
-        public void OnSectorChanged(Model.Object obj)
-        {
-            Console.WriteLine($"Sector changed({obj.Sequence}, sector : {obj.Sector?.Id})");
         }
 
         public void OnSpawned(Mob mob)

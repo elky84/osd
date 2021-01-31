@@ -68,11 +68,9 @@ namespace TestServer.Handler
                 map.Zen();
         }
 
-        public async Task Broadcast(Model.Object pivot, byte[] bytes, bool exceptSelf = true, bool inSector = false)
+        public async Task Broadcast(Model.Object pivot, byte[] bytes, bool exceptSelf = true)
         {
-            var targets = inSector ?
-                pivot.Map.Sectors.Nears(pivot.Position).SelectMany(x => x.Characters) :
-                pivot.Map.Objects.Values.Where(x => x is Character).Select(x => x as Character);
+            var targets = pivot.Map.Objects.Values.Where(x => x is Character).Select(x => x as Character);
 
             if (exceptSelf && pivot is Character)
                 targets = targets.Except(new[] { pivot as Character });
@@ -85,9 +83,9 @@ namespace TestServer.Handler
 
         public async Task Broadcast(Model.Map map, byte[] bytes)
         {
-            foreach (var context in map.Sectors.SelectMany(x => x.Characters).Select(x => x.Context))
+            foreach (var character in map.Characters)
             {
-                await context.Send(bytes);
+                await character.Context.Send(bytes);
             }
         }
 
