@@ -105,6 +105,7 @@ namespace TestServer.Handler
             _ = session.Send(FlatBuffers.Protocol.Response.Items.Bytes(session.Data.Items.Inventory.SelectMany(x => x.Value).Select(x => (FlatBuffers.Protocol.Response.Item.Model)x).ToList(),
                 session.Data.Items.Equipments.Values.Where(x => x != null).Select(x => (FlatBuffers.Protocol.Response.Equipment.Model)x).ToList()));
 
+            session.Data.Position = new NetworkShared.Types.Point(10, 10);
             session.Data.Map = mapFirst;
 
             var collision = MasterTable.From<TableCollision>()["캐릭터"];

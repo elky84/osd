@@ -24,7 +24,7 @@ namespace TestServer.Handler
 
                 character.Position = new NetworkShared.Types.Point(request.Position.Value.X, request.Position.Value.Y);
                 character.Direction = (Direction)request.Direction;
-                character.Velocity = new NetworkShared.Types.Point(10.0 * (request.Direction == (int)Direction.Left ? -1 : 1), character.Velocity.Y);
+                character.Velocity = new NetworkShared.Types.Point(1.0 * (request.Direction == (int)Direction.Left ? -1 : 1), character.Velocity.Y);
                 _ = Broadcast(character, FlatBuffers.Protocol.Response.State.Bytes(character));
 
                 Console.WriteLine($"캐릭터가 이동 ({request.Position?.X}, {request.Position?.Y})");

@@ -1,4 +1,5 @@
 ﻿using NetworkShared;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -8,6 +9,8 @@ public partial class GameController : MonoBehaviour
     private Transform CharactersTransform { get; set; }
 
     private Character MyCharacter { get; set; }
+
+    private Transform TilesTransform { get; set; }
 
     private Dictionary<int, Character> Characters { get; set; } = new Dictionary<int, Character>();
 
@@ -20,6 +23,7 @@ public partial class GameController : MonoBehaviour
     {
         CharactersTransform = transform.Find("Characters");
         Camera = GameObject.Find("Main Camera").GetComponent<Camera>();
+        TilesTransform = transform.Find("Tiles");
     }
 
     public void Start()
@@ -30,6 +34,12 @@ public partial class GameController : MonoBehaviour
         {
             MainThreadDispatcher.Instance.Enqueue(() =>
             {
+                var gameObj = Object.Instantiate(Resources.Load($"Prefabs/TileMap") as GameObject, TilesTransform);
+                gameObj.transform.SetParent(TilesTransform);
+
+                var testMap = JsonConvert.DeserializeObject<TileData.MapData>(Resources.Load<TextAsset>("Map/test").text);
+
+                gameObj.GetComponent<TileMap>().LoadMap(testMap);
             });
         };
         NettyClient.Instance.OnClose += () =>
@@ -137,7 +147,7 @@ public partial class GameController : MonoBehaviour
             {
                 MyCharacter.KeyUp(Direction.Right);
             }
-            else if (Input.GetKey(KeyCode.Space))
+            else if (Input.GetKeyUp(KeyCode.Space))
             {
                 MyCharacter.Jump();
             }

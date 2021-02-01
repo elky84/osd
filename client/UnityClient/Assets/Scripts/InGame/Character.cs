@@ -72,6 +72,28 @@ public class Character : SpriteObject
         NickName.text = Name;
     }
 
+    //바닥에 붙어있는지 판별
+    //public으로 되어 있는 이유는 실핼중에 bool값을 체크하기 위해
+    public bool IsGround;
+
+    //땅에 접촉한 동안에 실행됨
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        if (collision.transform.tag == "Tile")
+        {
+            this.IsGround = true;
+        }
+    }
+
+    //땅에서 탈출한 시점에 실행됨
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.transform.tag == "Tile")
+        {
+            this.IsGround = false;
+        }
+    }
+
     public void Attacking()
     {
     }
@@ -107,6 +129,15 @@ public class Character : SpriteObject
         }
     }
 
+    public void RemoveRigidBody()
+    {
+        var collider2D = this.gameObject.GetComponent<BoxCollider2D>();
+        if (collider2D != null)
+        {
+            collider2D.enabled = false;
+        }
+    }
+
     public void MoveDirection(Direction direction, bool packetSend)
     {
         if (Moving && this.TargetDirection == direction)
@@ -117,7 +148,7 @@ public class Character : SpriteObject
         this.TargetDirection = direction;
         StopMove(packetSend);
 
-        this.Velocity = new Vector2(10.0f * (direction == Direction.Left ? -1 : 1), 0);
+        this.Velocity = new Vector2(1.0f * (direction == Direction.Left ? -1 : 1), 0);
         MoveDt = DateTime.Now;
 
         if (packetSend)
@@ -130,8 +161,11 @@ public class Character : SpriteObject
 
     public void Jump()
     {
-        var rigidBody2D = this.gameObject.GetComponent<Rigidbody2D>();
-        rigidBody2D.AddForce(Vector3.up * 10);
+        if (IsGround)
+        {
+            var rigidBody2D = this.gameObject.GetComponent<Rigidbody2D>();
+            rigidBody2D.AddForce(Vector3.up * 30);
+        }
     }
 
     public void StopMove(bool packetSend)

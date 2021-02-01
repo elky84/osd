@@ -57,7 +57,7 @@ public partial class GameController : MonoBehaviour
         for (int i = 0; i < response.ObjectsLength; i++)
         {
             var obj = response.Objects(i).Value;
-            Debug.Log($"Object {i} : {obj.Name}({obj.Sequence}) => {(ObjectType)obj.Type}");
+            Debug.Log($"Object {i} : {obj.Name}({obj.Sequence}) => {(ObjectType)obj.Type}, {obj.Position.Value.X} {obj.Position.Value.Y}");
 
             CreateCharacter(obj.Name, obj.Sequence, (ObjectType)obj.Type, obj.Position.Value);
         }
