@@ -89,7 +89,46 @@ public partial class GameController : MonoBehaviour
         {
             cineCamera.Follow = character.transform;
             MyCharacter = character;
+            MyCharacter.OnCollisionEnter = this.OnCollisionEnter;
+            MyCharacter.OnCollisionExit = this.OnCollisionExit;
+            MyCharacter.OnJump = this.OnJump;
+
+            MyCharacter.OnCollisionExit(MyCharacter, null);
         }
+    }
+
+    private void OnJump(Character me)
+    {
+        NettyClient.Instance.Send(FlatBuffers.Protocol.Request.Jump.Bytes(new FlatBuffers.Protocol.Request.Vector2.Model { X = me.transform.localPosition.x, Y = me.transform.localPosition.y }));
+    }
+
+    private void OnCollisionExit(Character me, Collision2D obj)
+    {
+        // 낙하될 때 서버에 알림
+        NettyClient.Instance.Send(FlatBuffers.Protocol.Request.Fall.Bytes(new FlatBuffers.Protocol.Request.Vector2.Model { X = me.transform.localPosition.x, Y = me.transform.localPosition.y }));
+    }
+
+    private void OnCollisionEnter(Character me, Collision2D obj)
+    {
+        // 착지인지, 측면 충돌인지
+        var normal = obj.contacts[0].normal;
+        Axis axis;
+        if (normal.x > normal.y) // axis : x
+        { 
+            if(Mathf.Abs(normal.x) > 0)
+                UnityEngine.Debug.Log("Left 충돌");
+            else
+                UnityEngine.Debug.Log("Right 충돌");
+
+            axis = Axis.X;
+        }
+        else
+        {
+            UnityEngine.Debug.Log("Bottom 충돌");
+            axis = Axis.Y;
+        }
+
+        NettyClient.Instance.Send(FlatBuffers.Protocol.Request.Collision.Bytes(new FlatBuffers.Protocol.Request.Vector2.Model { X = me.transform.localPosition.x, Y = me.transform.localPosition.y}, (int)axis));
     }
 
     public void Clear()

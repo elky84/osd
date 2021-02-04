@@ -40,6 +40,10 @@ public enum Direction
 
 public class Character : SpriteObject
 {
+    public static float JUMPING_POWER = 30.0f;
+    public static float SPEED = 1.0f;
+
+
     public Text NickName;
 
     public float Speed => 1;
@@ -60,6 +64,10 @@ public class Character : SpriteObject
     public ObjectType Type { get; set; }
 
     public string Name { get; set; }
+
+    public Action<Character, Collision2D> OnCollisionEnter { get; set; }
+    public Action<Character, Collision2D> OnCollisionExit { get; set; }
+    public Action<Character> OnJump { get; set; }
 
 
     public void Awake()
@@ -92,6 +100,8 @@ public class Character : SpriteObject
         {
             this.IsGround = false;
         }
+
+        this.OnCollisionExit?.Invoke(this, collision);
     }
 
     public void Attacking()
@@ -112,6 +122,11 @@ public class Character : SpriteObject
         StartCoroutine(MoveCoroutine);
     }
 
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        this.OnCollisionEnter?.Invoke(this, collision);
+    }
+
     private IEnumerator CoMove()
     {
         Animator.SetBool("Walking", true);
@@ -122,7 +137,7 @@ public class Character : SpriteObject
             MoveDt = end;
 
             var moved = (Velocity * diff.Ticks) / 1000000;
-            CurrentPosition = new Position(CurrentPosition.X + moved.x, CurrentPosition.Y + moved.y);
+            CurrentPosition = new Position(CurrentPosition.X + moved.x, transform.localPosition.y);
             UnityEngine.Debug.Log(CurrentPosition);
             transform.localPosition = CurrentPosition.ToVector3();
             yield return new WaitForSeconds(0.01f);
@@ -148,12 +163,12 @@ public class Character : SpriteObject
         this.TargetDirection = direction;
         StopMove(packetSend);
 
-        this.Velocity = new Vector2(1.0f * (direction == Direction.Left ? -1 : 1), 0);
+        this.Velocity = new Vector2(1.0f * (direction == Direction.Left ? -SPEED : SPEED), 0);
         MoveDt = DateTime.Now;
 
         if (packetSend)
         {
-            NettyClient.Instance.Send(FlatBuffers.Protocol.Request.Move.Bytes(new FlatBuffers.Protocol.Request.Vector2.Model { X = CurrentPosition.X, Y = CurrentPosition.Y }, (int)direction));
+            NettyClient.Instance.Send(FlatBuffers.Protocol.Request.Move.Bytes(new FlatBuffers.Protocol.Request.Vector2.Model { X = this.transform.localPosition.x, Y = this.transform.localPosition.y }, (int)direction));
         }
 
         MoveStart();
@@ -164,7 +179,9 @@ public class Character : SpriteObject
         if (IsGround)
         {
             var rigidBody2D = this.gameObject.GetComponent<Rigidbody2D>();
-            rigidBody2D.AddForce(Vector3.up * 30);
+            rigidBody2D.AddForce(Vector3.up * JUMPING_POWER);
+
+            OnJump?.Invoke(this);
         }
     }
 
@@ -178,7 +195,7 @@ public class Character : SpriteObject
             Animator.SetBool("Walking", false);
 
             if (packetSend)
-                NettyClient.Instance.Send(FlatBuffers.Protocol.Request.Stop.Bytes(new FlatBuffers.Protocol.Request.Vector2.Model { X = CurrentPosition.X, Y = CurrentPosition.Y }));
+                NettyClient.Instance.Send(FlatBuffers.Protocol.Request.Stop.Bytes(new FlatBuffers.Protocol.Request.Vector2.Model { X = this.transform.localPosition.x, Y = this.transform.localPosition.y }));
         }
     }
 

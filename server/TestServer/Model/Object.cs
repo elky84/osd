@@ -7,6 +7,9 @@ namespace TestServer.Model
 {
     public abstract class Object : ILuable
     {
+        public static double GRAVITY = -9.81;
+        public static double GRAVITY_LIMIT = -20.0;
+
         private Point _position = new Point();
 
         public interface IListener
@@ -27,17 +30,54 @@ namespace TestServer.Model
             {
                 _position = value;
                 UpdatedPositionTime = DateTime.Now;
-                JumpLimit = value.Y;
             }
         }
-        public Point Velocity { get; set; } = new Point();
-        public DateTime UpdatedPositionTime { get; private set; } = DateTime.Now;
-        public double JumpLimit = 0;
-        
+        public Point Velocity
+        {
+            get
+            {
+                var x = 0.0;
+                if (this.Moving)
+                {
+                    x = this.Direction switch
+                    {
+                        Direction.Left => this.Speed * -1,
+                        Direction.Right => this.Speed,
+                        _ => 0,
+                    };
+                }
 
-        public bool Jumping => (int)Velocity.Y != 0;
-        public bool Falling => (int)Velocity.Y > 0;
-        public bool Moving => (int)Velocity.X != 0;
+                var y = 0.0;
+                if (Jumping)
+                    y = GRAVITY_LIMIT;
+
+                return new Point(x, y);
+            }
+        }
+        public DateTime UpdatedPositionTime { get; private set; } = DateTime.Now;
+        
+        public static readonly double BaseSpeed = 1.0;
+        public double SpeedPercentage { get; private set; } = 1.0;
+        public double Speed => BaseSpeed * this.SpeedPercentage;
+        public bool Moving { get; private set; } = false;
+        public double VelocityX
+        {
+            get
+            {
+                return this.Direction switch
+                {
+                    Direction.Left => this.Speed * -1,
+                    Direction.Right => this.Speed,
+                    _ => 0,
+                };
+            }
+        }
+
+        public static readonly double BaseJumpingPower = 30.0;
+        public double JumpingPowerPercentage { get; private set; } = 1.0;
+        public double JumpingPower => BaseJumpingPower * this.JumpingPowerPercentage;
+        public double JumpingLimit { get; private set; }
+        public bool Jumping { get; private set; } = false;
 
 
         public static implicit operator FlatBuffers.Protocol.Response.Object.Model(Object obj) =>
@@ -81,25 +121,25 @@ namespace TestServer.Model
             var elapsed = (DateTime.Now - UpdatedPositionTime).Ticks;
             var diff = new Point(position.X - Position.X, position.Y - Position.Y);
 
-            var calculatedX = (elapsed * Velocity.X) / 1000000.0;
+            var calculatedX = (elapsed * this.Velocity.X) / 1000000.0;
             var calculatedDiffX = Math.Abs(diff.X - calculatedX);
             if (calculatedDiffX > 5.0 && calculatedDiffX > calculatedX * 0.025)
                 return false;
 
             if (Jumping == false)
             {
-                if ((int)position.Y != Position.Y)
+                if (Math.Abs(position.Y - Position.Y) > 1)
                     return false;
             }
-            else if (position.Y < Position.Y)
+            else if (position.Y > Position.Y)
             {
-                if (JumpLimit < position.Y)
+                if (this.JumpingLimit < position.Y)
                     return false;
             }
             else
             {
-                var calculatedY = (elapsed * 10.0) / 1000000.0;
-                if (diff.Y > calculatedY)
+                var calculatedY = (elapsed * GRAVITY_LIMIT) / 1000000.0;
+                if (Math.Abs(diff.Y - calculatedY) > 5.0 && diff.Y < calculatedY)
                     return false;
             }
 
@@ -109,6 +149,41 @@ namespace TestServer.Model
         public void BindEvent(IListener listener)
         {
             Listener = listener;
+        }
+
+        public void Move(Direction direction)
+        {
+            this.Direction = direction;
+            this.Moving = true;
+        }
+
+        public void Stop()
+        {
+            this.Moving = false;
+        }
+
+        public void Jump(bool enable)
+        {
+            if (enable)
+            {
+                if (this.Jumping)
+                    throw new Exception("점프중");
+
+                var time = -this.JumpingPower / GRAVITY;
+                var top = (this.JumpingPower * time) + (GRAVITY * Math.Pow(time, 2) / 2);
+                this.JumpingLimit = this.Position.Y + top;
+                Console.WriteLine(this.JumpingLimit);
+                this.Jumping = true;
+            }
+            else
+            {
+                this.Jumping = false;
+            }
+        }
+
+        public void Fall()
+        {
+            this.Jumping = true;
         }
 
         public static int BuiltinName(IntPtr luaState)

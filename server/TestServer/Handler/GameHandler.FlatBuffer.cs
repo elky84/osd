@@ -23,8 +23,7 @@ namespace TestServer.Handler
                     throw new Exception("위치가 올바르지 않습니다.");
 
                 character.Position = new NetworkShared.Types.Point(request.Position.Value.X, request.Position.Value.Y);
-                character.Direction = (Direction)request.Direction;
-                character.Velocity = new NetworkShared.Types.Point(1.0 * (request.Direction == (int)Direction.Left ? -1 : 1), character.Velocity.Y);
+                character.Move((Direction)request.Direction);
                 _ = Broadcast(character, FlatBuffers.Protocol.Response.State.Bytes(character));
 
                 Console.WriteLine($"캐릭터가 이동 ({request.Position?.X}, {request.Position?.Y})");
@@ -48,7 +47,7 @@ namespace TestServer.Handler
                     throw new Exception("올바른 위치가 아님");
 
                 character.Position = new NetworkShared.Types.Point(request.Position.Value.X, request.Position.Value.Y);
-                character.Velocity = new NetworkShared.Types.Point(0, character.Velocity.Y);
+                character.Stop();
                 _ = Broadcast(character, FlatBuffers.Protocol.Response.State.Bytes(character));
                 Console.WriteLine($"캐릭터가 멈춤 : {character.Position}");
                 return true;
@@ -70,11 +69,8 @@ namespace TestServer.Handler
                 if (character.ValidPosition(new NetworkShared.Types.Point(request.Position.Value.X, request.Position.Value.Y)) == false)
                     throw new Exception("올바른 위치가 아님");
 
-                if (character.Jumping)
-                    throw new Exception("점프 혹은 낙하중에 점프하려고 함");
-
                 character.Position = new NetworkShared.Types.Point(request.Position.Value.X, request.Position.Value.Y);
-                character.Velocity = new NetworkShared.Types.Point(character.Velocity.X, -10.0);
+                character.Jump(true);
                 _ = Broadcast(character, FlatBuffers.Protocol.Response.State.Bytes(character));
                 Console.WriteLine($"캐릭터가 점프함 : {character.Position}");
                 return true;
@@ -96,11 +92,8 @@ namespace TestServer.Handler
                 if (character.ValidPosition(new NetworkShared.Types.Point(request.Position.Value.X, request.Position.Value.Y)) == false)
                     throw new Exception("올바른 위치가 아님");
 
-                if (character.Jumping)
-                    throw new Exception("점프 혹은 낙하중에 낙하될 순 없음");
-
                 character.Position = new NetworkShared.Types.Point(request.Position.Value.X, request.Position.Value.Y);
-                character.Velocity = new NetworkShared.Types.Point(character.Velocity.X, 0.0);
+                character.Fall();
                 _ = Broadcast(character, FlatBuffers.Protocol.Response.State.Bytes(character));
 
                 return true;
@@ -127,23 +120,19 @@ namespace TestServer.Handler
                                 throw new Exception("올바른 위치가 아님");
 
                             character.Position = new NetworkShared.Types.Point(request.Position.Value.X, request.Position.Value.Y);
-                            character.Velocity = new NetworkShared.Types.Point(0, character.Velocity.Y);
-                            _ = Broadcast(character, FlatBuffers.Protocol.Response.State.Bytes(character));
                         }
                         break;
 
                     case Axis.Y:
                         {
-                            if (character.Jumping == false)
-                                throw new Exception("점프 혹은 낙하상태가 아닌 경우 Y축 충돌은 안일어남");
+                            //if (character.Jumping == false)
+                            //    throw new Exception("점프 혹은 낙하상태가 아닌 경우 Y축 충돌은 안일어남");
 
                             if (character.ValidPosition(new NetworkShared.Types.Point(request.Position.Value.X, request.Position.Value.Y)) == false)
                                 throw new Exception("올바른 위치가 아님");
 
                             character.Position = new NetworkShared.Types.Point(request.Position.Value.X, request.Position.Value.Y);
-                            character.Velocity = new NetworkShared.Types.Point(character.Velocity.X, 0.0);
-                            character.JumpLimit = character.Position.Y;
-                            _ = Broadcast(character, FlatBuffers.Protocol.Response.State.Bytes(character));
+                            character.Jump(false);
                         }
                         break;
 
@@ -151,6 +140,7 @@ namespace TestServer.Handler
                         throw new Exception("잘못된 요청");
                 }
 
+                _ = Broadcast(character, FlatBuffers.Protocol.Response.State.Bytes(character), false);
                 return true;
             }
             catch (Exception e)

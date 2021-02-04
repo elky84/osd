@@ -5,21 +5,14 @@ using UnityEngine;
 public partial class GameController : MonoBehaviour
 {
     [FlatBufferEvent]
-    public bool OnState(State x)
+    public bool OnState(State response)
     {
-        //Debug.Log($"OnMoveStatus() {x.Sequence} {(Direction)x.Direction} {x.Position.Value.X} {x.Position.Value.Y}");
-        //var character = GetCharacter(x.Sequence);
-        //if (character != null)
-        //{
-        //    if (x.Moving)
-        //    {
-        //        character.MoveDirection((Direction)x.Direction, false);
-        //    }
-        //    else
-        //    {
-        //        character.StopMove(false);
-        //    }
-        //}
+        var character = GetCharacter(response.Sequence);
+        if (character != null)
+        {
+            character.CurrentPosition = new Position((float)response.Position.Value.X, (float)response.Position.Value.Y);
+            character.Velocity = new UnityEngine.Vector2((float)response.Velocity.Value.X, (float)response.Velocity.Value.Y);
+        }
         return true;
     }
 
