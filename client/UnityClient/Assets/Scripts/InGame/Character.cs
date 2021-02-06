@@ -57,7 +57,7 @@ public class Character : SpriteObject
 
     public Direction TargetDirection;
 
-    public bool Moving => (int)Velocity.x != 0;
+    public bool Moving { get; private set; }
 
     public DateTime MoveDt { get; set; }
 
@@ -96,12 +96,14 @@ public class Character : SpriteObject
     //땅에서 탈출한 시점에 실행됨
     private void OnCollisionExit2D(Collision2D collision)
     {
+        var before = this.IsGround;
         if (collision.transform.tag == "Tile")
         {
             this.IsGround = false;
         }
 
-        this.OnCollisionExit?.Invoke(this, collision);
+        if(before && !this.IsGround)
+            this.OnCollisionExit?.Invoke(this, collision);
     }
 
     public void Attacking()
@@ -138,7 +140,6 @@ public class Character : SpriteObject
 
             var moved = (Velocity * diff.Ticks) / 1000000;
             CurrentPosition = new Position(CurrentPosition.X + moved.x, transform.localPosition.y);
-            UnityEngine.Debug.Log(CurrentPosition);
             transform.localPosition = CurrentPosition.ToVector3();
             yield return new WaitForSeconds(0.01f);
         }
@@ -156,13 +157,12 @@ public class Character : SpriteObject
     public void MoveDirection(Direction direction, bool packetSend)
     {
         if (Moving && this.TargetDirection == direction)
-        {
             return;
-        }
 
         this.TargetDirection = direction;
         StopMove(packetSend);
 
+        this.Moving = true;
         this.Velocity = new Vector2(1.0f * (direction == Direction.Left ? -SPEED : SPEED), 0);
         MoveDt = DateTime.Now;
 
@@ -187,11 +187,12 @@ public class Character : SpriteObject
 
     public void StopMove(bool packetSend)
     {
+        this.Moving = false;
+        this.Velocity = new Vector2(0, 0);
         if (MoveCoroutine != null)
         {
             StopCoroutine(MoveCoroutine);
             MoveCoroutine = null;
-            Velocity = new Vector2(0, 0);
             Animator.SetBool("Walking", false);
 
             if (packetSend)

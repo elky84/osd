@@ -86,8 +86,10 @@ namespace TestServer.Model
         public static implicit operator FlatBuffers.Protocol.Response.Show.Model(Object obj) =>
             new FlatBuffers.Protocol.Response.Show.Model(obj.Sequence.Value, obj.Name, obj.Position, obj.Moving, (int)obj.Direction);
 
-        public static implicit operator FlatBuffers.Protocol.Response.State.Model(Object obj) =>
-            new FlatBuffers.Protocol.Response.State.Model(obj.Sequence.Value, obj.Position, obj.Velocity, (int)obj.Direction, obj.Jumping);
+        public FlatBuffers.Protocol.Response.State.Model State(bool jump)
+        {
+            return new FlatBuffers.Protocol.Response.State.Model(this.Sequence.Value, this.Position, this.Velocity, (int)this.Direction, jump, this.Jumping, this.Moving);
+        }
 
         private Map _map;
         public Map Map

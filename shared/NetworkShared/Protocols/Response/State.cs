@@ -25,29 +25,37 @@ namespace FlatBuffers.Protocol.Response
     public Vector2? Position { get { int o = __p.__offset(6); return o != 0 ? (Vector2?)(new Vector2()).__assign(__p.__indirect(o + __p.bb_pos), __p.bb) : null; } }
     public Vector2? Velocity { get { int o = __p.__offset(8); return o != 0 ? (Vector2?)(new Vector2()).__assign(__p.__indirect(o + __p.bb_pos), __p.bb) : null; } }
     public int Direction { get { int o = __p.__offset(10); return o != 0 ? __p.bb.GetInt(o + __p.bb_pos) : (int)0; } }
-    public bool Jumping { get { int o = __p.__offset(12); return o != 0 ? 0!=__p.bb.Get(o + __p.bb_pos) : (bool)false; } }
+    public bool Jump { get { int o = __p.__offset(12); return o != 0 ? 0!=__p.bb.Get(o + __p.bb_pos) : (bool)false; } }
+    public bool Hover { get { int o = __p.__offset(14); return o != 0 ? 0!=__p.bb.Get(o + __p.bb_pos) : (bool)false; } }
+    public bool Move { get { int o = __p.__offset(16); return o != 0 ? 0!=__p.bb.Get(o + __p.bb_pos) : (bool)false; } }
   
     public static Offset<State> CreateState(FlatBufferBuilder builder,
         int sequence = 0,
         Offset<Vector2> positionOffset = default(Offset<Vector2>),
         Offset<Vector2> velocityOffset = default(Offset<Vector2>),
         int direction = 0,
-        bool jumping = false) {
-      builder.StartTable(5);
+        bool jump = false,
+        bool hover = false,
+        bool move = false) {
+      builder.StartTable(7);
       State.AddDirection(builder, direction);
       State.AddVelocity(builder, velocityOffset);
       State.AddPosition(builder, positionOffset);
       State.AddSequence(builder, sequence);
-      State.AddJumping(builder, jumping);
+      State.AddMove(builder, move);
+      State.AddHover(builder, hover);
+      State.AddJump(builder, jump);
       return State.EndState(builder);
     }
   
-    public static void StartState(FlatBufferBuilder builder) { builder.StartTable(5); }
+    public static void StartState(FlatBufferBuilder builder) { builder.StartTable(7); }
     public static void AddSequence(FlatBufferBuilder builder, int sequence) { builder.AddInt(0, sequence, 0); }
     public static void AddPosition(FlatBufferBuilder builder, Offset<Vector2> positionOffset) { builder.AddOffset(1, positionOffset.Value, 0); }
     public static void AddVelocity(FlatBufferBuilder builder, Offset<Vector2> velocityOffset) { builder.AddOffset(2, velocityOffset.Value, 0); }
     public static void AddDirection(FlatBufferBuilder builder, int direction) { builder.AddInt(3, direction, 0); }
-    public static void AddJumping(FlatBufferBuilder builder, bool jumping) { builder.AddBool(4, jumping, false); }
+    public static void AddJump(FlatBufferBuilder builder, bool jump) { builder.AddBool(4, jump, false); }
+    public static void AddHover(FlatBufferBuilder builder, bool hover) { builder.AddBool(5, hover, false); }
+    public static void AddMove(FlatBufferBuilder builder, bool move) { builder.AddBool(6, move, false); }
     public static Offset<State> EndState(FlatBufferBuilder builder) {
       int o = builder.EndTable();
       return new Offset<State>(o);
@@ -59,23 +67,27 @@ namespace FlatBuffers.Protocol.Response
       public FlatBuffers.Protocol.Response.Vector2.Model Position { get; set; }
       public FlatBuffers.Protocol.Response.Vector2.Model Velocity { get; set; }
       public int Direction { get; set; }
-      public bool Jumping { get; set; }
+      public bool Jump { get; set; }
+      public bool Hover { get; set; }
+      public bool Move { get; set; }
     
-      public Model(int sequence, FlatBuffers.Protocol.Response.Vector2.Model position, FlatBuffers.Protocol.Response.Vector2.Model velocity, int direction, bool jumping)
+      public Model(int sequence, FlatBuffers.Protocol.Response.Vector2.Model position, FlatBuffers.Protocol.Response.Vector2.Model velocity, int direction, bool jump, bool hover, bool move)
       {
         Sequence = sequence;
         Position = position;
         Velocity = velocity;
         Direction = direction;
-        Jumping = jumping;
+        Jump = jump;
+        Hover = hover;
+        Move = move;
       }
     }
   
-    public static byte[] Bytes(int sequence, FlatBuffers.Protocol.Response.Vector2.Model position, FlatBuffers.Protocol.Response.Vector2.Model velocity, int direction, bool jumping) {
+    public static byte[] Bytes(int sequence, FlatBuffers.Protocol.Response.Vector2.Model position, FlatBuffers.Protocol.Response.Vector2.Model velocity, int direction, bool jump, bool hover, bool move) {
       var builder = new FlatBufferBuilder(512);
       var positionOffset = FlatBuffers.Protocol.Response.Vector2.CreateVector2(builder, position.X, position.Y);
       var velocityOffset = FlatBuffers.Protocol.Response.Vector2.CreateVector2(builder, velocity.X, velocity.Y);
-      var offset = State.CreateState(builder, sequence, positionOffset, velocityOffset, direction, jumping);
+      var offset = State.CreateState(builder, sequence, positionOffset, velocityOffset, direction, jump, hover, move);
       builder.Finish(offset.Value);
       
       var bytes = builder.DataBuffer.ToSizedArray();
@@ -94,7 +106,7 @@ namespace FlatBuffers.Protocol.Response
     }
     
     public static byte[] Bytes(Model model) {
-      return Bytes(model.Sequence, model.Position, model.Velocity, model.Direction, model.Jumping);
+      return Bytes(model.Sequence, model.Position, model.Velocity, model.Direction, model.Jump, model.Hover, model.Move);
     }
   };
 }

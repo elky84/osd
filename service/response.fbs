@@ -37,7 +37,9 @@ table State {
 	position: Vector2;
 	velocity: Vector2;
 	direction: int;
-	jumping: bool;
+	jump: bool;
+	hover: bool;
+	move: bool;
 }
 
 table ShowDialog {

@@ -8,11 +8,20 @@ public partial class GameController : MonoBehaviour
     public bool OnState(State response)
     {
         var character = GetCharacter(response.Sequence);
-        if (character != null)
-        {
-            character.CurrentPosition = new Position((float)response.Position.Value.X, (float)response.Position.Value.Y);
-            character.Velocity = new UnityEngine.Vector2((float)response.Velocity.Value.X, (float)response.Velocity.Value.Y);
-        }
+        if (character == null)
+            return false;
+
+        character.CurrentPosition = new Position((float)response.Position.Value.X, (float)response.Position.Value.Y);
+        character.Velocity = new UnityEngine.Vector2((float)response.Velocity.Value.X, (float)response.Velocity.Value.Y);
+
+        if (response.Jump)
+            character.Jump();
+
+        if (response.Move)
+            character.MoveDirection((Direction)response.Direction, false);
+        else
+            character.StopMove(false);
+
         return true;
     }
 

@@ -24,7 +24,7 @@ namespace TestServer.Handler
 
                 character.Position = new NetworkShared.Types.Point(request.Position.Value.X, request.Position.Value.Y);
                 character.Move((Direction)request.Direction);
-                _ = Broadcast(character, FlatBuffers.Protocol.Response.State.Bytes(character));
+                _ = Broadcast(character, FlatBuffers.Protocol.Response.State.Bytes(character.State(false)));
 
                 Console.WriteLine($"캐릭터가 이동 ({request.Position?.X}, {request.Position?.Y})");
                 return true;
@@ -48,7 +48,7 @@ namespace TestServer.Handler
 
                 character.Position = new NetworkShared.Types.Point(request.Position.Value.X, request.Position.Value.Y);
                 character.Stop();
-                _ = Broadcast(character, FlatBuffers.Protocol.Response.State.Bytes(character));
+                _ = Broadcast(character, FlatBuffers.Protocol.Response.State.Bytes(character.State(false)));
                 Console.WriteLine($"캐릭터가 멈춤 : {character.Position}");
                 return true;
             }
@@ -71,7 +71,7 @@ namespace TestServer.Handler
 
                 character.Position = new NetworkShared.Types.Point(request.Position.Value.X, request.Position.Value.Y);
                 character.Jump(true);
-                _ = Broadcast(character, FlatBuffers.Protocol.Response.State.Bytes(character));
+                _ = Broadcast(character, FlatBuffers.Protocol.Response.State.Bytes(character.State(true)));
                 Console.WriteLine($"캐릭터가 점프함 : {character.Position}");
                 return true;
             }
@@ -94,7 +94,7 @@ namespace TestServer.Handler
 
                 character.Position = new NetworkShared.Types.Point(request.Position.Value.X, request.Position.Value.Y);
                 character.Fall();
-                _ = Broadcast(character, FlatBuffers.Protocol.Response.State.Bytes(character));
+                _ = Broadcast(character, FlatBuffers.Protocol.Response.State.Bytes(character.State(false)));
 
                 return true;
             }
@@ -140,7 +140,7 @@ namespace TestServer.Handler
                         throw new Exception("잘못된 요청");
                 }
 
-                _ = Broadcast(character, FlatBuffers.Protocol.Response.State.Bytes(character), false);
+                _ = Broadcast(character, FlatBuffers.Protocol.Response.State.Bytes(character.State(false)));
                 return true;
             }
             catch (Exception e)
