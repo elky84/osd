@@ -1,5 +1,6 @@
 ﻿using NetworkShared;
 using Newtonsoft.Json;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -49,6 +50,8 @@ public partial class GameController : MonoBehaviour
                 Clear();
             });
         };
+
+        StartCoroutine(this.CoUpdate());
     }
 
     private Character CreateCharacter(string name, int sequence, ObjectType objectType, FlatBuffers.Protocol.Response.Vector2 position)
@@ -190,6 +193,20 @@ public partial class GameController : MonoBehaviour
             {
                 MyCharacter.Jump();
             }
+        }
+    }
+
+    private IEnumerator CoUpdate()
+    {
+        while (true)
+        {
+            if (this.MyCharacter != null && this.MyCharacter.Moving)
+            {
+                var position = new FlatBuffers.Protocol.Request.Vector2.Model { X = this.MyCharacter.transform.localPosition.x, Y = this.MyCharacter.transform.localPosition.y };
+                NettyClient.Instance.Send(FlatBuffers.Protocol.Request.Update.Bytes(position, new List<FlatBuffers.Protocol.Request.UpdateNPC.Model>()));
+            }
+
+            yield return new WaitForSeconds(0.1f);
         }
     }
 }

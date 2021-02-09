@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using TestServer.Model;
+using NetworkShared.Types;
 
 namespace TestServer.Handler
 {
@@ -16,13 +17,14 @@ namespace TestServer.Handler
         public bool OnMove(Session<Character> session, FlatBuffers.Protocol.Request.Move request)
         {
             var character = session.Data;
+            var position = request.Position.ToPoint();
 
             try
             {
                 if (character.Position.Delta(request.Position.Value) > 1.0)
                     throw new Exception("위치가 올바르지 않습니다.");
 
-                character.Position = new NetworkShared.Types.Point(request.Position.Value.X, request.Position.Value.Y);
+                character.Position = position;
                 character.Move((Direction)request.Direction);
                 _ = Broadcast(character, FlatBuffers.Protocol.Response.State.Bytes(character.State(false)));
 
@@ -40,13 +42,14 @@ namespace TestServer.Handler
         public bool OnStop(Session<Character> session, FlatBuffers.Protocol.Request.Stop request)
         {
             var character = session.Data;
+            var position = request.Position.ToPoint();
 
             try
             {
-                if (character.ValidPosition(new NetworkShared.Types.Point(request.Position.Value.X, request.Position.Value.Y)) == false)
+                if (character.ValidPosition(position) == false)
                     throw new Exception("올바른 위치가 아님");
 
-                character.Position = new NetworkShared.Types.Point(request.Position.Value.X, request.Position.Value.Y);
+                character.Position = position;
                 character.Stop();
                 _ = Broadcast(character, FlatBuffers.Protocol.Response.State.Bytes(character.State(false)));
                 Console.WriteLine($"캐릭터가 멈춤 : {character.Position}");
@@ -63,13 +66,14 @@ namespace TestServer.Handler
         public bool OnJump(Session<Character> session, FlatBuffers.Protocol.Request.Jump request)
         {
             var character = session.Data;
+            var position = request.Position.ToPoint();
 
             try
             {
-                if (character.ValidPosition(new NetworkShared.Types.Point(request.Position.Value.X, request.Position.Value.Y)) == false)
+                if (character.ValidPosition(position) == false)
                     throw new Exception("올바른 위치가 아님");
 
-                character.Position = new NetworkShared.Types.Point(request.Position.Value.X, request.Position.Value.Y);
+                character.Position = position;
                 character.Jump(true);
                 _ = Broadcast(character, FlatBuffers.Protocol.Response.State.Bytes(character.State(true)));
                 Console.WriteLine($"캐릭터가 점프함 : {character.Position}");
@@ -86,13 +90,14 @@ namespace TestServer.Handler
         public bool OnFall(Session<Character> session, FlatBuffers.Protocol.Request.Fall request)
         {
             var character = session.Data;
+            var position = request.Position.ToPoint();
 
             try
             {
-                if (character.ValidPosition(new NetworkShared.Types.Point(request.Position.Value.X, request.Position.Value.Y)) == false)
+                if (character.ValidPosition(position) == false)
                     throw new Exception("올바른 위치가 아님");
 
-                character.Position = new NetworkShared.Types.Point(request.Position.Value.X, request.Position.Value.Y);
+                character.Position = position;
                 character.Fall();
                 _ = Broadcast(character, FlatBuffers.Protocol.Response.State.Bytes(character.State(false)));
 
@@ -109,6 +114,7 @@ namespace TestServer.Handler
         public bool OnCollision(Session<Character> session, FlatBuffers.Protocol.Request.Collision request)
         {
             var character = session.Data;
+            var position = request.Position.ToPoint();
 
             try
             {
@@ -116,22 +122,19 @@ namespace TestServer.Handler
                 {
                     case Axis.X:
                         {
-                            if (character.ValidPosition(new NetworkShared.Types.Point(request.Position.Value.X, request.Position.Value.Y)) == false)
+                            if (character.ValidPosition(position) == false)
                                 throw new Exception("올바른 위치가 아님");
 
-                            character.Position = new NetworkShared.Types.Point(request.Position.Value.X, request.Position.Value.Y);
+                            character.Position = position;
                         }
                         break;
 
                     case Axis.Y:
                         {
-                            //if (character.Jumping == false)
-                            //    throw new Exception("점프 혹은 낙하상태가 아닌 경우 Y축 충돌은 안일어남");
-
-                            if (character.ValidPosition(new NetworkShared.Types.Point(request.Position.Value.X, request.Position.Value.Y)) == false)
+                            if (character.ValidPosition(position) == false)
                                 throw new Exception("올바른 위치가 아님");
 
-                            character.Position = new NetworkShared.Types.Point(request.Position.Value.X, request.Position.Value.Y);
+                            character.Position = position;
                             character.Jump(false);
                         }
                         break;
@@ -148,6 +151,33 @@ namespace TestServer.Handler
                 Console.WriteLine(e.Message);
                 return false;
             }
+        }
+
+        [FlatBufferEvent]
+        public bool OnUpdate(Session<Character> session, FlatBuffers.Protocol.Request.Update request)
+        {
+            var character = session.Data;
+            var position = request.Position.ToPoint();
+            if (character.ValidPosition(position) == false)
+                throw new Exception("올바른 위치가 아님");
+
+            character.Position = position;
+            Console.WriteLine($"{character.Sequence.Value} : {position.X}/{position.Y}");
+
+            for (int i = 0; i < request.MobsLength; i++)
+            {
+                var mobSequence = request.Mobs(i).Value.Sequence;
+                var mobPosition = request.Mobs(i).Value.Position.ToPoint();
+                var mob = character.Map.Objects[mobSequence] ??
+                    throw new Exception("몹 없음");
+
+                if (mob.ValidPosition(mobPosition) == false)
+                    throw new Exception("위치 올바르지 않음");
+
+                mob.Position = mobPosition;
+            }
+
+            return true;
         }
 
         [FlatBufferEvent]
@@ -208,7 +238,7 @@ namespace TestServer.Handler
         public bool OnCheatPosition(Session<Character> session, FlatBuffers.Protocol.Request.CheatPosition request)
         {
             var character = session.Data;
-            character.Position = new NetworkShared.Types.Point { X = request.Position.Value.X, Y = request.Position.Value.Y };
+            character.Position = new Point { X = request.Position.Value.X, Y = request.Position.Value.Y };
 
             _ = Broadcast(session.Data, FlatBuffers.Protocol.Response.PositionChanged.Bytes(character.Sequence.Value, character.Position));
             return true;

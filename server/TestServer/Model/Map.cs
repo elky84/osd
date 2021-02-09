@@ -20,8 +20,10 @@ namespace TestServer.Model
         public Size BlockSize { get; private set; }
         public Size TileSize { get; private set; }
         public Size Size { get; private set; }
+        public SectorContainer Sectors { get; private set; }
         public Dictionary<int, Object> Objects { get; private set; } = new Dictionary<int, Object>();
         public IEnumerable<Character> Characters => Objects.Values.Select(x => x as Character).Where(x => x != null);
+        public IEnumerable<Mob> Mobs => Objects.Values.Select(x => x as Mob).Where(x => x != null);
         public int? NextSequence
         {
             get
@@ -112,6 +114,12 @@ namespace TestServer.Model
 
             Size = new Size(BlockSize.Width * TileSize.Width, BlockSize.Height * TileSize.Height);
 
+#if DEBUG
+            Sectors = new SectorContainer(this, new Size(10, 10));
+#else
+            Sectors = new SectorContainer(this, new Size(800, 800));
+#endif
+
             MobSpawns = mobSpawns.ToDictionary(x => x, x =>
             {
                 var mobs = new List<Mob>();
@@ -131,25 +139,40 @@ namespace TestServer.Model
             return IsActivated;
         }
 
-        public void Add(Object obj)
+        public Sector Add(Object obj)
         {
             var sequence = NextSequence ??
                 throw new Exception("cannot get next sequence.");
 
             Objects.Add(sequence, obj);
             obj.Sequence = sequence;
+            obj.Sector = Sectors.Add(obj);
 
             if (IsActivated == false && obj.Type == NetworkShared.ObjectType.Character)
                 IsActivated = true;
+
+            return obj.Sector;
         }
 
-        public void Remove(Object obj)
+        public Sector Remove(Object obj)
         {
             if (obj.Sequence.HasValue == false)
-                return;
+                return null;
 
             Objects.Remove(obj.Sequence.Value);
             UpdateState();
+            return Sectors.Remove(obj);
+        }
+
+        public Sector Update(Object obj)
+        {
+            if (obj.Sequence.HasValue == false || Objects.ContainsKey(obj.Sequence.Value) == false)
+                return null;
+
+            if (obj.Sector == null)
+                return null;
+
+            return Sectors.Add(obj);
         }
 
         public void Zen()

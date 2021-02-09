@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace NetworkShared.Types
 {
@@ -34,6 +32,21 @@ namespace NetworkShared.Types
         public double Delta(FlatBuffers.Protocol.Response.Vector2 p)
         {
             return Delta(new Point { X = p.X, Y = p.Y });
+        }
+    }
+
+    public static class PointExtension
+    {
+        public static Point ToPoint(this FlatBuffers.Protocol.Request.Vector2? vector2)
+        {
+            if (vector2.HasValue)
+            {
+                return new Point(vector2.Value.X, vector2.Value.Y);
+            }
+            else
+            {
+                return new Point();
+            }
         }
     }
 }

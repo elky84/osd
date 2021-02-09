@@ -25,6 +25,16 @@ table Collision {
 	axis: int;
 }
 
+table UpdateNPC {
+	sequence: int;
+	position: Vector2;
+}
+
+table Update {
+	position: Vector2;
+	mobs: [UpdateNPC];
+}
+
 table Click {
 	sequence: int;
 }

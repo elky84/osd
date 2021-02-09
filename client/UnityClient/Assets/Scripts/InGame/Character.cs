@@ -118,7 +118,7 @@ public class Character : SpriteObject
     {
     }
 
-    public void MoveStart()
+    private void MoveStart()
     {
         MoveCoroutine = CoMove();
         StartCoroutine(MoveCoroutine);

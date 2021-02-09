@@ -36,6 +36,8 @@ namespace TestServer.Model
 
         public bool IsSpawned => SpawnedTime != null;
 
+        public Character Owner { get; set; }
+
         public Mob(MasterData.Table.Mob master)
         {
             Master = master;
