@@ -1,5 +1,4 @@
 ﻿using DotNetty.Transport.Channels;
-using FlatBuffers.Protocol.Response;
 using NetworkShared;
 using NetworkShared.NetworkHandler;
 using Serilog;
@@ -10,7 +9,7 @@ namespace TestClient
 {
     public partial class GameHandler : BaseHandler<Character>
     {
-        public Character Character { get; set; }
+        public Model.Character Character { get; set; }
 
         public override void ChannelInactive(IChannelHandlerContext context)
         {
@@ -18,14 +17,14 @@ namespace TestClient
         }
 
         [FlatBufferEvent]
-        public bool OnState(State response)
+        public bool OnState(FlatBuffers.Protocol.Response.State response)
         {
             Log.Logger.Information($"OnState() {response.Sequence} {response.Position} {response.Jumping} {response.Velocity}");
             return true;
         }
 
         [FlatBufferEvent]
-        public bool OnDialog(ShowDialog response)
+        public bool OnDialog(FlatBuffers.Protocol.Response.ShowDialog response)
         {
             Console.WriteLine($"Enabled next button : {response.Next}");
             Console.WriteLine($"Enabled quit button : {response.Quit}");
@@ -35,7 +34,7 @@ namespace TestClient
         }
 
         [FlatBufferEvent]
-        public bool OnSelectListDialog(ShowListDialog response)
+        public bool OnSelectListDialog(FlatBuffers.Protocol.Response.ShowListDialog response)
         {
             Console.WriteLine($"Message : {response.Message}");
             for (int i = 0; i < response.ListLength; i++)
@@ -47,18 +46,12 @@ namespace TestClient
         }
 
         [FlatBufferEvent]
-        public bool OnEnter(Enter response)
+        public bool OnEnter(FlatBuffers.Protocol.Response.Enter response)
         {
             for (int i = 0; i < response.PortalsLength; i++)
             {
                 var portal = response.Portals(i).Value;
                 Console.WriteLine($"Portal to {portal.Map} : {portal.Position?.X}, {portal.Position?.Y}");
-            }
-
-            for (int i = 0; i < response.ObjectsLength; i++)
-            {
-                var obj = response.Objects(i).Value;
-                Console.WriteLine($"Object {i} : {obj.Name}({obj.Sequence}) => {(ObjectType)obj.Type}");
             }
 
             Console.WriteLine($"My sequence : {response.Sequence}");
@@ -69,9 +62,22 @@ namespace TestClient
         }
 
         [FlatBufferEvent]
-        public bool OnShow(Show response)
+        public bool OnShow(FlatBuffers.Protocol.Response.Show response)
         {
-            Console.WriteLine($"{response.Name}({response.Sequence}) is entered in current map.");
+            for (int i = 0; i < response.ObjectsLength; i++)
+            {
+                var obj = response.Objects(i).Value;
+                Console.WriteLine($"Object {i} : {obj.Name}({obj.Sequence}) => {(ObjectType)obj.Type}");
+            }
+
+
+            for (int i = 0; i < response.CharactersLength; i++)
+            {
+                var character = response.Characters(i).Value;
+                Console.WriteLine($"Object {i} : {character.Name}({character.Sequence}) => {(ObjectType)character.Type}");
+            }
+
+
             return true;
         }
 
@@ -84,14 +90,14 @@ namespace TestClient
         }
 
         [FlatBufferEvent]
-        public bool OnLeave(Leave response)
+        public bool OnLeave(FlatBuffers.Protocol.Response.Leave response)
         {
             Console.WriteLine($"{response.Sequence} is leave from current map.");
             return true;
         }
 
         [FlatBufferEvent]
-        public bool OnItems(Items response)
+        public bool OnItems(FlatBuffers.Protocol.Response.Items response)
         {
             for (int i = 0; i < response.EquipmentLength; i++)
             {

@@ -21,21 +21,31 @@ def convert_type(namespace, type, method_dict):
     else:
         return type
     
-def constructor(namespace, name, type, param, method_dict):
+def constructor(namespace, root, name, type, param, method_dict):
     if type == 'string':
         return f'builder.CreateString({name})'
 
     group = extractor.extract(r'List<(?P<type>\b\w+)>', type)
     if group:
-        code = constructor(namespace, 'x', group['type'], 'x', method_dict)
+        name_e = 'x'
+        if f'{name_e}.' in name:
+            front, rear = name.split('.')
+            index = front.replace('x', '')
+            if index == '':
+                index = 0
+            else:
+                index = int(index)
+            name_e = f'x{index + 1}'
+        code = constructor(namespace, root, name_e, group['type'], name_e, method_dict)
         if code:
-            code = f".Select(x => {code})"
-        return f"Create{to_upper_camel(name)}Vector(builder, {name}{'' if not code else code}.ToArray())"
+            code = f".Select({name_e} => {code})"
+
+        return f"{namespace}.{root}.Create{to_upper_camel(name if '.' not in name else name.split('.')[-1])}Vector(builder, {name}{'' if not code else code}.ToArray())"
 
     if method_dict is not None and type in method_dict:
         arguments = []
         for x in method_dict[type]:
-            code = constructor(namespace, f"{name}.{to_upper_camel(x['pure name'])}", x['type'], 'x', method_dict)
+            code = constructor(namespace, type, f"{name}.{to_upper_camel(x['pure name'])}", x['type'], 'x', method_dict)
             if code:
                 arguments.append(code)
             else:
@@ -79,8 +89,8 @@ def parameter_str(namespace, parameters, method_dict):
 def argument_str(parameters):
     return ', '.join([f"{x['name']}" for x in parameters])
 
-def offset_code(namespace, parameters, method_dict):
-    offsets = [(x, constructor(namespace, x['pure name'], x['type'], x['pure name'], method_dict)) for x in parameters]
+def offset_code(namespace, root, parameters, method_dict):
+    offsets = [(x, constructor(namespace, root, x['pure name'], x['type'], x['pure name'], method_dict)) for x in parameters]
     offsets = [f"  var {x['name']} = {code};" for (x, code) in offsets if code]
     offsets = '\n'.join(offsets)
 

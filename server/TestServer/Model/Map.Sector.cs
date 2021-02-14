@@ -27,6 +27,25 @@ namespace TestServer.Model
             public bool IsRight => Id % Owner.Columns == Owner.Columns - 1;
             public Sector Right => Owner[Id + 1];
 
+            public IEnumerable<Sector> Nears
+            {
+                get
+                {
+                    return new List<Sector>
+                    {
+                        this,
+                        this.Left,
+                        this.Right,
+                        this.Top,
+                        this.Bottom,
+                        this.LeftTop,
+                        this.RightTop,
+                        this.LeftBottom,
+                        this.RightBottom
+                    }.Where(x => x != null);
+                }
+            }
+
             public bool IsTop => Id < Owner.Columns;
             public Sector Top => Owner[Id - Owner.Columns];
 

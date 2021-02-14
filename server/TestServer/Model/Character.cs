@@ -147,13 +147,16 @@ namespace TestServer.Model
 
         public override ObjectType Type => ObjectType.Character;
 
-        public static implicit operator FlatBuffers.Protocol.Response.ShowCharacter.Model(Character obj) =>
-            new FlatBuffers.Protocol.Response.ShowCharacter.Model(obj.Sequence.Value,
-                obj.Name,
-                obj.Position,
-                obj.Moving,
-                (int)obj.Direction,
-                obj.Items.Equipments.Values.Where(x => x != null).Select(x => (FlatBuffers.Protocol.Response.Equipment.Model)x).ToList());
+        public static implicit operator FlatBuffers.Protocol.Response.Character.Model(Character obj) =>
+            obj.ToProtocol();
+
+        public FlatBuffers.Protocol.Response.Character.Model ToProtocol() =>
+            new FlatBuffers.Protocol.Response.Character.Model(this.Sequence.Value,
+                this.Name,
+                this.Position,
+                this.Moving,
+                (int)this.Direction,
+                this.Items.Equipments.Values.Where(x => x != null).Select(x => (FlatBuffers.Protocol.Response.Equipment.Model)x).ToList());
 
         public Character()
         {

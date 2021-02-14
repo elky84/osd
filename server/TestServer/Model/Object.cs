@@ -16,7 +16,11 @@ namespace TestServer.Model
         {
             public void OnLeave(Object obj);
             public void OnEnter(Object obj);
-            public void OnSectorChanged(Object obj);
+            public void OnSectorChanged(Object obj, Map.Sector sector1, Map.Sector sector2);
+            public void OnSectorEntering(Object obj, Map.Sector sector);
+            public void OnSectorEntered(Object obj, Map.Sector sector);
+            public void OnSectorLeaving(Object obj, Map.Sector sector);
+            public void OnSectorLeaved(Object obj, Map.Sector sector);
         }
         public IListener Listener { get; set; }
 
@@ -85,10 +89,9 @@ namespace TestServer.Model
 
 
         public static implicit operator FlatBuffers.Protocol.Response.Object.Model(Object obj) =>
-            new FlatBuffers.Protocol.Response.Object.Model(obj.Sequence.Value, obj.Name, (int)obj.Type, obj.Position, obj.Moving, (int)obj.Direction);
+            obj.ToProtocol();
 
-        public static implicit operator FlatBuffers.Protocol.Response.Show.Model(Object obj) =>
-            new FlatBuffers.Protocol.Response.Show.Model(obj.Sequence.Value, obj.Name, obj.Position, obj.Moving, (int)obj.Direction);
+        public FlatBuffers.Protocol.Response.Object.Model ToProtocol() => new FlatBuffers.Protocol.Response.Object.Model(this.Sequence.Value, this.Name, (int)this.Type, this.Position, this.Moving, (int)this.Direction);
 
         public FlatBuffers.Protocol.Response.State.Model State(bool jump)
         {
@@ -129,8 +132,13 @@ namespace TestServer.Model
                 if (_sector == value)
                     return;
 
-                _sector = value;
-                Listener?.OnSectorChanged(this);
+                var before = this._sector;
+                Listener?.OnSectorLeaving(this, before);
+                Listener?.OnSectorEntering(this, value);
+                this._sector = value;
+                Listener?.OnSectorLeaved(this, before);
+                Listener?.OnSectorEntered(this, this._sector);
+                Listener?.OnSectorChanged(this, before, value);
             }
         }
         public virtual bool IsActive => true;

@@ -36,7 +36,7 @@ def method(namespace, name, parameters):
     code = method_template.render({'flatbName': name,
                                    'parameters': generator.parameter_str(namespace, parameters, METHOD_DICT),
                                    'arguments': generator.argument_str(parameters),
-                                   'offsets': generator.offset_code(namespace, parameters, METHOD_DICT),
+                                   'offsets': generator.offset_code(namespace, name, parameters, METHOD_DICT),
                                    'modelArguments': model_arguments})
     code = code.split('\n')
     code = [f'  {x}' for x in code]
@@ -50,7 +50,7 @@ if __name__ == '__main__':
     flatbuffer_template = env.get_template('flatbuffer.txt')
 
     parser = argparse.ArgumentParser(description='Excel table converter')
-    parser.add_argument('--dir', default='../Protocols/Request')
+    parser.add_argument('--dir', default='../Protocols/Response')
     parser.add_argument('--namespace', default='FlatBuffers.Protocol.Unknown')
     args = parser.parse_args()
 

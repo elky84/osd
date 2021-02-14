@@ -287,8 +287,8 @@ namespace TestServer.Handler
                 Console.WriteLine($"activated item : {activatedItem.Id}({activatedItem.Name})");
 
                 // 장비 사용하면 외형변경 브로드캐스팅
-                if (activatedItem.Master.Type == ItemType.Equipment)
-                    _ = Broadcast(character, FlatBuffers.Protocol.Response.ShowCharacter.Bytes(character), false);
+                //if (activatedItem.Master.Type == ItemType.Equipment)
+                //    _ = Broadcast(character, FlatBuffers.Protocol.Response.ShowCharacter.Bytes(character), false);
             }
 
             return true;
@@ -304,7 +304,7 @@ namespace TestServer.Handler
                 Console.WriteLine($"inactivated item : {inactivatedItem.Id}({inactivatedItem.Name})");
 
                 // 장비 해제하면 외형변경 브로드캐스팅
-                _ = Broadcast(character, FlatBuffers.Protocol.Response.ShowCharacter.Bytes(character), false);
+                //_ = Broadcast(character, FlatBuffers.Protocol.Response.ShowCharacter.Bytes(character), false);
             }
 
             return true;

@@ -66,7 +66,7 @@ namespace FlatBuffers.Protocol.Response
     public static byte[] Bytes(string message, List<string> list) {
       var builder = new FlatBufferBuilder(512);
       var messageOffset = builder.CreateString(message);
-      var listOffset = CreateListVector(builder, list.Select(x => builder.CreateString(x)).ToArray());
+      var listOffset = FlatBuffers.Protocol.Response.ShowListDialog.CreateListVector(builder, list.Select(x => builder.CreateString(x)).ToArray());
       var offset = ShowListDialog.CreateShowListDialog(builder, messageOffset, listOffset);
       builder.Finish(offset.Value);
       

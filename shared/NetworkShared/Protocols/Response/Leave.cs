@@ -21,17 +21,27 @@ namespace FlatBuffers.Protocol.Response
     public void __init(int _i, ByteBuffer _bb) { __p = new Table(_i, _bb); }
     public Leave __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
   
-    public int Sequence { get { int o = __p.__offset(4); return o != 0 ? __p.bb.GetInt(o + __p.bb_pos) : (int)0; } }
+    public int Sequence(int j) { int o = __p.__offset(4); return o != 0 ? __p.bb.GetInt(__p.__vector(o) + j * 4) : (int)0; }
+    public int SequenceLength { get { int o = __p.__offset(4); return o != 0 ? __p.__vector_len(o) : 0; } }
+  #if ENABLE_SPAN_T
+    public Span<int> GetSequenceBytes() { return __p.__vector_as_span<int>(4, 4); }
+  #else
+    public ArraySegment<byte>? GetSequenceBytes() { return __p.__vector_as_arraysegment(4); }
+  #endif
+    public int[] GetSequenceArray() { return __p.__vector_as_array<int>(4); }
   
     public static Offset<Leave> CreateLeave(FlatBufferBuilder builder,
-        int sequence = 0) {
+        VectorOffset sequenceOffset = default(VectorOffset)) {
       builder.StartTable(1);
-      Leave.AddSequence(builder, sequence);
+      Leave.AddSequence(builder, sequenceOffset);
       return Leave.EndLeave(builder);
     }
   
     public static void StartLeave(FlatBufferBuilder builder) { builder.StartTable(1); }
-    public static void AddSequence(FlatBufferBuilder builder, int sequence) { builder.AddInt(0, sequence, 0); }
+    public static void AddSequence(FlatBufferBuilder builder, VectorOffset sequenceOffset) { builder.AddOffset(0, sequenceOffset.Value, 0); }
+    public static VectorOffset CreateSequenceVector(FlatBufferBuilder builder, int[] data) { builder.StartVector(4, data.Length, 4); for (int i = data.Length - 1; i >= 0; i--) builder.AddInt(data[i]); return builder.EndVector(); }
+    public static VectorOffset CreateSequenceVectorBlock(FlatBufferBuilder builder, int[] data) { builder.StartVector(4, data.Length, 4); builder.Add(data); return builder.EndVector(); }
+    public static void StartSequenceVector(FlatBufferBuilder builder, int numElems) { builder.StartVector(4, numElems, 4); }
     public static Offset<Leave> EndLeave(FlatBufferBuilder builder) {
       int o = builder.EndTable();
       return new Offset<Leave>(o);
@@ -39,18 +49,18 @@ namespace FlatBuffers.Protocol.Response
   
     public struct Model
     {
-      public int Sequence { get; set; }
+      public List<int> Sequence { get; set; }
     
-      public Model(int sequence)
+      public Model(List<int> sequence)
       {
         Sequence = sequence;
       }
     }
   
-    public static byte[] Bytes(int sequence) {
+    public static byte[] Bytes(List<int> sequence) {
       var builder = new FlatBufferBuilder(512);
-    
-      var offset = Leave.CreateLeave(builder, sequence);
+      var sequenceOffset = FlatBuffers.Protocol.Response.Leave.CreateSequenceVector(builder, sequence.ToArray());
+      var offset = Leave.CreateLeave(builder, sequenceOffset);
       builder.Finish(offset.Value);
       
       var bytes = builder.DataBuffer.ToSizedArray();

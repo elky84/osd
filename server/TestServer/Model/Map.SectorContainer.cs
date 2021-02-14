@@ -104,18 +104,7 @@ namespace TestServer.Model
                     var pivot = this[position] ??
                         throw new System.Exception("invalid position");
 
-                    return new List<Sector>
-                    {
-                        pivot,
-                        pivot.Left,
-                        pivot.Right,
-                        pivot.Top,
-                        pivot.Bottom,
-                        pivot.LeftTop,
-                        pivot.RightTop,
-                        pivot.LeftBottom,
-                        pivot.RightBottom
-                    }.Where(x => x != null);
+                    return pivot.Nears;
                 }
                 catch (Exception e)
                 {

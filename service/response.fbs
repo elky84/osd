@@ -3,15 +3,6 @@ table Vector2 {
 	y: double;
 }
 
-table Object {
-	sequence: int;
-	name: string;
-	type: int;
-	position: Vector2;
-	moving: bool;
-	direction: int;
-}
-
 table Portal {
 	position: Vector2;
 	map: string;
@@ -59,23 +50,23 @@ table ShowConfirmDialog {
 }
 
 table Enter {
-	sequence: int;
+	character: Character;
 	map: Map;
 	position: Vector2;
 	direction: int;
-	objects: [Object];
 	portals: [Portal];
 }
 
-table Show {
+table Object {
 	sequence: int;
 	name: string;
+	type: int;
 	position: Vector2;
 	moving: bool;
 	direction: int;
 }
 
-table ShowCharacter {
+table Character {
 	sequence: int;
 	name: string;
 	position: Vector2;
@@ -84,8 +75,13 @@ table ShowCharacter {
 	equipment: [Equipment];
 }
 
+table Show {
+	objects: [Object];
+	characters: [Character];
+}
+
 table Leave {
-	sequence: int;
+	sequence: [int];
 }
 
 table PositionChanged {

@@ -56,16 +56,10 @@ public partial class GameController : MonoBehaviour
             Debug.Log($"Portal to {portal.Map} : {portal.Position?.X}, {portal.Position?.Y}");
         }
 
-        for (int i = 0; i < response.ObjectsLength; i++)
-        {
-            var obj = response.Objects(i).Value;
-            Debug.Log($"Object {i} : {obj.Name}({obj.Sequence}) => {(ObjectType)obj.Type}, {obj.Position.Value.X} {obj.Position.Value.Y}");
+        CreateCharacter(response.Character.Value.Name, response.Character.Value.Sequence, ObjectType.Character, response.Character.Value.Position.Value);
 
-            CreateCharacter(obj.Name, obj.Sequence, (ObjectType)obj.Type, obj.Position.Value);
-        }
-
-        Debug.Log($"My sequence : {response.Sequence}");
-        SetMyCharacter(response.Sequence);
+        Debug.Log($"My sequence : {response.Character.Value.Sequence}");
+        SetMyCharacter(response.Character.Value.Sequence);
 
         Debug.Log($"After position : {response.Position.Value.X}, {response.Position.Value.Y}");
         Debug.Log($"After map name : {response.Map?.Name}");
@@ -76,36 +70,29 @@ public partial class GameController : MonoBehaviour
     [FlatBufferEvent]
     public bool OnShow(Show response)
     {
-        var character = GetCharacter(response.Sequence);
-        if (character == null)
+        for (int i = 0; i < response.ObjectsLength; i++)
         {
-            Debug.Log($"{response.Name}({response.Sequence}) is entered in current map.");
-            character = CreateCharacter(response.Name, response.Sequence, ObjectType.Character, response.Position.Value);
+            var obj = response.Objects(i).Value;
+            Debug.Log($"Object {i} : {obj.Name}({obj.Sequence}) => {(ObjectType)obj.Type}, {obj.Position.Value.X} {obj.Position.Value.Y}");
+
+            var created = CreateCharacter(obj.Name, obj.Sequence, (ObjectType)obj.Type, obj.Position.Value);
+            if(obj.Moving)
+                created.MoveDirection((Direction)obj.Direction, false);
+            else
+                created.StopMove(false);
         }
 
-        if (response.Moving)
-            character.MoveDirection((Direction)response.Direction, false);
-        else
-            character.StopMove(false);
-
-        return true;
-    }
-
-
-    [FlatBufferEvent]
-    public bool OnShowCharacter(ShowCharacter response)
-    {
-        var character = GetCharacter(response.Sequence);
-        if (character == null)
+        for (int i = 0; i < response.CharactersLength; i++)
         {
-            Debug.Log($"{response.Name}({response.Sequence}) is entered in current map.");
-            character = CreateCharacter(response.Name, response.Sequence, ObjectType.Character, response.Position.Value);
-        }
+            var character = response.Characters(i).Value;
+            Debug.Log($"Object {i} : {character.Name}({character.Sequence}) => {ObjectType.Character}, {character.Position.Value.X} {character.Position.Value.Y}");
 
-        if (response.Moving)
-            character.MoveDirection((Direction)response.Direction, false);
-        else
-            character.StopMove(false);
+            var created = CreateCharacter(character.Name, character.Sequence, ObjectType.Character, character.Position.Value);
+            if (created.Moving)
+                created.MoveDirection((Direction)character.Direction, false);
+            else
+                created.StopMove(false);
+        }
 
         return true;
     }
@@ -113,8 +100,11 @@ public partial class GameController : MonoBehaviour
     [FlatBufferEvent]
     public bool OnLeave(Leave response)
     {
-        Debug.Log($"{response.Sequence} is leave from current map.");
-        RemoveCharacter(response.Sequence);
+        for (int i = 0; i < response.SequenceLength; i++)
+        {
+            Debug.Log($"{response.Sequence(i)} is leave from current map.");
+            RemoveCharacter(response.Sequence(i));
+        }
         return true;
     }
 }

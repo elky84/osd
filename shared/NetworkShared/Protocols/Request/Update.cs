@@ -60,7 +60,7 @@ namespace FlatBuffers.Protocol.Request
     public static byte[] Bytes(FlatBuffers.Protocol.Request.Vector2.Model position, List<FlatBuffers.Protocol.Request.UpdateNPC.Model> mobs) {
       var builder = new FlatBufferBuilder(512);
       var positionOffset = FlatBuffers.Protocol.Request.Vector2.CreateVector2(builder, position.X, position.Y);
-      var mobsOffset = CreateMobsVector(builder, mobs.Select(x => FlatBuffers.Protocol.Request.UpdateNPC.CreateUpdateNPC(builder, x.Sequence, FlatBuffers.Protocol.Request.Vector2.CreateVector2(builder, x.Position.X, x.Position.Y))).ToArray());
+      var mobsOffset = FlatBuffers.Protocol.Request.Update.CreateMobsVector(builder, mobs.Select(x => FlatBuffers.Protocol.Request.UpdateNPC.CreateUpdateNPC(builder, x.Sequence, FlatBuffers.Protocol.Request.Vector2.CreateVector2(builder, x.Position.X, x.Position.Y))).ToArray());
       var offset = Update.CreateUpdate(builder, positionOffset, mobsOffset);
       builder.Finish(offset.Value);
       

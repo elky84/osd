@@ -1,5 +1,6 @@
 ﻿using ServerShared.NetworkHandler;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using TestServer.Model;
 
@@ -9,16 +10,12 @@ namespace TestServer.Handler
     {
         public void OnLeave(Model.Object obj)
         {
-            _ = Broadcast(obj, FlatBuffers.Protocol.Response.Leave.Bytes(obj.Sequence.Value));
+            
         }
 
         public void OnEnter(Model.Object obj)
         {
             // 현재 맵에 있는 모든 오브젝트
-            var objects = obj.Map.Objects
-                .Select(x => (FlatBuffers.Protocol.Response.Object.Model)x.Value)
-                .ToList();
-
             var portals = obj.Map.Portals
                 .ConvertAll(x => (FlatBuffers.Protocol.Response.Portal.Model)x)
                 .ToList();
@@ -27,28 +24,66 @@ namespace TestServer.Handler
             if (obj is Character)
             {
                 var character = obj as Character;
-                _ = character.Context.Send(FlatBuffers.Protocol.Response.Enter.Bytes(character.Sequence.Value,
+                _ = character.Context.Send(FlatBuffers.Protocol.Response.Enter.Bytes(character.ToProtocol(),
                     character.Map,
                     character.Position,
                     (int)character.Direction,
-                    objects,
                     portals));
-
-                _ = Broadcast(obj, FlatBuffers.Protocol.Response.ShowCharacter.Bytes(character));
             }
-            else
-            {
-                _ = Broadcast(obj, FlatBuffers.Protocol.Response.Show.Bytes(obj.Sequence.Value, obj.Name, obj.Position, obj.Moving, (int)obj.Direction));
-            }
-
-
-            // 기존 유저들에게 정보 전송
-
         }
 
-        public void OnSectorChanged(Model.Object obj)
+        public void OnSectorChanged(Model.Object obj, Map.Sector sector1, Map.Sector sector2)
         {
-            Console.WriteLine($"Sector changed({obj.Sequence}, sector : {obj.Sector?.Id})");
+            if (obj.Type == NetworkShared.ObjectType.Character)
+            {
+                var character = obj as Character;
+                var befores = sector1 != null ? 
+                    sector1.Nears.Where(x => x != null).SelectMany(x => x.Objects) :
+                    Enumerable.Empty<Model.Object>();
+                var afters = sector2 != null ? 
+                    sector2.Nears.Where(x => x != null).SelectMany(x => x.Objects) :
+                    Enumerable.Empty<Model.Object>();
+
+                var hides = befores.Except(afters).ToList();
+                _ = character.Context.Send(FlatBuffers.Protocol.Response.Leave.Bytes(hides.Select(x => x.Sequence.Value).ToList()));
+                foreach (var x in hides.Where(x => x.Type == NetworkShared.ObjectType.Character))
+                {
+                    var ch = x as Character;
+                    _ = ch.Context.Send(FlatBuffers.Protocol.Response.Leave.Bytes(new System.Collections.Generic.List<int> { character.Sequence.Value }));
+                }
+
+                var shows = afters.Except(befores).ToList();
+                _ = character.Context.Send(FlatBuffers.Protocol.Response.Show.Bytes(
+                    shows.Where(x => x.Type != NetworkShared.ObjectType.Character).Select(x => x.ToProtocol()).ToList(),
+                    shows.Where(x => x.Type == NetworkShared.ObjectType.Character).Select(x => (x as Character).ToProtocol()).ToList()));
+                foreach (var x in shows.Where(x => x.Type == NetworkShared.ObjectType.Character))
+                {
+                    var ch = x as Character;
+                    _ = ch.Context.Send(FlatBuffers.Protocol.Response.Show.Bytes(
+                        new System.Collections.Generic.List<FlatBuffers.Protocol.Response.Object.Model> { },
+                        new System.Collections.Generic.List<FlatBuffers.Protocol.Response.Character.Model> { character }));
+                }
+
+                foreach (var (sector, objs) in hides.GroupBy(x => x.Sector).ToDictionary(x => x.Key, x => x.ToList()))
+                {
+                    var newOwner = sector.Nears.SelectMany(x => x.Characters).FirstOrDefault();
+                    foreach (var mob in objs.Where(x => x.Type == NetworkShared.ObjectType.Mob).Select(x => x as Mob))
+                        mob.Owner = newOwner;
+                }
+                
+
+                foreach (var (sector, objs) in shows.GroupBy(x => x.Sector).ToDictionary(x => x.Key, x => x.ToList()))
+                {
+                    var oldOwner = sector.Nears.SelectMany(x => x.Characters).FirstOrDefault();
+                    foreach (var mob in objs.Where(x => x.Type == NetworkShared.ObjectType.Mob).Select(x => x as Mob))
+                        mob.Owner = mob.Owner ?? character;
+                }
+            }
+            else if(obj.Type == NetworkShared.ObjectType.Mob)
+            {
+                var mob = obj as Mob;
+                mob.Owner = mob.Sector.Nears.SelectMany(x => x.Characters).FirstOrDefault();
+            }
         }
 
         public void OnSpawned(Mob mob)
@@ -60,6 +95,26 @@ namespace TestServer.Handler
         public void OnDie(Life life)
         {
             Console.WriteLine($"{life.Name}({life.Sequence}) is dead.");
+        }
+
+        public void OnSectorEntering(Model.Object obj, Map.Sector sector)
+        {
+
+        }
+
+        public void OnSectorLeaving(Model.Object obj, Map.Sector sector)
+        {
+            
+        }
+
+        public void OnSectorEntered(Model.Object obj, Map.Sector sector)
+        {
+            
+        }
+
+        public void OnSectorLeaved(Model.Object obj, Map.Sector sector)
+        {
+            
         }
     }
 }

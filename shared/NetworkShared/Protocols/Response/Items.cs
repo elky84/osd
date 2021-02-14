@@ -63,8 +63,8 @@ namespace FlatBuffers.Protocol.Response
   
     public static byte[] Bytes(List<FlatBuffers.Protocol.Response.Item.Model> inventory, List<FlatBuffers.Protocol.Response.Equipment.Model> equipment) {
       var builder = new FlatBufferBuilder(512);
-      var inventoryOffset = CreateInventoryVector(builder, inventory.Select(x => FlatBuffers.Protocol.Response.Item.CreateItem(builder, x.Id, builder.CreateString(x.Name))).ToArray());
-      var equipmentOffset = CreateEquipmentVector(builder, equipment.Select(x => FlatBuffers.Protocol.Response.Equipment.CreateEquipment(builder, x.Id, builder.CreateString(x.Name), x.Type)).ToArray());
+      var inventoryOffset = FlatBuffers.Protocol.Response.Items.CreateInventoryVector(builder, inventory.Select(x => FlatBuffers.Protocol.Response.Item.CreateItem(builder, x.Id, builder.CreateString(x.Name))).ToArray());
+      var equipmentOffset = FlatBuffers.Protocol.Response.Items.CreateEquipmentVector(builder, equipment.Select(x => FlatBuffers.Protocol.Response.Equipment.CreateEquipment(builder, x.Id, builder.CreateString(x.Name), x.Type)).ToArray());
       var offset = Items.CreateItems(builder, inventoryOffset, equipmentOffset);
       builder.Finish(offset.Value);
       
