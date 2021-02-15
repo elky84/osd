@@ -21,21 +21,25 @@ namespace FlatBuffers.Protocol.Request
     public void __init(int _i, ByteBuffer _bb) { __p = new Table(_i, _bb); }
     public Move __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
   
-    public Vector2? Position { get { int o = __p.__offset(4); return o != 0 ? (Vector2?)(new Vector2()).__assign(__p.__indirect(o + __p.bb_pos), __p.bb) : null; } }
-    public int Direction { get { int o = __p.__offset(6); return o != 0 ? __p.bb.GetInt(o + __p.bb_pos) : (int)0; } }
+    public int Sequence { get { int o = __p.__offset(4); return o != 0 ? __p.bb.GetInt(o + __p.bb_pos) : (int)0; } }
+    public Vector2? Position { get { int o = __p.__offset(6); return o != 0 ? (Vector2?)(new Vector2()).__assign(__p.__indirect(o + __p.bb_pos), __p.bb) : null; } }
+    public int Direction { get { int o = __p.__offset(8); return o != 0 ? __p.bb.GetInt(o + __p.bb_pos) : (int)0; } }
   
     public static Offset<Move> CreateMove(FlatBufferBuilder builder,
+        int sequence = 0,
         Offset<Vector2> positionOffset = default(Offset<Vector2>),
         int direction = 0) {
-      builder.StartTable(2);
+      builder.StartTable(3);
       Move.AddDirection(builder, direction);
       Move.AddPosition(builder, positionOffset);
+      Move.AddSequence(builder, sequence);
       return Move.EndMove(builder);
     }
   
-    public static void StartMove(FlatBufferBuilder builder) { builder.StartTable(2); }
-    public static void AddPosition(FlatBufferBuilder builder, Offset<Vector2> positionOffset) { builder.AddOffset(0, positionOffset.Value, 0); }
-    public static void AddDirection(FlatBufferBuilder builder, int direction) { builder.AddInt(1, direction, 0); }
+    public static void StartMove(FlatBufferBuilder builder) { builder.StartTable(3); }
+    public static void AddSequence(FlatBufferBuilder builder, int sequence) { builder.AddInt(0, sequence, 0); }
+    public static void AddPosition(FlatBufferBuilder builder, Offset<Vector2> positionOffset) { builder.AddOffset(1, positionOffset.Value, 0); }
+    public static void AddDirection(FlatBufferBuilder builder, int direction) { builder.AddInt(2, direction, 0); }
     public static Offset<Move> EndMove(FlatBufferBuilder builder) {
       int o = builder.EndTable();
       return new Offset<Move>(o);
@@ -43,20 +47,22 @@ namespace FlatBuffers.Protocol.Request
   
     public struct Model
     {
+      public int Sequence { get; set; }
       public FlatBuffers.Protocol.Request.Vector2.Model Position { get; set; }
       public int Direction { get; set; }
     
-      public Model(FlatBuffers.Protocol.Request.Vector2.Model position, int direction)
+      public Model(int sequence, FlatBuffers.Protocol.Request.Vector2.Model position, int direction)
       {
+        Sequence = sequence;
         Position = position;
         Direction = direction;
       }
     }
   
-    public static byte[] Bytes(FlatBuffers.Protocol.Request.Vector2.Model position, int direction) {
+    public static byte[] Bytes(int sequence, FlatBuffers.Protocol.Request.Vector2.Model position, int direction) {
       var builder = new FlatBufferBuilder(512);
       var positionOffset = FlatBuffers.Protocol.Request.Vector2.CreateVector2(builder, position.X, position.Y);
-      var offset = Move.CreateMove(builder, positionOffset, direction);
+      var offset = Move.CreateMove(builder, sequence, positionOffset, direction);
       builder.Finish(offset.Value);
       
       var bytes = builder.DataBuffer.ToSizedArray();
@@ -75,7 +81,7 @@ namespace FlatBuffers.Protocol.Request
     }
     
     public static byte[] Bytes(Model model) {
-      return Bytes(model.Position, model.Direction);
+      return Bytes(model.Sequence, model.Position, model.Direction);
     }
   };
 }

@@ -4,23 +4,28 @@ table Vector2 {
 }
 
 table Move {
+	sequence: int;
 	position: Vector2;
 	direction: int;
 }
 
 table Stop {
+	sequence: int;
 	position: Vector2;
 }
 
 table Jump {
+	sequence: int;
 	position: Vector2;
 }
 
 table Fall {
+	sequence: int;
 	position: Vector2;
 }
 
 table Collision {
+	sequence: int;
 	position: Vector2;
 	axis: int;
 }
@@ -31,6 +36,7 @@ table UpdateNPC {
 }
 
 table Update {
+	sequence: int;
 	position: Vector2;
 	mobs: [UpdateNPC];
 }

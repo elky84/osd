@@ -109,8 +109,6 @@ public class ClientHandler : SimpleChannelInboundHandler<IByteBuffer>
         base.ChannelInactive(context);
     }
 
-
-
     protected override void ChannelRead0(IChannelHandlerContext contex, IByteBuffer buffer)
     {
         try

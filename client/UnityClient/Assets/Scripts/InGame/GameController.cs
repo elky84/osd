@@ -15,6 +15,8 @@ public partial class GameController : MonoBehaviour
 
     private Dictionary<int, Character> Characters { get; set; } = new Dictionary<int, Character>();
 
+    private Dictionary<int, Character> Controllables { get; set; } = new Dictionary<int, Character>();
+
     private Camera Camera { get; set; }
 
     public Cinemachine.CinemachineVirtualCamera cineCamera;
@@ -61,8 +63,9 @@ public partial class GameController : MonoBehaviour
 
         character.CurrentPosition = Position.FromFlatBuffer(position);
 
-        character.name = name;
-        character.Name = name;
+        character.name = $"{name}({sequence})";
+        character.Name = $"{name}({sequence})";
+        character.Sequence = sequence;
 
         character.SpriteSheetPath = "ArmoredKnight";
         character.Type = objectType;
@@ -76,6 +79,7 @@ public partial class GameController : MonoBehaviour
         var character = GetCharacter(sequence);
         if (character != null)
         {
+            UnsetControllable(character);
             Destroy(character.gameObject);
             Characters.Remove(sequence);
         }
@@ -86,29 +90,56 @@ public partial class GameController : MonoBehaviour
         return Characters.TryGetValue(sequence, out var character) ? character : null;
     }
 
+    private void SetControllable(Character character)
+    {
+        if (Controllables.ContainsKey(character.Sequence))
+            return;
+
+        character.OnCollisionEnter = this.OnCollisionEnter;
+        character.OnCollisionExit = this.OnCollisionExit;
+        character.OnJump = this.OnJump;
+
+        if (character.IsGround == false)
+        {
+            character.OnCollisionExit(character, null);
+            UnityEngine.Debug.Log($"{character.Sequence} is falling.", character.gameObject);
+        }
+        else
+        {
+            UnityEngine.Debug.Log($"{character.Sequence} is on the ground.", character.gameObject);
+        }
+
+        Controllables.Add(character.Sequence, character);
+    }
+
+    private void UnsetControllable(Character character)
+    {
+        character.OnCollisionEnter = null;
+        character.OnCollisionExit = null;
+        character.OnJump = null;
+
+        Controllables.Remove(character.Sequence);
+    }
+
     private void SetMyCharacter(int sequence)
     {
         if (Characters.TryGetValue(sequence, out var character))
         {
             cineCamera.Follow = character.transform;
             MyCharacter = character;
-            MyCharacter.OnCollisionEnter = this.OnCollisionEnter;
-            MyCharacter.OnCollisionExit = this.OnCollisionExit;
-            MyCharacter.OnJump = this.OnJump;
-
-            MyCharacter.OnCollisionExit(MyCharacter, null);
+            SetControllable(MyCharacter);
         }
     }
 
     private void OnJump(Character me)
     {
-        NettyClient.Instance.Send(FlatBuffers.Protocol.Request.Jump.Bytes(new FlatBuffers.Protocol.Request.Vector2.Model { X = me.transform.localPosition.x, Y = me.transform.localPosition.y }));
+        NettyClient.Instance.Send(FlatBuffers.Protocol.Request.Jump.Bytes(me.Sequence, new FlatBuffers.Protocol.Request.Vector2.Model { X = me.transform.localPosition.x, Y = me.transform.localPosition.y }));
     }
 
     private void OnCollisionExit(Character me, Collision2D obj)
     {
         // 낙하될 때 서버에 알림
-        NettyClient.Instance.Send(FlatBuffers.Protocol.Request.Fall.Bytes(new FlatBuffers.Protocol.Request.Vector2.Model { X = me.transform.localPosition.x, Y = me.transform.localPosition.y }));
+        NettyClient.Instance.Send(FlatBuffers.Protocol.Request.Fall.Bytes(me.Sequence, new FlatBuffers.Protocol.Request.Vector2.Model { X = me.transform.localPosition.x, Y = me.transform.localPosition.y }));
     }
 
     private void OnCollisionEnter(Character me, Collision2D obj)
@@ -117,21 +148,12 @@ public partial class GameController : MonoBehaviour
         var normal = obj.contacts[0].normal;
         Axis axis;
         if (normal.x > normal.y) // axis : x
-        { 
-            if(Mathf.Abs(normal.x) > 0)
-                UnityEngine.Debug.Log("Left 충돌");
-            else
-                UnityEngine.Debug.Log("Right 충돌");
-
             axis = Axis.X;
-        }
         else
-        {
-            UnityEngine.Debug.Log("Bottom 충돌");
             axis = Axis.Y;
-        }
 
-        NettyClient.Instance.Send(FlatBuffers.Protocol.Request.Collision.Bytes(new FlatBuffers.Protocol.Request.Vector2.Model { X = me.transform.localPosition.x, Y = me.transform.localPosition.y}, (int)axis));
+        NettyClient.Instance.Send(FlatBuffers.Protocol.Request.Collision.Bytes(me.Sequence, new FlatBuffers.Protocol.Request.Vector2.Model { X = me.transform.localPosition.x, Y = me.transform.localPosition.y}, (int)axis));
+        UnityEngine.Debug.Log($"{me.Sequence} is enter collision");
     }
 
     public void Clear()
@@ -200,10 +222,13 @@ public partial class GameController : MonoBehaviour
     {
         while (true)
         {
-            if (this.MyCharacter != null && this.MyCharacter.Moving)
+            foreach (var controllable in Controllables.Values)
             {
-                var position = new FlatBuffers.Protocol.Request.Vector2.Model { X = this.MyCharacter.transform.localPosition.x, Y = this.MyCharacter.transform.localPosition.y };
-                NettyClient.Instance.Send(FlatBuffers.Protocol.Request.Update.Bytes(position, new List<FlatBuffers.Protocol.Request.UpdateNPC.Model>()));
+                if (controllable.Moving == false && controllable.IsGround == true)
+                    continue;
+
+                var position = new FlatBuffers.Protocol.Request.Vector2.Model { X = controllable.transform.localPosition.x, Y = controllable.transform.localPosition.y };
+                NettyClient.Instance.Send(FlatBuffers.Protocol.Request.Update.Bytes(controllable.Sequence, position, new List<FlatBuffers.Protocol.Request.UpdateNPC.Model>()));
             }
 
             yield return new WaitForSeconds(0.1f);

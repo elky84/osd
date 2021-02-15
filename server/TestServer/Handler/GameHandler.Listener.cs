@@ -1,6 +1,5 @@
 ﻿using ServerShared.NetworkHandler;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using TestServer.Model;
 
@@ -64,20 +63,41 @@ namespace TestServer.Handler
                         new System.Collections.Generic.List<FlatBuffers.Protocol.Response.Character.Model> { character }));
                 }
 
-                foreach (var (sector, objs) in hides.GroupBy(x => x.Sector).ToDictionary(x => x.Key, x => x.ToList()))
+                var unsetList = hides.Where(x => x.Type == NetworkShared.ObjectType.Mob).Select(x => x as Mob).Where(x => x.Owner == character).ToList();
+                _ = character.Context.Send(FlatBuffers.Protocol.Response.UnsetOwner.Bytes(unsetList.Select(x => x.Sequence.Value).ToList()));
+#if DEBUG
+                foreach (var sequence in unsetList.Select(x => x.Sequence.Value).ToList())
+                    Console.WriteLine($"unset owner : {sequence} > {character.Sequence}");
+#endif
+
+                foreach (var (sector, mobs) in unsetList.GroupBy(x => x.Sector).ToDictionary(x => x.Key, x => x.ToList()))
                 {
                     var newOwner = sector.Nears.SelectMany(x => x.Characters).FirstOrDefault();
-                    foreach (var mob in objs.Where(x => x.Type == NetworkShared.ObjectType.Mob).Select(x => x as Mob))
+                    foreach (var mob in mobs)
                         mob.Owner = newOwner;
-                }
-                
 
-                foreach (var (sector, objs) in shows.GroupBy(x => x.Sector).ToDictionary(x => x.Key, x => x.ToList()))
-                {
-                    var oldOwner = sector.Nears.SelectMany(x => x.Characters).FirstOrDefault();
-                    foreach (var mob in objs.Where(x => x.Type == NetworkShared.ObjectType.Mob).Select(x => x as Mob))
-                        mob.Owner = mob.Owner ?? character;
+                    if (newOwner != null)
+                    {
+                        var sequences = mobs.Select(x => x.Sequence.Value).ToList();
+                        _ = newOwner.Context.Send(FlatBuffers.Protocol.Response.SetOwner.Bytes(sequences));
+#if DEBUG
+                        foreach (var sequence in mobs.Select(x => x.Sequence.Value).ToList())
+                            Console.WriteLine($"new owner : {sequence} > {newOwner.Sequence}");
+#endif
+                    }
                 }
+
+                var setList = shows.Where(x => x.Type == NetworkShared.ObjectType.Mob).Select(x => x as Mob).Where(x => x.Owner == null).ToList();
+                foreach (var mob in setList)
+                {
+                    mob.Owner = character;
+                }
+                _ = character.Context.Send(FlatBuffers.Protocol.Response.SetOwner.Bytes(setList.Select(x => x.Sequence.Value).ToList()));
+
+#if DEBUG
+                foreach (var sequence in setList.Select(x => x.Sequence.Value).ToList())
+                    Console.WriteLine($"new owner : {sequence} > {character.Sequence}");
+#endif
             }
             else if(obj.Type == NetworkShared.ObjectType.Mob)
             {

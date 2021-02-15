@@ -84,6 +84,14 @@ table Leave {
 	sequence: [int];
 }
 
+table SetOwner {
+	sequences: [int];
+}
+
+table UnsetOwner {
+	sequences: [int];
+}
+
 table PositionChanged {
 	sequence: int;
 	position: Vector2;

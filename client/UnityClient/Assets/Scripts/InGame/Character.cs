@@ -1,5 +1,4 @@
-﻿using FlatBuffers.Protocol;
-using NetworkShared;
+﻿using NetworkShared;
 using System;
 using System.Collections;
 using UnityEngine;
@@ -62,6 +61,8 @@ public class Character : SpriteObject
     public DateTime MoveDt { get; set; }
 
     public ObjectType Type { get; set; }
+
+    public int Sequence { get; set; }
 
     public string Name { get; set; }
 
@@ -168,7 +169,7 @@ public class Character : SpriteObject
 
         if (packetSend)
         {
-            NettyClient.Instance.Send(FlatBuffers.Protocol.Request.Move.Bytes(new FlatBuffers.Protocol.Request.Vector2.Model { X = this.transform.localPosition.x, Y = this.transform.localPosition.y }, (int)direction));
+            NettyClient.Instance.Send(FlatBuffers.Protocol.Request.Move.Bytes(this.Sequence, new FlatBuffers.Protocol.Request.Vector2.Model { X = this.transform.localPosition.x, Y = this.transform.localPosition.y }, (int)direction));
         }
 
         MoveStart();
@@ -187,16 +188,23 @@ public class Character : SpriteObject
 
     public void StopMove(bool packetSend)
     {
-        this.Moving = false;
-        this.Velocity = new Vector2(0, 0);
-        if (MoveCoroutine != null)
+        try
         {
-            StopCoroutine(MoveCoroutine);
-            MoveCoroutine = null;
-            Animator.SetBool("Walking", false);
+            this.Moving = false;
+            this.Velocity = new Vector2(0, 0);
+            if (MoveCoroutine != null)
+            {
+                StopCoroutine(MoveCoroutine);
+                MoveCoroutine = null;
+                Animator.SetBool("Walking", false);
 
-            if (packetSend)
-                NettyClient.Instance.Send(FlatBuffers.Protocol.Request.Stop.Bytes(new FlatBuffers.Protocol.Request.Vector2.Model { X = this.transform.localPosition.x, Y = this.transform.localPosition.y }));
+                if (packetSend)
+                    NettyClient.Instance.Send(FlatBuffers.Protocol.Request.Stop.Bytes(this.Sequence, new FlatBuffers.Protocol.Request.Vector2.Model { X = this.transform.localPosition.x, Y = this.transform.localPosition.y }));
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.Log(e.Message);
         }
     }
 

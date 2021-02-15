@@ -21,17 +21,21 @@ namespace FlatBuffers.Protocol.Request
     public void __init(int _i, ByteBuffer _bb) { __p = new Table(_i, _bb); }
     public Jump __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
   
-    public Vector2? Position { get { int o = __p.__offset(4); return o != 0 ? (Vector2?)(new Vector2()).__assign(__p.__indirect(o + __p.bb_pos), __p.bb) : null; } }
+    public int Sequence { get { int o = __p.__offset(4); return o != 0 ? __p.bb.GetInt(o + __p.bb_pos) : (int)0; } }
+    public Vector2? Position { get { int o = __p.__offset(6); return o != 0 ? (Vector2?)(new Vector2()).__assign(__p.__indirect(o + __p.bb_pos), __p.bb) : null; } }
   
     public static Offset<Jump> CreateJump(FlatBufferBuilder builder,
+        int sequence = 0,
         Offset<Vector2> positionOffset = default(Offset<Vector2>)) {
-      builder.StartTable(1);
+      builder.StartTable(2);
       Jump.AddPosition(builder, positionOffset);
+      Jump.AddSequence(builder, sequence);
       return Jump.EndJump(builder);
     }
   
-    public static void StartJump(FlatBufferBuilder builder) { builder.StartTable(1); }
-    public static void AddPosition(FlatBufferBuilder builder, Offset<Vector2> positionOffset) { builder.AddOffset(0, positionOffset.Value, 0); }
+    public static void StartJump(FlatBufferBuilder builder) { builder.StartTable(2); }
+    public static void AddSequence(FlatBufferBuilder builder, int sequence) { builder.AddInt(0, sequence, 0); }
+    public static void AddPosition(FlatBufferBuilder builder, Offset<Vector2> positionOffset) { builder.AddOffset(1, positionOffset.Value, 0); }
     public static Offset<Jump> EndJump(FlatBufferBuilder builder) {
       int o = builder.EndTable();
       return new Offset<Jump>(o);
@@ -39,18 +43,20 @@ namespace FlatBuffers.Protocol.Request
   
     public struct Model
     {
+      public int Sequence { get; set; }
       public FlatBuffers.Protocol.Request.Vector2.Model Position { get; set; }
     
-      public Model(FlatBuffers.Protocol.Request.Vector2.Model position)
+      public Model(int sequence, FlatBuffers.Protocol.Request.Vector2.Model position)
       {
+        Sequence = sequence;
         Position = position;
       }
     }
   
-    public static byte[] Bytes(FlatBuffers.Protocol.Request.Vector2.Model position) {
+    public static byte[] Bytes(int sequence, FlatBuffers.Protocol.Request.Vector2.Model position) {
       var builder = new FlatBufferBuilder(512);
       var positionOffset = FlatBuffers.Protocol.Request.Vector2.CreateVector2(builder, position.X, position.Y);
-      var offset = Jump.CreateJump(builder, positionOffset);
+      var offset = Jump.CreateJump(builder, sequence, positionOffset);
       builder.Finish(offset.Value);
       
       var bytes = builder.DataBuffer.ToSizedArray();
@@ -69,7 +75,7 @@ namespace FlatBuffers.Protocol.Request
     }
     
     public static byte[] Bytes(Model model) {
-      return Bytes(model.Position);
+      return Bytes(model.Sequence, model.Position);
     }
   };
 }

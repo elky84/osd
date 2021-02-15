@@ -16,17 +16,20 @@ namespace TestServer.Handler
         [FlatBufferEvent]
         public bool OnMove(Session<Character> session, FlatBuffers.Protocol.Request.Move request)
         {
-            var character = session.Data;
-            var position = request.Position.ToPoint();
-
             try
             {
-                if (character.Position.Delta(request.Position.Value) > 1.0)
+                var obj = GetControllableObject(session, request.Sequence);
+                if (obj == null)
+                    throw new Exception("컨트롤 할 수 없는 오브젝트");
+
+                var position = request.Position.ToPoint();
+
+                if (obj.Position.Delta(request.Position.Value) > 1.0)
                     throw new Exception("위치가 올바르지 않습니다.");
 
-                character.Position = position;
-                character.Move((Direction)request.Direction);
-                _ = Broadcast(character, FlatBuffers.Protocol.Response.State.Bytes(character.State(false)));
+                obj.Position = position;
+                obj.Move((Direction)request.Direction);
+                _ = Broadcast(obj, FlatBuffers.Protocol.Response.State.Bytes(obj.State(false)));
 
                 Console.WriteLine($"캐릭터가 이동 ({request.Position?.X}, {request.Position?.Y})");
                 return true;
@@ -41,18 +44,21 @@ namespace TestServer.Handler
         [FlatBufferEvent]
         public bool OnStop(Session<Character> session, FlatBuffers.Protocol.Request.Stop request)
         {
-            var character = session.Data;
-            var position = request.Position.ToPoint();
-
             try
             {
-                if (character.ValidPosition(position) == false)
+                var obj = GetControllableObject(session, request.Sequence);
+                if (obj == null)
+                    throw new Exception("컨트롤 할 수 없는 오브젝트");
+
+                var position = request.Position.ToPoint();
+
+                if (obj.ValidPosition(position) == false)
                     throw new Exception("올바른 위치가 아님");
 
-                character.Position = position;
-                character.Stop();
-                _ = Broadcast(character, FlatBuffers.Protocol.Response.State.Bytes(character.State(false)));
-                Console.WriteLine($"캐릭터가 멈춤 : {character.Position}");
+                obj.Position = position;
+                obj.Stop();
+                _ = Broadcast(obj, FlatBuffers.Protocol.Response.State.Bytes(obj.State(false)));
+                Console.WriteLine($"캐릭터가 멈춤 : {obj.Position}");
                 return true;
             }
             catch (Exception e)
@@ -65,18 +71,21 @@ namespace TestServer.Handler
         [FlatBufferEvent]
         public bool OnJump(Session<Character> session, FlatBuffers.Protocol.Request.Jump request)
         {
-            var character = session.Data;
-            var position = request.Position.ToPoint();
-
             try
             {
-                if (character.ValidPosition(position) == false)
+                var obj = GetControllableObject(session, request.Sequence);
+                if (obj == null)
+                    throw new Exception("컨트롤 할 수 없는 오브젝트");
+
+                var position = request.Position.ToPoint();
+
+                if (obj.ValidPosition(position) == false)
                     throw new Exception("올바른 위치가 아님");
 
-                character.Position = position;
-                character.Jump(true);
-                _ = Broadcast(character, FlatBuffers.Protocol.Response.State.Bytes(character.State(true)));
-                Console.WriteLine($"캐릭터가 점프함 : {character.Position}");
+                obj.Position = position;
+                obj.Jump(true);
+                _ = Broadcast(obj, FlatBuffers.Protocol.Response.State.Bytes(obj.State(true)));
+                Console.WriteLine($"캐릭터가 점프함 : {obj.Position}");
                 return true;
             }
             catch (Exception e)
@@ -89,17 +98,20 @@ namespace TestServer.Handler
         [FlatBufferEvent]
         public bool OnFall(Session<Character> session, FlatBuffers.Protocol.Request.Fall request)
         {
-            var character = session.Data;
-            var position = request.Position.ToPoint();
-
             try
             {
-                if (character.ValidPosition(position) == false)
+                var obj = GetControllableObject(session, request.Sequence);
+                if (obj == null)
+                    throw new Exception("컨트롤 할 수 없는 오브젝트");
+
+                var position = request.Position.ToPoint();
+
+                if (obj.ValidPosition(position) == false)
                     throw new Exception("올바른 위치가 아님");
 
-                character.Position = position;
-                character.Fall();
-                _ = Broadcast(character, FlatBuffers.Protocol.Response.State.Bytes(character.State(false)));
+                obj.Position = position;
+                obj.Fall();
+                _ = Broadcast(obj, FlatBuffers.Protocol.Response.State.Bytes(obj.State(false)));
 
                 return true;
             }
@@ -113,29 +125,32 @@ namespace TestServer.Handler
         [FlatBufferEvent]
         public bool OnCollision(Session<Character> session, FlatBuffers.Protocol.Request.Collision request)
         {
-            var character = session.Data;
-            var position = request.Position.ToPoint();
-
             try
             {
+                var obj = GetControllableObject(session, request.Sequence);
+                if (obj == null)
+                    throw new Exception("컨트롤 할 수 없는 오브젝트");
+
+                var position = request.Position.ToPoint();
+
                 switch ((Axis)request.Axis)
                 {
                     case Axis.X:
                         {
-                            if (character.ValidPosition(position) == false)
+                            if (obj.ValidPosition(position) == false)
                                 throw new Exception("올바른 위치가 아님");
 
-                            character.Position = position;
+                            obj.Position = position;
                         }
                         break;
 
                     case Axis.Y:
                         {
-                            if (character.ValidPosition(position) == false)
+                            if (obj.ValidPosition(position) == false)
                                 throw new Exception("올바른 위치가 아님");
 
-                            character.Position = position;
-                            character.Jump(false);
+                            obj.Position = position;
+                            obj.Jump(false);
                         }
                         break;
 
@@ -143,7 +158,7 @@ namespace TestServer.Handler
                         throw new Exception("잘못된 요청");
                 }
 
-                _ = Broadcast(character, FlatBuffers.Protocol.Response.State.Bytes(character.State(false)));
+                _ = Broadcast(obj, FlatBuffers.Protocol.Response.State.Bytes(obj.State(false)));
                 return true;
             }
             catch (Exception e)
@@ -156,19 +171,22 @@ namespace TestServer.Handler
         [FlatBufferEvent]
         public bool OnUpdate(Session<Character> session, FlatBuffers.Protocol.Request.Update request)
         {
-            var character = session.Data;
+            var obj = GetControllableObject(session, request.Sequence);
+            if (obj == null)
+                throw new Exception("컨트롤 할 수 없는 오브젝트");
+
             var position = request.Position.ToPoint();
-            if (character.ValidPosition(position) == false)
+            if (obj.ValidPosition(position) == false)
                 throw new Exception("올바른 위치가 아님");
 
-            character.Position = position;
-            Console.WriteLine($"{character.Sequence.Value} : {position.X}/{position.Y}");
+            obj.Position = position;
+            Console.WriteLine($"{obj.Sequence.Value} : {position.X}/{position.Y}");
 
             for (int i = 0; i < request.MobsLength; i++)
             {
                 var mobSequence = request.Mobs(i).Value.Sequence;
                 var mobPosition = request.Mobs(i).Value.Position.ToPoint();
-                var mob = character.Map.Objects[mobSequence] ??
+                var mob = obj.Map.Objects[mobSequence] ??
                     throw new Exception("몹 없음");
 
                 if (mob.ValidPosition(mobPosition) == false)

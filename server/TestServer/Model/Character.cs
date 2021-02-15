@@ -150,7 +150,7 @@ namespace TestServer.Model
         public static implicit operator FlatBuffers.Protocol.Response.Character.Model(Character obj) =>
             obj.ToProtocol();
 
-        public FlatBuffers.Protocol.Response.Character.Model ToProtocol() =>
+        public new FlatBuffers.Protocol.Response.Character.Model ToProtocol() =>
             new FlatBuffers.Protocol.Response.Character.Model(this.Sequence.Value,
                 this.Name,
                 this.Position,

@@ -158,7 +158,7 @@ namespace TestServer.Model
                 if (Math.Abs(position.Y - Position.Y) > 1)
                     return false;
             }
-            else if (position.Y > Position.Y)
+            else if (position.Y > Position.Y && Math.Abs(position.Y - Position.Y) > 5.0)
             {
                 if (this.JumpingLimit < position.Y)
                     return false;

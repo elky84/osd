@@ -21,22 +21,26 @@ namespace FlatBuffers.Protocol.Request
     public void __init(int _i, ByteBuffer _bb) { __p = new Table(_i, _bb); }
     public Update __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
   
-    public Vector2? Position { get { int o = __p.__offset(4); return o != 0 ? (Vector2?)(new Vector2()).__assign(__p.__indirect(o + __p.bb_pos), __p.bb) : null; } }
-    public UpdateNPC? Mobs(int j) { int o = __p.__offset(6); return o != 0 ? (UpdateNPC?)(new UpdateNPC()).__assign(__p.__indirect(__p.__vector(o) + j * 4), __p.bb) : null; }
-    public int MobsLength { get { int o = __p.__offset(6); return o != 0 ? __p.__vector_len(o) : 0; } }
+    public int Sequence { get { int o = __p.__offset(4); return o != 0 ? __p.bb.GetInt(o + __p.bb_pos) : (int)0; } }
+    public Vector2? Position { get { int o = __p.__offset(6); return o != 0 ? (Vector2?)(new Vector2()).__assign(__p.__indirect(o + __p.bb_pos), __p.bb) : null; } }
+    public UpdateNPC? Mobs(int j) { int o = __p.__offset(8); return o != 0 ? (UpdateNPC?)(new UpdateNPC()).__assign(__p.__indirect(__p.__vector(o) + j * 4), __p.bb) : null; }
+    public int MobsLength { get { int o = __p.__offset(8); return o != 0 ? __p.__vector_len(o) : 0; } }
   
     public static Offset<Update> CreateUpdate(FlatBufferBuilder builder,
+        int sequence = 0,
         Offset<Vector2> positionOffset = default(Offset<Vector2>),
         VectorOffset mobsOffset = default(VectorOffset)) {
-      builder.StartTable(2);
+      builder.StartTable(3);
       Update.AddMobs(builder, mobsOffset);
       Update.AddPosition(builder, positionOffset);
+      Update.AddSequence(builder, sequence);
       return Update.EndUpdate(builder);
     }
   
-    public static void StartUpdate(FlatBufferBuilder builder) { builder.StartTable(2); }
-    public static void AddPosition(FlatBufferBuilder builder, Offset<Vector2> positionOffset) { builder.AddOffset(0, positionOffset.Value, 0); }
-    public static void AddMobs(FlatBufferBuilder builder, VectorOffset mobsOffset) { builder.AddOffset(1, mobsOffset.Value, 0); }
+    public static void StartUpdate(FlatBufferBuilder builder) { builder.StartTable(3); }
+    public static void AddSequence(FlatBufferBuilder builder, int sequence) { builder.AddInt(0, sequence, 0); }
+    public static void AddPosition(FlatBufferBuilder builder, Offset<Vector2> positionOffset) { builder.AddOffset(1, positionOffset.Value, 0); }
+    public static void AddMobs(FlatBufferBuilder builder, VectorOffset mobsOffset) { builder.AddOffset(2, mobsOffset.Value, 0); }
     public static VectorOffset CreateMobsVector(FlatBufferBuilder builder, Offset<UpdateNPC>[] data) { builder.StartVector(4, data.Length, 4); for (int i = data.Length - 1; i >= 0; i--) builder.AddOffset(data[i].Value); return builder.EndVector(); }
     public static VectorOffset CreateMobsVectorBlock(FlatBufferBuilder builder, Offset<UpdateNPC>[] data) { builder.StartVector(4, data.Length, 4); builder.Add(data); return builder.EndVector(); }
     public static void StartMobsVector(FlatBufferBuilder builder, int numElems) { builder.StartVector(4, numElems, 4); }
@@ -47,21 +51,23 @@ namespace FlatBuffers.Protocol.Request
   
     public struct Model
     {
+      public int Sequence { get; set; }
       public FlatBuffers.Protocol.Request.Vector2.Model Position { get; set; }
       public List<FlatBuffers.Protocol.Request.UpdateNPC.Model> Mobs { get; set; }
     
-      public Model(FlatBuffers.Protocol.Request.Vector2.Model position, List<FlatBuffers.Protocol.Request.UpdateNPC.Model> mobs)
+      public Model(int sequence, FlatBuffers.Protocol.Request.Vector2.Model position, List<FlatBuffers.Protocol.Request.UpdateNPC.Model> mobs)
       {
+        Sequence = sequence;
         Position = position;
         Mobs = mobs;
       }
     }
   
-    public static byte[] Bytes(FlatBuffers.Protocol.Request.Vector2.Model position, List<FlatBuffers.Protocol.Request.UpdateNPC.Model> mobs) {
+    public static byte[] Bytes(int sequence, FlatBuffers.Protocol.Request.Vector2.Model position, List<FlatBuffers.Protocol.Request.UpdateNPC.Model> mobs) {
       var builder = new FlatBufferBuilder(512);
       var positionOffset = FlatBuffers.Protocol.Request.Vector2.CreateVector2(builder, position.X, position.Y);
       var mobsOffset = FlatBuffers.Protocol.Request.Update.CreateMobsVector(builder, mobs.Select(x => FlatBuffers.Protocol.Request.UpdateNPC.CreateUpdateNPC(builder, x.Sequence, FlatBuffers.Protocol.Request.Vector2.CreateVector2(builder, x.Position.X, x.Position.Y))).ToArray());
-      var offset = Update.CreateUpdate(builder, positionOffset, mobsOffset);
+      var offset = Update.CreateUpdate(builder, sequence, positionOffset, mobsOffset);
       builder.Finish(offset.Value);
       
       var bytes = builder.DataBuffer.ToSizedArray();
@@ -80,7 +86,7 @@ namespace FlatBuffers.Protocol.Request
     }
     
     public static byte[] Bytes(Model model) {
-      return Bytes(model.Position, model.Mobs);
+      return Bytes(model.Sequence, model.Position, model.Mobs);
     }
   };
 }

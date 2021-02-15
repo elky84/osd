@@ -1,6 +1,7 @@
 ﻿using KeraLua;
 using MasterData;
 using MasterData.Table;
+using NetworkShared;
 using ServerShared.Model;
 using ServerShared.NetworkHandler;
 using System;
@@ -89,6 +90,36 @@ namespace TestServer.Handler
             {
                 await context.Send(bytes);
             }
+        }
+
+        private Model.Object GetControllableObject(Session<Character> session, int sequence)
+        {
+            var character = session.Data;
+            if (character.Map.Objects.TryGetValue(sequence, out var obj) == false)
+                return null;
+
+            switch (obj.Type)
+            {
+                case ObjectType.Character:
+                    {
+                        if (sequence != character.Sequence)
+                            return null;
+                    }
+                    break;
+
+                case ObjectType.Mob:
+                    {
+                        var mob = obj as Model.Mob;
+                        if (mob.Owner != character)
+                            return null;
+                    }
+                    break;
+
+                default:
+                    return null;
+            }
+
+            return obj;
         }
 
         protected override void OnConnected(Session<Character> session)

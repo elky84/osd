@@ -73,7 +73,7 @@ public partial class GameController : MonoBehaviour
         for (int i = 0; i < response.ObjectsLength; i++)
         {
             var obj = response.Objects(i).Value;
-            Debug.Log($"Object {i} : {obj.Name}({obj.Sequence}) => {(ObjectType)obj.Type}, {obj.Position.Value.X} {obj.Position.Value.Y}");
+            Debug.Log($"show : {obj.Sequence}({obj.Name})");
 
             var created = CreateCharacter(obj.Name, obj.Sequence, (ObjectType)obj.Type, obj.Position.Value);
             if(obj.Moving)
@@ -85,7 +85,7 @@ public partial class GameController : MonoBehaviour
         for (int i = 0; i < response.CharactersLength; i++)
         {
             var character = response.Characters(i).Value;
-            Debug.Log($"Object {i} : {character.Name}({character.Sequence}) => {ObjectType.Character}, {character.Position.Value.X} {character.Position.Value.Y}");
+            Debug.Log($"show : {character.Sequence}({character.Name})");
 
             var created = CreateCharacter(character.Name, character.Sequence, ObjectType.Character, character.Position.Value);
             if (created.Moving)
@@ -102,9 +102,41 @@ public partial class GameController : MonoBehaviour
     {
         for (int i = 0; i < response.SequenceLength; i++)
         {
-            Debug.Log($"{response.Sequence(i)} is leave from current map.");
+            Debug.Log($"hide : {response.Sequence(i)}");
             RemoveCharacter(response.Sequence(i));
         }
+        return true;
+    }
+
+    [FlatBufferEvent]
+    public bool OnSetOwner(SetOwner response)
+    {
+        for (int i = 0; i < response.SequencesLength; i++)
+        {
+            var sequence = response.Sequences(i);
+            if (Characters.TryGetValue(sequence, out var obj) == false)
+                continue;
+
+            UnityEngine.Debug.Log($"set owner : {sequence}", obj.gameObject);
+            SetControllable(obj);
+        }
+
+        return true;
+    }
+
+    [FlatBufferEvent]
+    public bool OnUnsetOwner(UnsetOwner response)
+    {
+        for (int i = 0; i < response.SequencesLength; i++)
+        {
+            var sequence = response.Sequences(i);
+            if (Characters.TryGetValue(sequence, out var obj) == false)
+                continue;
+
+            UnityEngine.Debug.Log($"unset owner : {sequence}", obj.gameObject);
+            UnsetControllable(obj);
+        }
+
         return true;
     }
 }
