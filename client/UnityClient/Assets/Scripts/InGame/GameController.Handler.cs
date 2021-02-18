@@ -1,4 +1,5 @@
-﻿using FlatBuffers.Protocol.Response;
+﻿using Assets.Scripts.InGame.OOP;
+using FlatBuffers.Protocol.Response;
 using NetworkShared;
 using UnityEngine;
 
@@ -7,20 +8,23 @@ public partial class GameController : MonoBehaviour
     [FlatBufferEvent]
     public bool OnState(State response)
     {
-        var character = GetCharacter(response.Sequence);
-        if (character == null)
+        var obj = GetObject(response.Sequence);
+        if (obj == null)
             return false;
 
-        character.CurrentPosition = new Position((float)response.Position.Value.X, (float)response.Position.Value.Y);
-        character.Velocity = new UnityEngine.Vector2((float)response.Velocity.Value.X, (float)response.Velocity.Value.Y);
+        obj.transform.localPosition = new Position((float)response.Position.Value.X, (float)response.Position.Value.Y).ToVector3();
 
-        if (response.Jump)
-            character.Jump();
+        if (obj is Life)
+        {
+            var life = obj as Life;
+            if (response.Jump)
+                life.Jump();
 
-        if (response.Move)
-            character.MoveDirection((Direction)response.Direction, false);
-        else
-            character.StopMove(false);
+            if (response.Move)
+                life.Move((Direction)response.Direction);
+            else
+                life.Stop();
+        }
 
         return true;
     }
@@ -56,7 +60,7 @@ public partial class GameController : MonoBehaviour
             Debug.Log($"Portal to {portal.Map} : {portal.Position?.X}, {portal.Position?.Y}");
         }
 
-        CreateCharacter(response.Character.Value.Name, response.Character.Value.Sequence, ObjectType.Character, response.Character.Value.Position.Value);
+        CreateObject(response.Character.Value.Name, response.Character.Value.Sequence, ObjectType.Character, response.Character.Value.Position.Value);
 
         Debug.Log($"My sequence : {response.Character.Value.Sequence}");
         SetMyCharacter(response.Character.Value.Sequence);
@@ -75,11 +79,15 @@ public partial class GameController : MonoBehaviour
             var obj = response.Objects(i).Value;
             Debug.Log($"show : {obj.Sequence}({obj.Name})");
 
-            var created = CreateCharacter(obj.Name, obj.Sequence, (ObjectType)obj.Type, obj.Position.Value);
-            if(obj.Moving)
-                created.MoveDirection((Direction)obj.Direction, false);
-            else
-                created.StopMove(false);
+            var created = CreateObject(obj.Name, obj.Sequence, (ObjectType)obj.Type, obj.Position.Value);
+            if (created is Life)
+            {
+                var createdLife = created as Life;
+                if (obj.Moving)
+                    createdLife.Move((Direction)obj.Direction);
+                else
+                    createdLife.Stop();
+            }
         }
 
         for (int i = 0; i < response.CharactersLength; i++)
@@ -87,11 +95,11 @@ public partial class GameController : MonoBehaviour
             var character = response.Characters(i).Value;
             Debug.Log($"show : {character.Sequence}({character.Name})");
 
-            var created = CreateCharacter(character.Name, character.Sequence, ObjectType.Character, character.Position.Value);
+            var created = CreateObject(character.Name, character.Sequence, ObjectType.Character, character.Position.Value) as Assets.Scripts.InGame.OOP.Character;
             if (created.Moving)
-                created.MoveDirection((Direction)character.Direction, false);
+                created.Move((Direction)character.Direction);
             else
-                created.StopMove(false);
+                created.Stop();
         }
 
         return true;
@@ -114,7 +122,7 @@ public partial class GameController : MonoBehaviour
         for (int i = 0; i < response.SequencesLength; i++)
         {
             var sequence = response.Sequences(i);
-            if (Characters.TryGetValue(sequence, out var obj) == false)
+            if (Objects.TryGetValue(sequence, out var obj) == false)
                 continue;
 
             UnityEngine.Debug.Log($"set owner : {sequence}", obj.gameObject);
@@ -130,7 +138,7 @@ public partial class GameController : MonoBehaviour
         for (int i = 0; i < response.SequencesLength; i++)
         {
             var sequence = response.Sequences(i);
-            if (Characters.TryGetValue(sequence, out var obj) == false)
+            if (Objects.TryGetValue(sequence, out var obj) == false)
                 continue;
 
             UnityEngine.Debug.Log($"unset owner : {sequence}", obj.gameObject);

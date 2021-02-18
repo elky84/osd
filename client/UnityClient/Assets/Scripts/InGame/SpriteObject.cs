@@ -2,6 +2,8 @@
 using System.Linq;
 using UnityEngine;
 
+[RequireComponent(typeof(SpriteRenderer))]
+[RequireComponent(typeof(Animator))]
 public class SpriteObject : MonoBehaviour
 {
     protected SpriteRenderer SpriteRenderer { get; set; }
@@ -20,7 +22,6 @@ public class SpriteObject : MonoBehaviour
     }
 
     // The name of the sprite sheet to use
-    [HideInInspector]
     public string SpriteSheetPath;
 
     // The name of the currently loaded sprite sheet
