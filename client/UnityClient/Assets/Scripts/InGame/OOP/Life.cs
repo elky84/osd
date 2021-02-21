@@ -20,7 +20,7 @@ namespace Assets.Scripts.InGame.OOP
         public Action<Life> OnStop { get; set; }
         public Action<Life> OnJump { get; set; }
 
-       private IEnumerator CoMove()
+        private IEnumerator CoMove()
         {
             Animator.SetBool("Walking", true);
             while (true)
@@ -32,14 +32,18 @@ namespace Assets.Scripts.InGame.OOP
                 var velocityX = this.Speed;
                 if (this.Direction == Direction.Left)
                     velocityX *= -1;
-                
+
                 var movedX = (velocityX * diff.Ticks) / 1000000;
+
                 var newPosition = new Position(Mathf.Clamp(transform.localPosition.x + movedX, 0, 32), Mathf.Max(0, transform.localPosition.y)).ToVector3();
 
                 if (OnPositionChanging != null)
                     newPosition = OnPositionChanging.Invoke(this, newPosition);
 
                 transform.localPosition = newPosition;
+
+                IsGround = IsGrounded();
+
                 yield return new WaitForSeconds(0.01f);
             }
         }
@@ -65,8 +69,9 @@ namespace Assets.Scripts.InGame.OOP
         {
             if (IsGround)
             {
-                var rigidBody2D = this.gameObject.GetComponent<Rigidbody2D>();
-                rigidBody2D.AddForce(Vector3.up * JUMPING_POWER);
+                JumpPower = JUMPING_POWER;
+
+                this.OnJumpStart?.Invoke(this);
 
                 OnJump?.Invoke(this);
             }

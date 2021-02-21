@@ -5,11 +5,9 @@ using UnityEngine;
 
 namespace Assets.Scripts.InGame.OOP
 {
-    [RequireComponent(typeof(BoxCollider2D))]
-    [RequireComponent(typeof(Rigidbody2D))]
     public abstract class Object : SpriteObject
     {
-        public static float JUMPING_POWER = 30.0f;
+        public static float JUMPING_POWER = 2.0f;
         public static float SPEED = 1.0f;
 
         public float Speed => 1;
@@ -19,13 +17,19 @@ namespace Assets.Scripts.InGame.OOP
         public BoxCollider2D BoxCollider2D { get; private set; }
         public Rigidbody2D Rigidbody2D { get; private set; }
 
+        public bool IsGround = false;
+
         public int Sequence { get; set; }
         public string Name { get; set; }
-        public bool IsGround { get; private set; }
+
         public virtual bool Moving { get; } = false;
 
-        public Action<Object, Collision2D> OnCollisionEnter { get; set; }
-        public Action<Object, Collision2D> OnCollisionExit { get; set; }
+        public Action<Object> OnJumpEnd { get; set; }
+        public Action<Object> OnJumpStart { get; set; }
+
+        public LayerMask GroundLayer;
+
+        protected float JumpPower = 0.0f;
 
         public void Awake()
         {
@@ -35,40 +39,50 @@ namespace Assets.Scripts.InGame.OOP
             Rigidbody2D = GetComponent<Rigidbody2D>();
         }
 
-        public void RemoveRigidBody()
+        protected bool IsGrounded()
         {
-            var collider2D = this.gameObject.GetComponent<BoxCollider2D>();
-            if (collider2D != null)
+            Vector2 position = transform.position;
+            Vector2 direction = Vector2.down;
+            float distance = 0.5f;
+
+            Debug.DrawRay(position, direction, Color.green);
+
+            RaycastHit2D hit = Physics2D.Raycast(position, direction, distance, GroundLayer);
+            if (hit.collider != null)
             {
-                collider2D.enabled = false;
+                return true;
             }
+            return false;
         }
 
-        private void OnCollisionEnter2D(Collision2D collision)
+        public void Update()
         {
-            this.OnCollisionEnter?.Invoke(this, collision);
-        }
-
-
-        private void OnCollisionStay2D(Collision2D collision)
-        {
-            if (collision.transform.tag == "Tile")
+            if (JumpPower > 0.0f)
             {
-                this.IsGround = true;
-            }
-        }
+                var next = new Vector3(transform.position.x, transform.position.y);
+                var min = Math.Min(0.05f, JumpPower);
 
-        //땅에서 탈출한 시점에 실행됨
-        private void OnCollisionExit2D(Collision2D collision)
-        {
-            var before = this.IsGround;
-            if (collision.transform.tag == "Tile")
+                next.y += min;
+
+                JumpPower -= min;
+
+                transform.position = next;
+
+                IsGround = IsGrounded();
+            }
+            else if (IsGround == false)
             {
-                this.IsGround = false;
-            }
+                var next = new Vector3(transform.position.x, transform.position.y);
+                next.y -= 0.05f;
+                transform.position = next;
 
-            if (before && !this.IsGround)
-                this.OnCollisionExit?.Invoke(this, collision);
+                IsGround = IsGrounded();
+
+                if (IsGround)
+                {
+                    this.OnJumpEnd?.Invoke(this);
+                }
+            }
         }
     }
 }

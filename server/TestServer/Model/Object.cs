@@ -63,7 +63,7 @@ namespace TestServer.Model
             }
         }
         public DateTime UpdatedPositionTime { get; private set; } = DateTime.Now;
-        
+
         public static readonly double BaseSpeed = 1.0;
         public double SpeedPercentage { get; private set; } = 1.0;
         public double Speed => BaseSpeed * this.SpeedPercentage;

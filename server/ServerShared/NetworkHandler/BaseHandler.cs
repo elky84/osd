@@ -19,7 +19,7 @@ namespace ServerShared.NetworkHandler
     { }
 
     public class Timer
-    { 
+    {
         public long Interval { get; set; }
         public Action<long> Callback { get; set; }
         public long LastEventTick { get; set; }
@@ -96,7 +96,7 @@ namespace ServerShared.NetworkHandler
         public void SetTimer(long interval, Action<long> callback)
         {
             _timers.Add(new Timer
-            { 
+            {
                 Interval = interval,
                 Callback = callback,
                 LastEventTick = DateTime.Now.Ticks

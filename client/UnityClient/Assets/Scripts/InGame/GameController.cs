@@ -98,14 +98,14 @@ public partial class GameController : MonoBehaviour
             default:
                 return null;
         }
-        
+
         obj.transform.localPosition = Position.FromFlatBuffer(position).ToVector3();
         obj.name = $"{name}({sequence})";
         obj.Name = $"{name}({sequence})";
         obj.Sequence = sequence;
 
         Objects.Add(sequence, obj);
-        if(obj is Mob)
+        if (obj is Mob)
             (obj as Mob).OnPositionChanging = this.OnMobPositionChanging;
         return obj;
     }
@@ -152,12 +152,12 @@ public partial class GameController : MonoBehaviour
         if (Controllables.ContainsKey(obj.Sequence))
             return;
 
-        obj.OnCollisionEnter = this.OnCollisionEnter;
-        obj.OnCollisionExit = this.OnCollisionExit;
+        obj.OnJumpEnd = this.OnJumpEnd;
+        obj.OnJumpStart = this.OnJumpStart;
 
         if (obj.IsGround == false)
         {
-            obj.OnCollisionExit(obj, null);
+            obj.OnJumpStart(obj);
             UnityEngine.Debug.Log($"{obj.Sequence} is falling.", obj.gameObject);
         }
         else
@@ -191,9 +191,9 @@ public partial class GameController : MonoBehaviour
 
     private void UnsetControllable(Assets.Scripts.InGame.OOP.Object obj)
     {
-        obj.OnCollisionEnter = null;
-        obj.OnCollisionExit = null;
-        
+        obj.OnJumpStart = null;
+        obj.OnJumpEnd = null;
+
         Controllables.Remove(obj.Sequence);
     }
 
@@ -224,23 +224,23 @@ public partial class GameController : MonoBehaviour
         NettyClient.Instance.Send(FlatBuffers.Protocol.Request.Jump.Bytes(me.Sequence, new FlatBuffers.Protocol.Request.Vector2.Model { X = me.transform.localPosition.x, Y = me.transform.localPosition.y }));
     }
 
-    private void OnCollisionExit(Assets.Scripts.InGame.OOP.Object me, Collision2D obj)
+    private void OnJumpEnd(Assets.Scripts.InGame.OOP.Object me)
     {
         // 낙하될 때 서버에 알림
         NettyClient.Instance.Send(FlatBuffers.Protocol.Request.Fall.Bytes(me.Sequence, new FlatBuffers.Protocol.Request.Vector2.Model { X = me.transform.localPosition.x, Y = me.transform.localPosition.y }));
     }
 
-    private void OnCollisionEnter(Assets.Scripts.InGame.OOP.Object me, Collision2D obj)
+    private void OnJumpStart(Assets.Scripts.InGame.OOP.Object me)
     {
         // 착지인지, 측면 충돌인지
-        var normal = obj.contacts[0].normal;
-        Axis axis;
-        if (normal.x > normal.y) // axis : x
-            axis = Axis.X;
-        else
-            axis = Axis.Y;
+        //var normal = obj.contacts[0].normal;
+        Axis axis = Axis.Y;
+        //if (normal.x > normal.y) // axis : x
+        //    axis = Axis.X;
+        //else
+        //    axis = Axis.Y;
 
-        NettyClient.Instance.Send(FlatBuffers.Protocol.Request.Collision.Bytes(me.Sequence, new FlatBuffers.Protocol.Request.Vector2.Model { X = me.transform.localPosition.x, Y = me.transform.localPosition.y}, (int)axis));
+        NettyClient.Instance.Send(FlatBuffers.Protocol.Request.Collision.Bytes(me.Sequence, new FlatBuffers.Protocol.Request.Vector2.Model { X = me.transform.localPosition.x, Y = me.transform.localPosition.y }, (int)axis));
         UnityEngine.Debug.Log($"{me.Sequence} is enter collision");
     }
 
@@ -257,6 +257,11 @@ public partial class GameController : MonoBehaviour
     public void OnGUI()
     {
         if (EventSystem.current.IsPointerOverGameObject()) // 마우스 포인터가 UI위에 있다면
+        {
+            return;
+        }
+
+        if (MyCharacter == null)
         {
             return;
         }
