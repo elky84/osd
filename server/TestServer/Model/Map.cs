@@ -167,8 +167,9 @@ namespace TestServer.Model
 
         public Point ToGround(Point position, SizeF size, int layer = 0)
         {
-            var row = Collision(position, size, layer);
-            return new Point { X = position.X, Y = row + 1 + size.Height / 2.0 };
+            var adjustedX = (int)(position.X - size.Width / 2.0) + (size.Width / 2.0);
+            var row = Collision(new Point { X = adjustedX, Y = position.Y }, size, layer);
+            return new Point { X = adjustedX, Y = row + 1 + size.Height / 2.0 };
         }
 
         private bool UpdateState()
@@ -234,9 +235,7 @@ namespace TestServer.Model
                         endPoint = new Point { X = Size.Width, Y = Size.Height };
 
                     var randomPoint = new Point { X = random.Next((int)beginPoint.X, (int)endPoint.X), Y = random.Next((int)beginPoint.Y, (int)endPoint.Y) };
-                    Console.WriteLine($"{randomPoint.X}, {randomPoint.Y}");
                     var groundPoint = this.ToGround(randomPoint, new SizeF { Width = 0.6f, Height = 1.2f });
-                    Console.WriteLine($"{groundPoint.X}, {groundPoint.Y}");
                     unspawned.Spawn(this, groundPoint);
                 }
             }

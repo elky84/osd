@@ -1,19 +1,30 @@
 ﻿using UnityEngine;
-using System.IO;
-using System;
-using Newtonsoft.Json;
 
 public class TileMap : MonoBehaviour
 {
+    private short[,,] _blocks;
+
     public TileData.MapData MapData { get; set; }
 
     public void LoadMap(TileData.MapData mapData)
     {
         MapData = mapData;
 
-        BoundsInt bounds = new BoundsInt(Vector3Int.zero, new Vector3Int(mapData.Width, mapData.Height, 0));
-        //var sprites = Resources.LoadAll("Tilesets/" + mapData.Name);
-        var sprites = Resources.LoadAll("Tilesets/" + "Volcano");
+        var bounds = new BoundsInt(Vector3Int.zero, new Vector3Int(mapData.Width, mapData.Height, 0));
+        var sprites = Resources.LoadAll($"Tilesets/{"Volcano"}");
+
+        _blocks = new short[mapData.Layers.Length, mapData.Height, mapData.Width];
+        for (int layer = 0; layer < mapData.Layers.Length; layer++)
+        {
+            for (int row = 0; row < mapData.Width; row++)
+            {
+                for (int col = 0; col < mapData.Height; col++)
+                {
+                    _blocks[layer, mapData.Height - row - 1, col] = mapData.Layers[layer].Data[row * mapData.Width + col];
+                }
+            }
+        }
+
         foreach (var layer in mapData.Layers)
         {
             if (layer.Data == null)
@@ -43,5 +54,13 @@ public class TileMap : MonoBehaviour
                 }
             }
         }
+    }
+
+    public bool IsGround(Vector2 position, int layer = 0)
+    {
+        var row = Mathf.Max(0, (int)position.y - 1);
+        var col = (int)position.x;
+
+        return _blocks[layer, row, col] > 0;
     }
 }

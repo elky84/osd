@@ -15,11 +15,12 @@ namespace Assets.Scripts.InGame.OOP
         private bool _moving;
         public override bool Moving => _moving;
 
+        public Func<Life, Vector3, Vector3> OnPositionChanging;
         public Action<Life> OnMove { get; set; }
         public Action<Life> OnStop { get; set; }
         public Action<Life> OnJump { get; set; }
 
-        private IEnumerator CoMove()
+       private IEnumerator CoMove()
         {
             Animator.SetBool("Walking", true);
             while (true)
@@ -33,8 +34,12 @@ namespace Assets.Scripts.InGame.OOP
                     velocityX *= -1;
                 
                 var movedX = (velocityX * diff.Ticks) / 1000000;
-                var newPosition = new Position(Mathf.Clamp(transform.localPosition.x + movedX, 0, 32), Mathf.Max(0, transform.localPosition.y));
-                transform.localPosition = newPosition.ToVector3();
+                var newPosition = new Position(Mathf.Clamp(transform.localPosition.x + movedX, 0, 32), Mathf.Max(0, transform.localPosition.y)).ToVector3();
+
+                if (OnPositionChanging != null)
+                    newPosition = OnPositionChanging.Invoke(this, newPosition);
+
+                transform.localPosition = newPosition;
                 yield return new WaitForSeconds(0.01f);
             }
         }

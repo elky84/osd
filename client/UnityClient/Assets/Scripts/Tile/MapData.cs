@@ -18,7 +18,7 @@ namespace TileData
 
     public class Layer
     {
-        public int[] Data { get; set; }
+        public short[] Data { get; set; }
 
         public string Name { get; set; }
 

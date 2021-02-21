@@ -22,6 +22,8 @@ public partial class GameController : MonoBehaviour
 
     public Cinemachine.CinemachineVirtualCamera cineCamera;
 
+    public TileMap Map { get; private set; }
+
 
     void Awake()
     {
@@ -43,7 +45,8 @@ public partial class GameController : MonoBehaviour
 
                 var testMap = JsonConvert.DeserializeObject<TileData.MapData>(Resources.Load<TextAsset>("Map/test").text);
 
-                gameObj.GetComponent<TileMap>().LoadMap(testMap);
+                Map = gameObj.GetComponent<TileMap>();
+                Map.LoadMap(testMap);
             });
         };
         NettyClient.Instance.OnClose += () =>
@@ -102,7 +105,30 @@ public partial class GameController : MonoBehaviour
         obj.Sequence = sequence;
 
         Objects.Add(sequence, obj);
+        if(obj is Mob)
+            (obj as Mob).OnPositionChanging = this.OnMobPositionChanging;
         return obj;
+    }
+
+    private Vector3 DontFallPosition(Life life, Vector3 position)
+    {
+        if (life.Direction == Direction.Right)
+        {
+            if (Map.IsGround(new Vector2 { x = life.BoxCollider2D.bounds.max.x, y = life.BoxCollider2D.bounds.min.y }) == false)
+                return new Vector3 { x = (float)((int)life.BoxCollider2D.bounds.max.x - life.BoxCollider2D.bounds.size.x / 2.0), y = life.transform.localPosition.y };
+        }
+        else
+        {
+            if (Map.IsGround(new Vector2 { x = life.BoxCollider2D.bounds.min.x, y = life.BoxCollider2D.bounds.min.y }) == false)
+                return new Vector3 { x = (float)((int)life.BoxCollider2D.bounds.min.x + life.BoxCollider2D.bounds.size.x / 2.0), y = life.transform.localPosition.y };
+        }
+
+        return position;
+    }
+
+    private Vector3 OnMobPositionChanging(Life mob, Vector3 newPosition)
+    {
+        return DontFallPosition(mob, newPosition);
     }
 
     private void RemoveCharacter(int sequence)

@@ -16,6 +16,8 @@ namespace Assets.Scripts.InGame.OOP
 
         public Direction Direction;
         public abstract ObjectType Type { get; }
+        public BoxCollider2D BoxCollider2D { get; private set; }
+        public Rigidbody2D Rigidbody2D { get; private set; }
 
         public int Sequence { get; set; }
         public string Name { get; set; }
@@ -28,6 +30,9 @@ namespace Assets.Scripts.InGame.OOP
         public void Awake()
         {
             OnAwake();
+
+            BoxCollider2D = GetComponent<BoxCollider2D>();
+            Rigidbody2D = GetComponent<Rigidbody2D>();
         }
 
         public void RemoveRigidBody()
