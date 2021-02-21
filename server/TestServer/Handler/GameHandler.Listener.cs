@@ -65,10 +65,6 @@ namespace TestServer.Handler
 
                 var unsetList = hides.Where(x => x.Type == NetworkShared.ObjectType.Mob).Select(x => x as Mob).Where(x => x.Owner == character).ToList();
                 _ = character.Context.Send(FlatBuffers.Protocol.Response.UnsetOwner.Bytes(unsetList.Select(x => x.Sequence.Value).ToList()));
-#if DEBUG
-                foreach (var sequence in unsetList.Select(x => x.Sequence.Value).ToList())
-                    Console.WriteLine($"unset owner : {sequence} > {character.Sequence}");
-#endif
 
                 foreach (var (sector, mobs) in unsetList.GroupBy(x => x.Sector).ToDictionary(x => x.Key, x => x.ToList()))
                 {
@@ -80,10 +76,6 @@ namespace TestServer.Handler
                     {
                         var sequences = mobs.Select(x => x.Sequence.Value).ToList();
                         _ = newOwner.Context.Send(FlatBuffers.Protocol.Response.SetOwner.Bytes(sequences));
-#if DEBUG
-                        foreach (var sequence in mobs.Select(x => x.Sequence.Value).ToList())
-                            Console.WriteLine($"new owner : {sequence} > {newOwner.Sequence}");
-#endif
                     }
                 }
 
@@ -93,11 +85,6 @@ namespace TestServer.Handler
                     mob.Owner = character;
                 }
                 _ = character.Context.Send(FlatBuffers.Protocol.Response.SetOwner.Bytes(setList.Select(x => x.Sequence.Value).ToList()));
-
-#if DEBUG
-                foreach (var sequence in setList.Select(x => x.Sequence.Value).ToList())
-                    Console.WriteLine($"new owner : {sequence} > {character.Sequence}");
-#endif
             }
             else if(obj.Type == NetworkShared.ObjectType.Mob)
             {
@@ -109,7 +96,7 @@ namespace TestServer.Handler
         public void OnSpawned(Mob mob)
         {
             // 이런 형식으로 쓰면 편하긴 한데 퍼포먼스 이슈가...
-            Console.WriteLine($"Spawned '{mob.Name}' in '{mob.Map.Name}' ({mob.Position.X}, {mob.Position.Y})");
+            Console.WriteLine($"Spawned '{mob.Name}({mob.Sequence.Value})' in '{mob.Map.Name}' ({mob.Position.X}, {mob.Position.Y})");
         }
 
         public void OnDie(Life life)

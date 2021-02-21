@@ -31,9 +31,10 @@ namespace Assets.Scripts.InGame.OOP
                 var velocityX = this.Speed;
                 if (this.Direction == Direction.Left)
                     velocityX *= -1;
+                
                 var movedX = (velocityX * diff.Ticks) / 1000000;
-
-                transform.localPosition = new Position(transform.localPosition.x + movedX, transform.localPosition.y).ToVector3();
+                var newPosition = new Position(Mathf.Clamp(transform.localPosition.x + movedX, 0, 32), Mathf.Max(0, transform.localPosition.y));
+                transform.localPosition = newPosition.ToVector3();
                 yield return new WaitForSeconds(0.01f);
             }
         }

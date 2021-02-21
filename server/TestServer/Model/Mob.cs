@@ -36,7 +36,26 @@ namespace TestServer.Model
 
         public bool IsSpawned => SpawnedTime != null;
 
-        public Character Owner { get; set; }
+        public DateTime LastActionDateTime { get; set; } = DateTime.MinValue;
+
+        private Character _owner;
+        public Character Owner
+        {
+            get
+            {
+                return _owner;
+            }
+            set
+            {
+                _owner = value;
+#if DEBUG
+                if (_owner != null)
+                    Console.WriteLine($"new owner : {this.Sequence} > {_owner.Sequence}");
+                else
+                    Console.WriteLine($"unset owner : {this.Sequence}");
+#endif
+            }
+        }
 
         public Mob(MasterData.Table.Mob master)
         {

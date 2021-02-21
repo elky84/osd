@@ -92,6 +92,11 @@ table UnsetOwner {
 	sequences: [int];
 }
 
+table Action {
+	sequence: int;
+	pattern: int;
+}
+
 table PositionChanged {
 	sequence: int;
 	position: Vector2;

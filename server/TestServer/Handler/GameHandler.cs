@@ -59,7 +59,41 @@ namespace TestServer.Handler
             }
 
             SetTimer(1000, OnRezen);
+            //SetTimer(100, OnMobAction);
             ExecuteScheduler();
+        }
+
+        private void OnMobAction(long ms)
+        {
+            var now = DateTime.Now;
+            var random = new Random((int)now.Ticks);
+            foreach (var map in _maps.Where(x => x.Value.IsActivated))
+            {
+                var mobs = map.Value.Mobs
+                    .Where(x => x.Sector.Nears.Any(x => x.Activated))
+                    .Where(x => 
+                    {
+                        var elapsed = now - x.LastActionDateTime;
+                        return elapsed.TotalMilliseconds > x.Master.Speed * 1000;
+                    });
+
+                foreach (var mob in mobs)
+                {
+                    var direction = (Direction)random.Next(2);
+                    switch (direction)
+                    {
+                        case Direction.Left:
+                            _ = Broadcast(mob, FlatBuffers.Protocol.Response.Action.Bytes(mob.Sequence.Value, (int)ActionPattern.LeftMove), true, true);
+                            break;
+
+                        case Direction.Right:
+                            _ = Broadcast(mob, FlatBuffers.Protocol.Response.Action.Bytes(mob.Sequence.Value, (int)ActionPattern.RightMove), true, true);
+                            break;
+                    }
+
+                    mob.LastActionDateTime = now;
+                }
+            }
         }
 
         private void OnRezen(long ms)

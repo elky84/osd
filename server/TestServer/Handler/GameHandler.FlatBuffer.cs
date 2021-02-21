@@ -20,7 +20,8 @@ namespace TestServer.Handler
             {
                 var obj = GetControllableObject(session, request.Sequence);
                 if (obj == null)
-                    throw new Exception("컨트롤 할 수 없는 오브젝트");
+                    return true;
+                    // throw new Exception("컨트롤 할 수 없는 오브젝트");
 
                 var position = request.Position.ToPoint();
 
@@ -48,7 +49,8 @@ namespace TestServer.Handler
             {
                 var obj = GetControllableObject(session, request.Sequence);
                 if (obj == null)
-                    throw new Exception("컨트롤 할 수 없는 오브젝트");
+                    return true;
+                    // throw new Exception("컨트롤 할 수 없는 오브젝트");
 
                 var position = request.Position.ToPoint();
 
@@ -75,7 +77,8 @@ namespace TestServer.Handler
             {
                 var obj = GetControllableObject(session, request.Sequence);
                 if (obj == null)
-                    throw new Exception("컨트롤 할 수 없는 오브젝트");
+                    return true;
+                    // throw new Exception("컨트롤 할 수 없는 오브젝트");
 
                 var position = request.Position.ToPoint();
 
@@ -102,7 +105,8 @@ namespace TestServer.Handler
             {
                 var obj = GetControllableObject(session, request.Sequence);
                 if (obj == null)
-                    throw new Exception("컨트롤 할 수 없는 오브젝트");
+                    return true;
+                    // throw new Exception("컨트롤 할 수 없는 오브젝트");
 
                 var position = request.Position.ToPoint();
 
@@ -129,7 +133,8 @@ namespace TestServer.Handler
             {
                 var obj = GetControllableObject(session, request.Sequence);
                 if (obj == null)
-                    throw new Exception("컨트롤 할 수 없는 오브젝트");
+                    return true;
+                    // throw new Exception("컨트롤 할 수 없는 오브젝트");
 
                 var position = request.Position.ToPoint();
 
@@ -173,14 +178,15 @@ namespace TestServer.Handler
         {
             var obj = GetControllableObject(session, request.Sequence);
             if (obj == null)
-                throw new Exception("컨트롤 할 수 없는 오브젝트");
+                return true;
+                // throw new Exception("컨트롤 할 수 없는 오브젝트");
 
             var position = request.Position.ToPoint();
             if (obj.ValidPosition(position) == false)
                 throw new Exception("올바른 위치가 아님");
 
             obj.Position = position;
-            Console.WriteLine($"{obj.Sequence.Value} : {position.X}/{position.Y}");
+            //Console.WriteLine($"{obj.Sequence.Value} : {position.X}/{position.Y}");
 
             for (int i = 0; i < request.MobsLength; i++)
             {

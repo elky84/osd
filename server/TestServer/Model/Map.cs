@@ -17,10 +17,9 @@ namespace TestServer.Model
         private MapData _format;
 
         public string Name { get; private set; }
-        public Size BlockSize { get; private set; }
-        public Size TileSize { get; private set; }
         public Size Size { get; private set; }
         public SectorContainer Sectors { get; private set; }
+        public short[,,] Blocks { get; private set; }
         public Dictionary<int, Object> Objects { get; private set; } = new Dictionary<int, Object>();
         public IEnumerable<Character> Characters => Objects.Values.Select(x => x as Character).Where(x => x != null);
         public IEnumerable<Mob> Mobs => Objects.Values.Select(x => x as Mob).Where(x => x != null);
@@ -72,8 +71,8 @@ namespace TestServer.Model
             var lua = Lua.FromIntPtr(luaState);
             var map = lua.ToLuable<Map>(1);
 
-            lua.PushInteger(map.BlockSize.Width);
-            lua.PushInteger(map.BlockSize.Height);
+            lua.PushInteger(map.Size.Width);
+            lua.PushInteger(map.Size.Height);
             return 2;
         }
 
@@ -100,19 +99,24 @@ namespace TestServer.Model
             var contents = File.ReadAllText(master.Data);
             _format = JsonConvert.DeserializeObject<MapData>(contents);
 
+            Blocks = new short[_format.Layers.Count, _format.Height, _format.Width];
+            for (int i = 0; i < _format.Layers.Count; i++)
+            {
+                var data = _format.Layers[i].Data.ToArray();
+                for (int row = 0; row < _format.Height; row++)
+                {
+                    for (int col = 0; col < _format.Height; col++)
+                    {
+                        Blocks[i, _format.Height - row - 1, col] = data[row * _format.Width + col];
+                    }
+                }
+            }
+
             Name = master.Id;
             if (string.IsNullOrEmpty(Name))
                 throw new Exception("map name cannot be null or empty.");
 
-            BlockSize = new Size { Width = _format.Width, Height = _format.Height };
-            if (BlockSize.IsEmpty)
-                throw new Exception($"map size cannot be empty : {Name}.");
-
-            TileSize = new Size { Width = _format.TileWidth, Height = _format.TileHeight };
-            if (TileSize.IsEmpty)
-                throw new Exception($"map tile size cannot be empty : {Name}.");
-
-            Size = new Size(BlockSize.Width * TileSize.Width, BlockSize.Height * TileSize.Height);
+            Size = new Size(_format.Width, _format.Height);
 
 #if DEBUG
             Sectors = new SectorContainer(this, new Size(10, 10));
@@ -131,6 +135,40 @@ namespace TestServer.Model
 
                 return mobs;
             });
+        }
+
+        private bool Collision(int row, double x, double size, int layer = 0)
+        {
+            if (row >= Size.Width)
+                return false;
+
+            var beginX = Math.Clamp((int)(x - size / 2.0), 0, Size.Width);
+            var endX = Math.Clamp((int)(x + size / 2.0), 0, Size.Height);
+
+            for (int col = beginX; col <= endX; col++)
+            {
+                if (Blocks[layer, row, col] > 0)
+                    return true;
+            }
+
+            return false;
+        }
+
+        public int Collision(Point position, SizeF size, int layer = 0)
+        {
+            for (int row = (int)(position.Y + size.Height / 2.0); row >= 0; row--)
+            {
+                if (Collision(row, position.X, size.Width, layer))
+                    return row;
+            }
+
+            return -1;
+        }
+
+        public Point ToGround(Point position, SizeF size, int layer = 0)
+        {
+            var row = Collision(position, size, layer);
+            return new Point { X = position.X, Y = row + 1 + size.Height / 2.0 };
         }
 
         private bool UpdateState()
@@ -193,29 +231,32 @@ namespace TestServer.Model
 
                     var endPoint = spawnCase.End;
                     if (endPoint == null)
-                        endPoint = new Point { X = BlockSize.Width, Y = BlockSize.Height };
+                        endPoint = new Point { X = Size.Width, Y = Size.Height };
 
                     var randomPoint = new Point { X = random.Next((int)beginPoint.X, (int)endPoint.X), Y = random.Next((int)beginPoint.Y, (int)endPoint.Y) };
-                    unspawned.Spawn(this, randomPoint);
+                    Console.WriteLine($"{randomPoint.X}, {randomPoint.Y}");
+                    var groundPoint = this.ToGround(randomPoint, new SizeF { Width = 0.6f, Height = 1.2f });
+                    Console.WriteLine($"{groundPoint.X}, {groundPoint.Y}");
+                    unspawned.Spawn(this, groundPoint);
                 }
             }
         }
 
-        public byte Block(Point position, uint layer = 0)
-        {
-            var offsetX = Math.Clamp((int)(position.X / TileSize.Width), 0, BlockSize.Width);
-            var offsetY = Math.Clamp((int)(position.Y / TileSize.Height), 0, BlockSize.Height);
+        //public byte Block(Point position, uint layer = 0)
+        //{
+        //    var offsetX = Math.Clamp((int)(position.X / TileSize.Width), 0, BlockSize.Width);
+        //    var offsetY = Math.Clamp((int)(position.Y / TileSize.Height), 0, BlockSize.Height);
 
-            layer = Math.Max(0, layer);
-            if (layer > _format.Layers.Count)
-                throw new Exception($"Layer cannot be {layer}. (only available between 0 and {_format.Layers.Count})");
+        //    layer = Math.Max(0, layer);
+        //    if (layer > _format.Layers.Count)
+        //        throw new Exception($"Layer cannot be {layer}. (only available between 0 and {_format.Layers.Count})");
 
-            var selectedLayer = _format.Layers[(int)layer];
-            var offsetBlock = offsetY * BlockSize.Width + offsetX;
-            if (offsetBlock > selectedLayer.Data.Count)
-                throw new Exception($"block offset cannot be {offsetBlock}. (only available bettwen 0 and {selectedLayer.Data.Count})");
+        //    var selectedLayer = _format.Layers[(int)layer];
+        //    var offsetBlock = offsetY * BlockSize.Width + offsetX;
+        //    if (offsetBlock > selectedLayer.Data.Count)
+        //        throw new Exception($"block offset cannot be {offsetBlock}. (only available bettwen 0 and {selectedLayer.Data.Count})");
 
-            return selectedLayer.Data[offsetBlock];
-        }
+        //    return selectedLayer.Data[offsetBlock];
+        //}
     }
 }

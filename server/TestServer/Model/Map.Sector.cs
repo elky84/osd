@@ -12,7 +12,6 @@ namespace TestServer.Model
         public class Sector : IDictionary<int, Object>
         {
             private Dictionary<int, Object> _objects = new Dictionary<int, Object>();
-            private bool _activated = false;
             private Action<Sector> _stateChangedEvent;
 
             public SectorContainer Owner { get; private set; }
@@ -68,6 +67,7 @@ namespace TestServer.Model
 
             public IEnumerable<Character> Characters => _objects.Select(x => x.Value as Character).Where(x => x != null);
 
+            private bool _activated = false;
             public bool Activated
             {
                 get => _activated;

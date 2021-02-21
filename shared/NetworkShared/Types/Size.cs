@@ -19,4 +19,20 @@ namespace NetworkShared.Types
             Height = height;
         }
     }
+
+    public class SizeF
+    {
+        public float Width { get; set; }
+        public float Height { get; set; }
+        public bool IsEmpty => Width < 0.001 || Height < 0.001;
+
+        public SizeF()
+        { }
+
+        public SizeF(float width, float height)
+        {
+            Width = width;
+            Height = height;
+        }
+    }
 }

@@ -182,6 +182,7 @@ namespace TestServer.Model
         {
             this.Direction = direction;
             this.Moving = true;
+            this.UpdatedPositionTime = DateTime.Now;
         }
 
         public void Stop()

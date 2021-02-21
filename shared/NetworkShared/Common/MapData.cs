@@ -20,7 +20,7 @@ namespace NetworkShared.Common
 
     public class Layer
     { 
-        public List<byte> Data { get; set; }
+        public List<short> Data { get; set; }
         public int Id { get; set; }
         public string Name { get; set; }
         public int Opacity { get; set; }
