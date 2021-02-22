@@ -27,7 +27,7 @@ public partial class GameController : MonoBehaviour
 
     void Awake()
     {
-        _objectsGroup = transform.Find("Characters");
+        _objectsGroup = transform.Find("Objects");
         Camera = GameObject.Find("Main Camera").GetComponent<Camera>();
         TilesTransform = transform.Find("Tiles");
     }
@@ -103,6 +103,8 @@ public partial class GameController : MonoBehaviour
         obj.name = $"{name}({sequence})";
         obj.Name = $"{name}({sequence})";
         obj.Sequence = sequence;
+
+        obj.Map = Map;
 
         if (!Objects.ContainsKey(sequence))
         {

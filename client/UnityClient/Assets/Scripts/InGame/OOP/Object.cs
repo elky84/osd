@@ -29,6 +29,8 @@ namespace Assets.Scripts.InGame.OOP
 
         public LayerMask GroundLayer;
 
+        public TileMap Map { get; set; }
+
         protected float JumpPower = 0.0f;
 
         public void Awake()
@@ -46,12 +48,8 @@ namespace Assets.Scripts.InGame.OOP
 
             Debug.DrawRay(position, direction, Color.green);
 
-            RaycastHit2D hit = Physics2D.Raycast(position, direction, distance, GroundLayer);
-            if (hit.collider != null)
-            {
-                return true;
-            }
-            return false;
+            return Map.IsGround(new Vector2 { x = position.x, y = BoxCollider2D.bounds.min.y + 1f }) &&
+                Physics2D.Raycast(position, direction, distance, GroundLayer).collider != null;
         }
 
         public void Update()
