@@ -104,7 +104,11 @@ public partial class GameController : MonoBehaviour
         obj.Name = $"{name}({sequence})";
         obj.Sequence = sequence;
 
-        Objects.Add(sequence, obj);
+        if (!Objects.ContainsKey(sequence))
+        {
+            Objects.Add(sequence, obj);
+        }
+
         if (obj is Mob)
             (obj as Mob).OnPositionChanging = this.OnMobPositionChanging;
         return obj;
