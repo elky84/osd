@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace Assets.Scripts.InGame.OOP
 {
+    [RequireComponent(typeof(BoxCollider2D))]
     public abstract class Object : SpriteObject
     {
         public static float JUMPING_POWER = 2.0f;
@@ -15,7 +16,6 @@ namespace Assets.Scripts.InGame.OOP
         public Direction Direction;
         public abstract ObjectType Type { get; }
         public BoxCollider2D BoxCollider2D { get; private set; }
-        public Rigidbody2D Rigidbody2D { get; private set; }
 
         public bool IsGround = false;
 
@@ -36,7 +36,6 @@ namespace Assets.Scripts.InGame.OOP
             OnAwake();
 
             BoxCollider2D = GetComponent<BoxCollider2D>();
-            Rigidbody2D = GetComponent<Rigidbody2D>();
         }
 
         protected bool IsGrounded()

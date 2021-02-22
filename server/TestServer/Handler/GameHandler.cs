@@ -59,7 +59,7 @@ namespace TestServer.Handler
             }
 
             SetTimer(1000, OnRezen);
-            //SetTimer(100, OnMobAction);
+            SetTimer(100, OnMobAction);
             ExecuteScheduler();
         }
 
@@ -71,7 +71,7 @@ namespace TestServer.Handler
             {
                 var mobs = map.Value.Mobs
                     .Where(x => x.Sector.Nears.Any(x => x.Activated))
-                    .Where(x => 
+                    .Where(x =>
                     {
                         var elapsed = now - x.LastActionDateTime;
                         return elapsed.TotalMilliseconds > x.Master.Speed * 1000;
