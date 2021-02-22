@@ -58,15 +58,14 @@ public class TileMap : MonoBehaviour
 
     public bool IsGround(Vector2 position, int layer = 0)
     {
-        var row = Mathf.Max(0, (int)position.y - 1);
-        var col = (int)position.x;
-
-        if (row < 0 || row >= MapData.Height ||
-            col < 0 || col >= MapData.Height)
+        if (position.y < 0f || position.y >= MapData.Height ||
+            position.x < 0f || position.x >= MapData.Height)
         {
             return false;
         }
 
+        var row = (int)position.y;
+        var col = (int)position.x;
         return _blocks[layer, row, col] > 0;
     }
 }

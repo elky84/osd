@@ -48,7 +48,7 @@ namespace Assets.Scripts.InGame.OOP
 
             Debug.DrawRay(position, direction, Color.green);
 
-            return Map.IsGround(new Vector2 { x = position.x, y = BoxCollider2D.bounds.min.y + 1f }) &&
+            return Map.IsGround(new Vector2 { x = position.x, y = BoxCollider2D.bounds.min.y }) &&
                 Physics2D.Raycast(position, direction, distance, GroundLayer).collider != null;
         }
 
