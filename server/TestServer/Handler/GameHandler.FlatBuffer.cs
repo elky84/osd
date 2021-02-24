@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using TestServer.Model;
 using NetworkShared.Types;
+using Serilog;
 
 namespace TestServer.Handler
 {
@@ -21,7 +22,7 @@ namespace TestServer.Handler
                 var obj = GetControllableObject(session, request.Sequence);
                 if (obj == null)
                     return true;
-                    // throw new Exception("컨트롤 할 수 없는 오브젝트");
+                // throw new Exception("컨트롤 할 수 없는 오브젝트");
 
                 var position = request.Position.ToPoint();
 
@@ -50,7 +51,7 @@ namespace TestServer.Handler
                 var obj = GetControllableObject(session, request.Sequence);
                 if (obj == null)
                     return true;
-                    // throw new Exception("컨트롤 할 수 없는 오브젝트");
+                // throw new Exception("컨트롤 할 수 없는 오브젝트");
 
                 var position = request.Position.ToPoint();
 
@@ -78,7 +79,7 @@ namespace TestServer.Handler
                 var obj = GetControllableObject(session, request.Sequence);
                 if (obj == null)
                     return true;
-                    // throw new Exception("컨트롤 할 수 없는 오브젝트");
+                // throw new Exception("컨트롤 할 수 없는 오브젝트");
 
                 var position = request.Position.ToPoint();
 
@@ -106,7 +107,7 @@ namespace TestServer.Handler
                 var obj = GetControllableObject(session, request.Sequence);
                 if (obj == null)
                     return true;
-                    // throw new Exception("컨트롤 할 수 없는 오브젝트");
+                // throw new Exception("컨트롤 할 수 없는 오브젝트");
 
                 var position = request.Position.ToPoint();
 
@@ -134,7 +135,7 @@ namespace TestServer.Handler
                 var obj = GetControllableObject(session, request.Sequence);
                 if (obj == null)
                     return true;
-                    // throw new Exception("컨트롤 할 수 없는 오브젝트");
+                // throw new Exception("컨트롤 할 수 없는 오브젝트");
 
                 var position = request.Position.ToPoint();
 
@@ -178,12 +179,17 @@ namespace TestServer.Handler
         {
             var obj = GetControllableObject(session, request.Sequence);
             if (obj == null)
+            {
+                Log.Logger.Error($"컨트롤 할 수 없는 오브젝트.");
                 return true;
-                // throw new Exception("컨트롤 할 수 없는 오브젝트");
+            }
 
             var position = request.Position.ToPoint();
             if (obj.ValidPosition(position) == false)
-                throw new Exception("올바른 위치가 아님");
+            {
+                Log.Logger.Error($"유효하지 않은 위치입니다.");
+                return true;
+            }
 
             obj.Position = position;
             //Console.WriteLine($"{obj.Sequence.Value} : {position.X}/{position.Y}");

@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 public class Main : MonoBehaviour
 {
-    public GameObject LoginUI;
+    public LoginUI LoginUI;
 
     void Start()
     {
@@ -11,14 +11,22 @@ public class Main : MonoBehaviour
         {
             MainThreadDispatcher.Instance.Enqueue(() =>
             {
-                LoginUI.SetActive(false);
+                LoginUI.gameObject.SetActive(false);
             });
         };
         NettyClient.Instance.OnClose += () =>
         {
             MainThreadDispatcher.Instance.Enqueue(() =>
             {
-                LoginUI.SetActive(true);
+                LoginUI.gameObject.SetActive(true);
+            });
+        };
+
+        NettyClient.Instance.OnConnectFailed += () =>
+        {
+            MainThreadDispatcher.Instance.Enqueue(() =>
+            {
+                LoginUI.Message("접속 불가");
             });
         };
     }

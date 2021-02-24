@@ -60,6 +60,25 @@ public partial class GameController : MonoBehaviour
         StartCoroutine(this.CoUpdate());
     }
 
+
+    public void Clear()
+    {
+        foreach (Transform child in _objectsGroup)
+        {
+            GameObject.Destroy(child.gameObject);
+        }
+
+        Objects.Clear();
+
+        foreach (Transform child in TilesTransform)
+        {
+            GameObject.Destroy(child.gameObject);
+        }
+
+        StopAllCoroutines();
+    }
+
+
     private Assets.Scripts.InGame.OOP.Object CreateObject(string name, int sequence, ObjectType objectType, FlatBuffers.Protocol.Response.Vector2 position)
     {
         Assets.Scripts.InGame.OOP.Object obj;
@@ -164,11 +183,11 @@ public partial class GameController : MonoBehaviour
         if (obj.IsGround == false)
         {
             obj.OnJumpStart(obj);
-            UnityEngine.Debug.Log($"{obj.Sequence} is falling.", obj.gameObject);
+            Debug.Log($"{obj.Sequence} is falling.", obj.gameObject);
         }
         else
         {
-            UnityEngine.Debug.Log($"{obj.Sequence} is on the ground.", obj.gameObject);
+            Debug.Log($"{obj.Sequence} is on the ground.", obj.gameObject);
         }
 
         Controllables.Add(obj.Sequence, obj);
@@ -248,16 +267,6 @@ public partial class GameController : MonoBehaviour
 
         NettyClient.Instance.Send(FlatBuffers.Protocol.Request.Collision.Bytes(me.Sequence, new FlatBuffers.Protocol.Request.Vector2.Model { X = me.transform.localPosition.x, Y = me.transform.localPosition.y }, (int)axis));
         UnityEngine.Debug.Log($"{me.Sequence} is enter collision");
-    }
-
-    public void Clear()
-    {
-        foreach (Transform child in _objectsGroup)
-        {
-            GameObject.Destroy(child.gameObject);
-        }
-
-        Objects.Clear();
     }
 
     public void OnGUI()

@@ -169,14 +169,12 @@ public class ClientHandler : SimpleChannelInboundHandler<IByteBuffer>
 
     public override void ExceptionCaught(IChannelHandlerContext contex, Exception e)
     {
-        Debug.LogError(e.StackTrace);
         contex.CloseAsync();
     }
 
     public override void ChannelUnregistered(IChannelHandlerContext ctx)
     {
         base.ChannelUnregistered(ctx);
-        Debug.LogError("Channel Closed!!");
         OnClose?.Invoke();
     }
 }

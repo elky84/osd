@@ -18,12 +18,15 @@ public class NettyClient
 
     public event Action OnClose;
     public event Action OnConnected;
+    public event Action OnConnectFailed;
 
     private IChannel bootstrapChannel;
     private Bootstrap bootstrap;
     private MultithreadEventLoopGroup group;
     private string ip;
     private int port;
+
+    public bool TryConnect = false;
 
     public NettyClient()
     {
@@ -49,21 +52,43 @@ public class NettyClient
                 pipeline.AddLast(handler);
             }));
     }
-    public async void Connect(string ip, int port)
+
+    public void SetDestination(string ip, int port)
     {
         this.ip = ip;
         this.port = port;
+    }
+
+    public async void Connect()
+    {
+        if (TryConnect)
+        {
+            return;
+        }
+
+        TryConnect = true;
+        if (bootstrapChannel != null && bootstrapChannel.Active)
+            await bootstrapChannel.CloseAsync();
 
         try
         {
             bootstrapChannel = await bootstrap.ConnectAsync(new IPEndPoint(IPAddress.Parse(ip), port));
-            OnConnected?.Invoke();
+            MainThreadDispatcher.Instance.Enqueue(() => OnConnected?.Invoke());
+            TryConnect = false;
         }
-        catch (Exception e)
+        catch (Exception)
         {
-            Debug.LogError(e.Message);
-            OnCloseCallback();
+            MainThreadDispatcher.Instance.Enqueue(() =>
+            {
+                OnConnectFailedCallback();
+            });
         }
+    }
+
+    void OnConnectFailedCallback()
+    {
+        TryConnect = false;
+        MainThreadDispatcher.Instance.Enqueue(() => OnConnectFailed?.Invoke());
     }
 
     public async void ReConnect()
