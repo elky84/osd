@@ -48,6 +48,7 @@ namespace TestServer.Model
             set
             {
                 _owner = value;
+                UpdatedPositionTime = DateTime.Now;
 #if DEBUG
                 if (_owner != null)
                     Console.WriteLine($"new owner : {this.Sequence} > {_owner.Sequence}");

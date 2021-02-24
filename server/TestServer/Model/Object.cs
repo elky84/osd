@@ -2,6 +2,7 @@
 using NetworkShared;
 using NetworkShared.Types;
 using System;
+using System.Threading.Tasks;
 
 namespace TestServer.Model
 {
@@ -25,7 +26,7 @@ namespace TestServer.Model
         public IListener Listener { get; set; }
 
         public abstract ObjectType Type { get; }
-        public Direction Direction { get; set; } = Direction.Bottom;
+        public Direction Direction { get; set; } = Direction.Right;
 
         public virtual string Name { get; set; }
         public Point Position
@@ -62,7 +63,7 @@ namespace TestServer.Model
                 return new Point(x, y);
             }
         }
-        public DateTime UpdatedPositionTime { get; private set; } = DateTime.Now;
+        public DateTime UpdatedPositionTime { get; protected set; } = DateTime.Now;
 
         public static readonly double BaseSpeed = 1.0;
         public double SpeedPercentage { get; private set; } = 1.0;
@@ -156,7 +157,7 @@ namespace TestServer.Model
             if (Jumping == false)
             {
                 //TODO 원래는 1이었음. 1.5는 떨어질때 속도가 빨라서, 1을 좀 더 넘을때가 있어서 임시 처리.
-                if (Math.Abs(position.Y - Position.Y) > 1.5)
+                if (Math.Abs(position.Y - Position.Y) > 5.0)
                     return false;
             }
             else if (position.Y > Position.Y && Math.Abs(position.Y - Position.Y) > 5.0)
@@ -214,6 +215,9 @@ namespace TestServer.Model
         {
             this.Jumping = true;
         }
+
+        public async virtual Task Send(byte[] bytes)
+        { }
 
         public static int BuiltinName(IntPtr luaState)
         {

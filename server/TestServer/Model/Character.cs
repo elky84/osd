@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace TestServer.Model
 {
@@ -161,6 +162,11 @@ namespace TestServer.Model
         public Character()
         {
             Items = new ItemCollection(this);
+        }
+
+        public override async Task Send(byte[] bytes)
+        {
+            await Context.Send(bytes);
         }
 
         public static int BuiltinDamage(IntPtr luaState)

@@ -23,7 +23,7 @@ namespace TestServer.Handler
             if (obj is Character)
             {
                 var character = obj as Character;
-                _ = character.Context.Send(FlatBuffers.Protocol.Response.Enter.Bytes(character.ToProtocol(),
+                _ = character.Send(FlatBuffers.Protocol.Response.Enter.Bytes(character.ToProtocol(),
                     character.Map,
                     character.Position,
                     (int)character.Direction,
@@ -33,38 +33,45 @@ namespace TestServer.Handler
 
         public void OnSectorChanged(Model.Object obj, Map.Sector sector1, Map.Sector sector2)
         {
+            var befores = sector1 != null ?
+                sector1.Nears.Where(x => x != null).SelectMany(x => x.Objects) :
+                Enumerable.Empty<Model.Object>();
+            var afters = sector2 != null ?
+                sector2.Nears.Where(x => x != null).SelectMany(x => x.Objects) :
+                Enumerable.Empty<Model.Object>();
+
+            var hides = befores.Except(afters).ToList();
+            _ = obj.Send(FlatBuffers.Protocol.Response.Leave.Bytes(hides.Select(x => x.Sequence.Value).ToList()));
+
+            var hideBytes = FlatBuffers.Protocol.Response.Leave.Bytes(new System.Collections.Generic.List<int> { obj.Sequence.Value });
+            foreach (var ch in hides.Where(x => x.Type == NetworkShared.ObjectType.Character).Select(x => x as Character))
+            {
+                _ = ch.Send(hideBytes);
+            }
+
+            var shows = afters.Except(befores).ToList();
+            _ = obj.Send(FlatBuffers.Protocol.Response.Show.Bytes(
+                shows.Where(x => x.Type != NetworkShared.ObjectType.Character).Select(x => x.ToProtocol()).ToList(),
+                shows.Where(x => x.Type == NetworkShared.ObjectType.Character).Select(x => (x as Character).ToProtocol()).ToList()));
+
+
+            var showBytes = obj is Character ?
+                FlatBuffers.Protocol.Response.Show.Bytes(
+                    new System.Collections.Generic.List<FlatBuffers.Protocol.Response.Object.Model> { },
+                    new System.Collections.Generic.List<FlatBuffers.Protocol.Response.Character.Model> { obj as Character }) :
+                FlatBuffers.Protocol.Response.Show.Bytes(
+                    new System.Collections.Generic.List<FlatBuffers.Protocol.Response.Object.Model> { obj },
+                    new System.Collections.Generic.List<FlatBuffers.Protocol.Response.Character.Model> { });
+            foreach (var ch in shows.Where(x => x.Type == NetworkShared.ObjectType.Character).Select(x => x as Character))
+            {
+                _ = ch.Send(showBytes);
+            }
+
             if (obj.Type == NetworkShared.ObjectType.Character)
             {
                 var character = obj as Character;
-                var befores = sector1 != null ? 
-                    sector1.Nears.Where(x => x != null).SelectMany(x => x.Objects) :
-                    Enumerable.Empty<Model.Object>();
-                var afters = sector2 != null ? 
-                    sector2.Nears.Where(x => x != null).SelectMany(x => x.Objects) :
-                    Enumerable.Empty<Model.Object>();
-
-                var hides = befores.Except(afters).ToList();
-                _ = character.Context.Send(FlatBuffers.Protocol.Response.Leave.Bytes(hides.Select(x => x.Sequence.Value).ToList()));
-                foreach (var x in hides.Where(x => x.Type == NetworkShared.ObjectType.Character))
-                {
-                    var ch = x as Character;
-                    _ = ch.Context.Send(FlatBuffers.Protocol.Response.Leave.Bytes(new System.Collections.Generic.List<int> { character.Sequence.Value }));
-                }
-
-                var shows = afters.Except(befores).ToList();
-                _ = character.Context.Send(FlatBuffers.Protocol.Response.Show.Bytes(
-                    shows.Where(x => x.Type != NetworkShared.ObjectType.Character).Select(x => x.ToProtocol()).ToList(),
-                    shows.Where(x => x.Type == NetworkShared.ObjectType.Character).Select(x => (x as Character).ToProtocol()).ToList()));
-                foreach (var x in shows.Where(x => x.Type == NetworkShared.ObjectType.Character))
-                {
-                    var ch = x as Character;
-                    _ = ch.Context.Send(FlatBuffers.Protocol.Response.Show.Bytes(
-                        new System.Collections.Generic.List<FlatBuffers.Protocol.Response.Object.Model> { },
-                        new System.Collections.Generic.List<FlatBuffers.Protocol.Response.Character.Model> { character }));
-                }
-
                 var unsetList = hides.Where(x => x.Type == NetworkShared.ObjectType.Mob).Select(x => x as Mob).Where(x => x.Owner == character).ToList();
-                _ = character.Context.Send(FlatBuffers.Protocol.Response.UnsetOwner.Bytes(unsetList.Select(x => x.Sequence.Value).ToList()));
+                _ = character.Send(FlatBuffers.Protocol.Response.UnsetOwner.Bytes(unsetList.Select(x => x.Sequence.Value).ToList()));
 
                 foreach (var (sector, mobs) in unsetList.GroupBy(x => x.Sector).ToDictionary(x => x.Key, x => x.ToList()))
                 {
@@ -84,12 +91,18 @@ namespace TestServer.Handler
                 {
                     mob.Owner = character;
                 }
-                _ = character.Context.Send(FlatBuffers.Protocol.Response.SetOwner.Bytes(setList.Select(x => x.Sequence.Value).ToList()));
+                _ = character.Send(FlatBuffers.Protocol.Response.SetOwner.Bytes(setList.Select(x => x.Sequence.Value).ToList()));
             }
             else if(obj.Type == NetworkShared.ObjectType.Mob)
             {
                 var mob = obj as Mob;
+                var ownerBefore = mob.Owner;
                 mob.Owner = mob.Sector.Nears.SelectMany(x => x.Characters).FirstOrDefault();
+                if (ownerBefore != mob.Owner)
+                {
+                    _ = ownerBefore?.Send(FlatBuffers.Protocol.Response.UnsetOwner.Bytes(new System.Collections.Generic.List<int> { obj.Sequence.Value }));
+                    _ = mob.Owner?.Send(FlatBuffers.Protocol.Response.SetOwner.Bytes(new System.Collections.Generic.List<int> { obj.Sequence.Value }));
+                }
             }
         }
 
