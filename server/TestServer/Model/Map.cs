@@ -79,12 +79,47 @@ namespace TestServer.Model
         public static int BuiltinObjects(IntPtr luaState)
         {
             var lua = Lua.FromIntPtr(luaState);
+            var argc = lua.GetTop();
             var map = lua.ToLuable<Map>(1);
+            var type = argc < 2 ? null : new long?(lua.ToInteger(2));
+            var pivot = argc < 3 ? null : lua.ToLuable<Object>(3);
+            var bounds = (pivot == null || argc < 3) ? null : new long?(lua.ToInteger(4));
 
             lua.NewTable();
-            foreach (var (obj, i) in map.Objects.Select((x, i) => (x, i)))
+            foreach (var (obj, i) in map.Objects.Select((x, i) => (x.Value, i)))
             {
-                lua.PushLuable(obj.Value);
+                if (type != null && obj.Type != (NetworkShared.ObjectType)type.Value)
+                    continue;
+
+                if (pivot != null && bounds != null)
+                {
+                    var distance = obj.Position.Distance(pivot.Position);
+                    if (distance > bounds)
+                        continue;
+                }
+
+                switch (obj.Type)
+                {
+                    case NetworkShared.ObjectType.Character:
+                        lua.PushLuable(obj as Character);
+                        break;
+
+                    case NetworkShared.ObjectType.Item:
+                        lua.PushLuable(obj as Item);
+                        break;
+
+                    case NetworkShared.ObjectType.Mob:
+                        lua.PushLuable(obj as Mob);
+                        break;
+
+                    case NetworkShared.ObjectType.NPC:
+                        lua.PushLuable(obj as NPC);
+                        break;
+
+                    default:
+                        continue;
+                }
+
                 lua.RawSetInteger(-2, i + 1);
             }
 

@@ -57,5 +57,10 @@ namespace Assets.Scripts.InGame.OOP
         public void DeadEnd()
         {
         }
+
+        public void ActiveSkill(int slot = 0)
+        {
+            NettyClient.Instance.Send(FlatBuffers.Protocol.Request.ActiveSkill.Bytes(slot));
+        }
     }
 }

@@ -156,7 +156,7 @@ public partial class GameController : MonoBehaviour
         return DontFallPosition(mob, newPosition);
     }
 
-    private void RemoveCharacter(int sequence)
+    private void RemoveObject(int sequence)
     {
         var character = GetObject(sequence);
         if (character != null)
@@ -326,6 +326,11 @@ public partial class GameController : MonoBehaviour
             else if (Input.GetKeyUp(KeyCode.Space))
             {
                 MyCharacter.Jump();
+            }
+
+            else if (Input.GetKeyUp(KeyCode.Q))
+            {
+                MyCharacter.ActiveSkill();
             }
         }
     }

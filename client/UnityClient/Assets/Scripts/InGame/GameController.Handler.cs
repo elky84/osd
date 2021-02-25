@@ -111,7 +111,7 @@ public partial class GameController : MonoBehaviour
         for (int i = 0; i < response.SequenceLength; i++)
         {
             Debug.Log($"hide : {response.Sequence(i)}");
-            RemoveCharacter(response.Sequence(i));
+            RemoveObject(response.Sequence(i));
         }
         return true;
     }
@@ -171,6 +171,28 @@ public partial class GameController : MonoBehaviour
 
             default:
                 return false;
+        }
+
+        return true;
+    }
+
+    [FlatBufferEvent]
+    public bool OnDamaged(Damaged response)
+    {
+        UnityEngine.Debug.Log($"damaged ({response.Sequence} > {response.Damage})");
+        return true;
+    }
+
+    [FlatBufferEvent]
+    public bool OnDie(Die response)
+    {
+        if (Objects.TryGetValue(response.Sequence, out var obj) == false)
+            return true;
+
+        if (obj.Type == ObjectType.Mob)
+        {
+            RemoveObject(obj.Sequence);
+            UnityEngine.Debug.Log($"{obj.Sequence} is dead");
         }
 
         return true;

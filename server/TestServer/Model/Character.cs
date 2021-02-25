@@ -148,6 +148,8 @@ namespace TestServer.Model
 
         public override ObjectType Type => ObjectType.Character;
 
+        public override int BaseHP => int.MaxValue;
+
         public static implicit operator FlatBuffers.Protocol.Response.Character.Model(Character obj) =>
             obj.ToProtocol();
 

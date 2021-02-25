@@ -36,4 +36,8 @@ public partial class TableNpc : BaseDict<string, Npc>
 public partial class TableReward : BaseDict<string, Reward>
 { }
 
+[Table("json/Skill.json")]
+public partial class TableSkill : BaseDict<string, Skill>
+{ }
+
 }

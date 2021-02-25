@@ -65,6 +65,10 @@ table InactiveItem {
 	id: ulong;
 }
 
+table ActiveSkill {
+	id: int;
+}
+
 
 
 

@@ -97,7 +97,11 @@ namespace TestServer.Handler
             {
                 var mob = obj as Mob;
                 var ownerBefore = mob.Owner;
-                mob.Owner = mob.Sector.Nears.SelectMany(x => x.Characters).FirstOrDefault();
+
+                mob.Owner = mob.Sector != null ?
+                    mob.Sector.Nears.SelectMany(x => x.Characters).FirstOrDefault() :
+                    null;
+
                 if (ownerBefore != mob.Owner)
                 {
                     _ = ownerBefore?.Send(FlatBuffers.Protocol.Response.UnsetOwner.Bytes(new System.Collections.Generic.List<int> { obj.Sequence.Value }));
@@ -115,6 +119,7 @@ namespace TestServer.Handler
         public void OnDie(Life life)
         {
             Console.WriteLine($"{life.Name}({life.Sequence}) is dead.");
+            _ = Broadcast(life, FlatBuffers.Protocol.Response.Die.Bytes(life.Sequence.Value));
         }
 
         public void OnSectorEntering(Model.Object obj, Map.Sector sector)
@@ -135,6 +140,12 @@ namespace TestServer.Handler
         public void OnSectorLeaved(Model.Object obj, Map.Sector sector)
         {
             
+        }
+
+        public void OnDamaged(Life life, int damage)
+        {
+            Console.WriteLine($"damaged : {life.Sequence.Value}({damage})");
+            _ = Broadcast(life, FlatBuffers.Protocol.Response.Damaged.Bytes(life.Sequence.Value, damage), false, life.Sector);
         }
     }
 }

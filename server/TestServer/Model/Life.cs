@@ -1,7 +1,6 @@
 ﻿using KeraLua;
 using NetworkShared.Types;
 using System;
-using System.Numerics;
 
 namespace TestServer.Model
 {
@@ -10,6 +9,7 @@ namespace TestServer.Model
         // listener
         public new interface IListener : Object.IListener
         {
+            public void OnDamaged(Life life, int damage);
             public void OnDie(Life life);
         }
         public new IListener Listener { get; private set; }
@@ -38,7 +38,12 @@ namespace TestServer.Model
             get => _hp;
             set
             {
+                var damage = (value < _hp) ? _hp - value : 0;
+
                 _hp = Math.Max(0, value);
+                if (damage > 0)
+                    Listener?.OnDamaged(this, damage);
+
                 if (_hp > 0)
                 {
                     IsAlive = true;
@@ -53,18 +58,50 @@ namespace TestServer.Model
             }
         }
 
+        public abstract int BaseHP { get; }
+
 
         // override 
         public override bool IsActive => IsAlive;
 
 
         // build-in functions
-        public static int BuiltinHP(IntPtr luaState)
+        public static int BuiltinHp(IntPtr luaState)
+        {
+            var lua = Lua.FromIntPtr(luaState);
+            var argc = lua.GetTop();
+            var life = lua.ToLuable<Life>(1);
+            var value = argc < 2 ? null : new double?(lua.ToNumber(2));
+
+            if (value != null)
+            {
+                life.Hp = (int)value.Value;
+                return 0;
+            }
+            else
+            {
+                lua.PushInteger(life.Hp);
+                return 1;
+            }
+        }
+
+        public static int BuiltinHpAdd(IntPtr luaState)
+        {
+            var lua = Lua.FromIntPtr(luaState);
+            var life = lua.ToLuable<Life>(1);
+            var value = lua.ToNumber(2);
+
+            life.Hp += (int)value;
+            lua.PushInteger(life.Hp);
+            return 1;
+        }
+
+        public static int BuiltinBaseHp(IntPtr luaState)
         {
             var lua = Lua.FromIntPtr(luaState);
             var life = lua.ToLuable<Life>(1);
 
-            lua.PushInteger(life.Hp);
+            lua.PushInteger(life.BaseHP);
             return 1;
         }
 

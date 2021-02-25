@@ -49,14 +49,10 @@ namespace TestServer.Model
             {
                 _owner = value;
                 UpdatedPositionTime = DateTime.Now;
-#if DEBUG
-                if (_owner != null)
-                    Console.WriteLine($"new owner : {this.Sequence} > {_owner.Sequence}");
-                else
-                    Console.WriteLine($"unset owner : {this.Sequence}");
-#endif
             }
         }
+
+        public override int BaseHP => Master.HP;
 
         public Mob(MasterData.Table.Mob master)
         {

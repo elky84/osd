@@ -1,0 +1,10 @@
+{
+  "전체공격스킬": {
+    "Id": "전체공격스킬",
+    "Script": "Scripts/Skill/Attack.lua"
+  },
+  "전체회복스킬": {
+    "Id": "전체회복스킬",
+    "Script": "Scripts/Skill/Heal.lua"
+  }
+}

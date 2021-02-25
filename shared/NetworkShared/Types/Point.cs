@@ -19,6 +19,16 @@ namespace NetworkShared.Types
             Y = y;
         }
 
+        public double DistanceSqrt(Point from)
+        {
+            return Math.Pow(from.X - this.X, 2) + Math.Pow(from.Y - this.Y, 2);
+        }
+
+        public double Distance(Point from)
+        {
+            return Math.Sqrt(DistanceSqrt(from));
+        }
+
         public double Delta(Point p)
         {
             return Math.Abs(X - p.X) + Math.Abs(p.Y - p.Y);

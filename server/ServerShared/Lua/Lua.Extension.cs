@@ -35,9 +35,9 @@ namespace KeraLua
                 case LuaStatus.Yield:
                     break;
 
-                default:
-                    lua.GarbageCollector(LuaGC.Collect, 0);
-                    break;
+                //default:
+                //    lua.GarbageCollector(LuaGC.Collect, 0);
+                //    break;
             }
 
             return result;

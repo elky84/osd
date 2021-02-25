@@ -106,3 +106,12 @@ table Items {
 	inventory: [Item];
 	equipment: [Equipment];
 }
+
+table Damaged {
+	sequence: int;
+	damage: int;
+}
+
+table Die {
+	sequence: int;
+}

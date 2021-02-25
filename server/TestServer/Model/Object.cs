@@ -2,6 +2,7 @@
 using NetworkShared;
 using NetworkShared.Types;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace TestServer.Model
@@ -219,6 +220,19 @@ namespace TestServer.Model
         public async virtual Task Send(byte[] bytes)
         { }
 
+        public static int BuiltinSequence(IntPtr luaState)
+        {
+            var lua = Lua.FromIntPtr(luaState);
+            var obj = lua.ToLuable<Object>(1);
+
+            if (obj.Sequence == null)
+                lua.PushNil();
+            else
+                lua.PushInteger(obj.Sequence.Value);
+            
+            return 1;
+        }
+
         public static int BuiltinName(IntPtr luaState)
         {
             var lua = Lua.FromIntPtr(luaState);
@@ -244,6 +258,46 @@ namespace TestServer.Model
             var obj = lua.ToLuable<Object>(1);
 
             lua.PushLuable(obj.Map);
+            return 1;
+        }
+
+        public static int BuiltinNears(IntPtr luaState)
+        {
+            var lua = Lua.FromIntPtr(luaState);
+            var argc = lua.GetTop();
+            var me = lua.ToLuable<Object>(1);
+            var type = argc < 2 ? null : new long?(lua.ToInteger(2));
+
+            lua.NewTable();
+            foreach (var (obj, i) in me.Sector.Nears.SelectMany(x => x.Objects).Select((x, i) => (x, i)))
+            {
+                if (type != null && obj.Type != (NetworkShared.ObjectType)type.Value)
+                    continue;
+
+                switch (obj.Type)
+                {
+                    case NetworkShared.ObjectType.Character:
+                        lua.PushLuable(obj as Character);
+                        break;
+
+                    case NetworkShared.ObjectType.Item:
+                        lua.PushLuable(obj as Item);
+                        break;
+
+                    case NetworkShared.ObjectType.Mob:
+                        lua.PushLuable(obj as Mob);
+                        break;
+
+                    case NetworkShared.ObjectType.NPC:
+                        lua.PushLuable(obj as NPC);
+                        break;
+
+                    default:
+                        continue;
+                }
+                lua.RawSetInteger(-2, i + 1);
+            }
+
             return 1;
         }
     }

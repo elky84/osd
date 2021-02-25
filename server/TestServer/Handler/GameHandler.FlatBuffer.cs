@@ -8,6 +8,8 @@ using System.Linq;
 using System.Text;
 using TestServer.Model;
 using NetworkShared.Types;
+using MasterData;
+using MasterData.Table;
 using Serilog;
 
 namespace TestServer.Handler
@@ -337,6 +339,24 @@ namespace TestServer.Handler
                 //_ = Broadcast(character, FlatBuffers.Protocol.Response.ShowCharacter.Bytes(character), false);
             }
 
+            return true;
+        }
+
+        [FlatBufferEvent]
+        public bool OnActiveSkill(Session<Character> session, FlatBuffers.Protocol.Request.ActiveSkill request)
+        {
+            using var lua = Static.Main.NewThread();
+            lua.Encoding = Encoding.UTF8;
+
+            var path = MasterTable.From<TableSkill>()["전체공격스킬"].Script;
+            if (File.Exists(path) == false)
+                return true;
+
+            lua.DoFile(path);
+            lua.GetGlobal("func");
+
+            lua.PushLuable(session.Data);
+            var state = lua.Resume(1);
             return true;
         }
     }
