@@ -184,6 +184,13 @@ public partial class GameController : MonoBehaviour
     }
 
     [FlatBufferEvent]
+    public bool OnHealed(Healed response)
+    {
+        UnityEngine.Debug.Log($"healed ({response.Sequence} > {response.Heal})");
+        return true;
+    }
+
+    [FlatBufferEvent]
     public bool OnDie(Die response)
     {
         if (Objects.TryGetValue(response.Sequence, out var obj) == false)

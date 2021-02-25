@@ -9,6 +9,7 @@ namespace TestServer.Model
         // listener
         public new interface IListener : Object.IListener
         {
+            public void OnHealed(Life life, int heal);
             public void OnDamaged(Life life, int damage);
             public void OnDie(Life life);
         }
@@ -39,10 +40,14 @@ namespace TestServer.Model
             set
             {
                 var damage = (value < _hp) ? _hp - value : 0;
+                var heal = (value > _hp) ? value - _hp : 0;
 
                 _hp = Math.Max(0, value);
                 if (damage > 0)
                     Listener?.OnDamaged(this, damage);
+
+                if (heal > 0)
+                    Listener?.OnHealed(this, heal);
 
                 if (_hp > 0)
                 {

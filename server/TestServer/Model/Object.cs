@@ -158,8 +158,8 @@ namespace TestServer.Model
             if (Jumping == false)
             {
                 //TODO 원래는 1이었음. 1.5는 떨어질때 속도가 빨라서, 1을 좀 더 넘을때가 있어서 임시 처리.
-                if (Math.Abs(position.Y - Position.Y) > 5.0)
-                    return false;
+                //if (Math.Abs(position.Y - Position.Y) > 5.0)
+                //    return false;
             }
             else if (position.Y > Position.Y && Math.Abs(position.Y - Position.Y) > 5.0)
             {

@@ -5,7 +5,7 @@ using TestServer.Model;
 
 namespace TestServer.Handler
 {
-    public partial class GameHandler : Mob.IListener, Character.IListener
+    public partial class GameHandler : Life.IListener, Character.IListener
     {
         public void OnLeave(Model.Object obj)
         {
@@ -146,6 +146,15 @@ namespace TestServer.Handler
         {
             Console.WriteLine($"damaged : {life.Sequence.Value}({damage})");
             _ = Broadcast(life, FlatBuffers.Protocol.Response.Damaged.Bytes(life.Sequence.Value, damage), false, life.Sector);
+        }
+
+        public void OnHealed(Life life, int heal)
+        {
+            if (life.Sequence == null)
+                return;
+
+            Console.WriteLine($"heal : {life.Sequence.Value}({heal})");
+            _ = Broadcast(life, FlatBuffers.Protocol.Response.Healed.Bytes(life.Sequence.Value, heal), false, life.Sector);
         }
     }
 }

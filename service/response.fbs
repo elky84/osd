@@ -112,6 +112,11 @@ table Damaged {
 	damage: int;
 }
 
+table Healed {
+	sequence: int;
+	heal: int;
+}
+
 table Die {
 	sequence: int;
 }

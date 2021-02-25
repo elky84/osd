@@ -35,9 +35,9 @@ namespace KeraLua
                 case LuaStatus.Yield:
                     break;
 
-                //default:
-                //    lua.GarbageCollector(LuaGC.Collect, 0);
-                //    break;
+                default:
+                    lua.GarbageCollector(LuaGC.Collect, 0);
+                    break;
             }
 
             return result;
@@ -84,7 +84,7 @@ namespace KeraLua
 
         public static bool PushLuable<T>(this Lua lua, T luable) where T : ILuable
         {
-            return PushLuable(lua, luable as ILuable, typeof(T));
+            return PushLuable(lua, luable, typeof(T));
         }
 
         public static bool PushLuable(this Lua lua, ILuable luable, Type type)

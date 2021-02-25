@@ -330,7 +330,11 @@ public partial class GameController : MonoBehaviour
 
             else if (Input.GetKeyUp(KeyCode.Q))
             {
-                MyCharacter.ActiveSkill();
+                MyCharacter.ActiveSkill(0);
+            }
+            else if (Input.GetKeyUp(KeyCode.H))
+            {
+                MyCharacter.ActiveSkill(1);
             }
         }
     }

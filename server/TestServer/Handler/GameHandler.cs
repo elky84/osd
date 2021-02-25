@@ -106,6 +106,9 @@ namespace TestServer.Handler
 
         public async Task Broadcast(Model.Object pivot, byte[] bytes, bool exceptSelf = true, Model.Map.Sector sector = null)
         {
+            if (pivot.Map == null)
+                return;
+
             var targets = sector != null ?
                 sector.Nears.SelectMany(x => x.Characters) :
                 pivot.Map.Objects.Values.Where(x => x is Character).Select(x => x as Character);

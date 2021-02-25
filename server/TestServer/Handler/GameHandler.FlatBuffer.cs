@@ -35,12 +35,12 @@ namespace TestServer.Handler
                 obj.Move((Direction)request.Direction);
                 _ = Broadcast(obj, FlatBuffers.Protocol.Response.State.Bytes(obj.State(false)));
 
-                Console.WriteLine($"캐릭터가 이동 ({request.Position?.X}, {request.Position?.Y})");
+                Log.Logger.Information($"캐릭터가 이동 ({request.Position?.X}, {request.Position?.Y})");
                 return true;
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                Log.Logger.Error(e.Message);
                 return false;
             }
         }
@@ -63,12 +63,12 @@ namespace TestServer.Handler
                 obj.Position = position;
                 obj.Stop();
                 _ = Broadcast(obj, FlatBuffers.Protocol.Response.State.Bytes(obj.State(false)));
-                Console.WriteLine($"캐릭터가 멈춤 : {obj.Position}");
+                Log.Logger.Information($"캐릭터가 멈춤 : {obj.Position}");
                 return true;
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                Log.Logger.Error(e.Message);
                 return false;
             }
         }
@@ -91,12 +91,12 @@ namespace TestServer.Handler
                 obj.Position = position;
                 obj.Jump(true);
                 _ = Broadcast(obj, FlatBuffers.Protocol.Response.State.Bytes(obj.State(true)));
-                Console.WriteLine($"캐릭터가 점프함 : {obj.Position}");
+                Log.Logger.Information($"캐릭터가 점프함 : {obj.Position}");
                 return true;
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                Log.Logger.Error(e.Message);
                 return false;
             }
         }
@@ -124,7 +124,7 @@ namespace TestServer.Handler
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                Log.Logger.Error(e.Message);
                 return false;
             }
         }
@@ -171,7 +171,7 @@ namespace TestServer.Handler
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                Log.Logger.Error(e.Message);
                 return false;
             }
         }
@@ -194,7 +194,7 @@ namespace TestServer.Handler
             }
 
             obj.Position = position;
-            //Console.WriteLine($"{obj.Sequence.Value} : {position.X}/{position.Y}");
+            //Log.Logger.Error($"{obj.Sequence.Value} : {position.X}/{position.Y}");
 
             for (int i = 0; i < request.MobsLength; i++)
             {
@@ -316,7 +316,7 @@ namespace TestServer.Handler
             var activatedItem = character.Items.Active(request.Id);
             if (activatedItem != null)
             {
-                Console.WriteLine($"activated item : {activatedItem.Id}({activatedItem.Name})");
+                Log.Logger.Error($"activated item : {activatedItem.Id}({activatedItem.Name})");
 
                 // 장비 사용하면 외형변경 브로드캐스팅
                 //if (activatedItem.Master.Type == ItemType.Equipment)
@@ -333,7 +333,7 @@ namespace TestServer.Handler
             var inactivatedItem = character.Items.Inactive(request.Id);
             if (inactivatedItem != null)
             {
-                Console.WriteLine($"inactivated item : {inactivatedItem.Id}({inactivatedItem.Name})");
+                Log.Logger.Error($"inactivated item : {inactivatedItem.Id}({inactivatedItem.Name})");
 
                 // 장비 해제하면 외형변경 브로드캐스팅
                 //_ = Broadcast(character, FlatBuffers.Protocol.Response.ShowCharacter.Bytes(character), false);
@@ -348,7 +348,19 @@ namespace TestServer.Handler
             using var lua = Static.Main.NewThread();
             lua.Encoding = Encoding.UTF8;
 
-            var path = MasterTable.From<TableSkill>()["전체공격스킬"].Script;
+            var skillName = string.Empty;
+            switch (request.Id)
+            {
+                case 0:
+                    skillName = "전체공격스킬";
+                    break;
+
+                case 1:
+                    skillName = "전체회복스킬";
+                    break;
+            }
+
+            var path = MasterTable.From<TableSkill>()[skillName].Script;
             if (File.Exists(path) == false)
                 return true;
 
