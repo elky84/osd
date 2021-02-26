@@ -13,6 +13,6 @@ function func(me)
             damage = base_hp
         end
 
-        mob:hp_add(damage)
+        mob:hp_add(-damage)
     end
 end

@@ -42,7 +42,7 @@ namespace TestServer.Model
                 var damage = (value < _hp) ? _hp - value : 0;
                 var heal = (value > _hp) ? value - _hp : 0;
 
-                _hp = Math.Max(0, value);
+                _hp = Math.Clamp(0, value, BaseHP);
                 if (damage > 0)
                     Listener?.OnDamaged(this, damage);
 

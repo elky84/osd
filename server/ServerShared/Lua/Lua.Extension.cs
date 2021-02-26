@@ -13,8 +13,11 @@ namespace KeraLua
 
     public static class Static
     {
+        private static readonly int MAX_THREAD_POOL_SIZE = 50;
+
         private static Dictionary<Type, LuaRegister[]> _builtinFunctions = new Dictionary<Type, LuaRegister[]>();
         private static Dictionary<Type, Dictionary<string, LuaFunction>> _builtinGlobalFunctions = new Dictionary<Type, Dictionary<string, LuaFunction>>();
+        private static Queue<Lua> _luaThreadPool = new Queue<Lua>();
 
         // 빌트인 함수 규칙
         //   1. Builtin 으로 시작
@@ -25,6 +28,26 @@ namespace KeraLua
         static Static()
         {
             Main.LoadBuiltinFunctions();
+            for (int i = 0; i < MAX_THREAD_POOL_SIZE; i++)
+            {
+                var thread = Main.NewThread();
+                thread.Encoding = Encoding.UTF8;
+                _luaThreadPool.Enqueue(thread);
+            }
+        }
+
+        public static Lua Get(this Lua lua)
+        {
+            if (_luaThreadPool.Count == 0)
+                return null;
+
+            return _luaThreadPool.Dequeue();
+        }
+
+        public static void Release(this Lua lua)
+        {
+            if (_luaThreadPool.Contains(lua) == false)
+                _luaThreadPool.Enqueue(lua);
         }
 
         public static LuaStatus Resume(this Lua lua, int arguments)
@@ -36,7 +59,7 @@ namespace KeraLua
                     break;
 
                 default:
-                    lua.GarbageCollector(LuaGC.Collect, 0);
+                    //lua.GarbageCollector(LuaGC.Collect, 0);
                     break;
             }
 

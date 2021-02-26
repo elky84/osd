@@ -345,30 +345,41 @@ namespace TestServer.Handler
         [FlatBufferEvent]
         public bool OnActiveSkill(Session<Character> session, FlatBuffers.Protocol.Request.ActiveSkill request)
         {
-            using var lua = Static.Main.NewThread();
-            lua.Encoding = Encoding.UTF8;
-
-            var skillName = string.Empty;
-            switch (request.Id)
+            try
             {
-                case 0:
-                    skillName = "전체공격스킬";
-                    break;
+                var lua = Static.Main.Get() ??
+                    throw new Exception("all lua threads are used.");
 
-                case 1:
-                    skillName = "전체회복스킬";
-                    break;
+                var skillName = string.Empty;
+                switch (request.Id)
+                {
+                    case 0:
+                        skillName = "전체공격스킬";
+                        break;
+
+                    case 1:
+                        skillName = "전체회복스킬";
+                        break;
+                }
+
+                var path = MasterTable.From<TableSkill>()[skillName].Script;
+                if (File.Exists(path) == false)
+                    throw new Exception($"{path} : script not found");
+
+                lua.DoFile(path);
+                lua.GetGlobal("func");
+
+                lua.PushLuable(session.Data);
+                if (lua.Resume(1) == LuaStatus.ErrRun)
+                    throw new Exception($"{path} : lua script error");
+
+                lua.Release();
+            }
+            catch (Exception e)
+            {
+                Log.Logger.Error(e.Message);
             }
 
-            var path = MasterTable.From<TableSkill>()[skillName].Script;
-            if (File.Exists(path) == false)
-                return true;
-
-            lua.DoFile(path);
-            lua.GetGlobal("func");
-
-            lua.PushLuable(session.Data);
-            var state = lua.Resume(1);
             return true;
         }
     }
