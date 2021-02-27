@@ -1,2 +1,0 @@
-CALL build.bat
-PAUSE

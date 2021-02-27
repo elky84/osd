@@ -60,6 +60,7 @@ namespace KeraLua
 
                 default:
                     //lua.GarbageCollector(LuaGC.Collect, 0);
+                    lua.Release();
                     break;
             }
 

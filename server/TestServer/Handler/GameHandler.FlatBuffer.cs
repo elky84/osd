@@ -372,8 +372,6 @@ namespace TestServer.Handler
                 lua.PushLuable(session.Data);
                 if (lua.Resume(1) == LuaStatus.ErrRun)
                     throw new Exception($"{path} : lua script error");
-
-                lua.Release();
             }
             catch (Exception e)
             {
