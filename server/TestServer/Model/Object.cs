@@ -147,31 +147,31 @@ namespace TestServer.Model
 
         public bool ValidPosition(Point position)
         {
-            var elapsed = (DateTime.Now - UpdatedPositionTime).Ticks;
-            var diff = new Point(position.X - Position.X, position.Y - Position.Y);
+            //var elapsed = (DateTime.Now - UpdatedPositionTime).Ticks;
+            //var diff = new Point(position.X - Position.X, position.Y - Position.Y);
 
-            var calculatedX = (elapsed * this.Velocity.X) / 1000000.0;
-            var calculatedDiffX = Math.Abs(diff.X - calculatedX);
-            if (calculatedDiffX > 5.0 && calculatedDiffX > calculatedX * 0.025)
-                return false;
+            //var calculatedX = (elapsed * this.Velocity.X) / 1000000.0;
+            //var calculatedDiffX = Math.Abs(diff.X - calculatedX);
+            //if (calculatedDiffX > 5.0 && calculatedDiffX > calculatedX * 0.025)
+            //    return false;
 
-            if (Jumping == false)
-            {
-                //TODO 원래는 1이었음. 1.5는 떨어질때 속도가 빨라서, 1을 좀 더 넘을때가 있어서 임시 처리.
-                //if (Math.Abs(position.Y - Position.Y) > 5.0)
-                //    return false;
-            }
-            else if (position.Y > Position.Y && Math.Abs(position.Y - Position.Y) > 5.0)
-            {
-                if (this.JumpingLimit < position.Y)
-                    return false;
-            }
-            else
-            {
-                var calculatedY = (elapsed * GRAVITY_LIMIT) / 1000000.0;
-                if (Math.Abs(diff.Y - calculatedY) > 5.0 && diff.Y < calculatedY)
-                    return false;
-            }
+            //if (Jumping == false)
+            //{
+            //    //TODO 원래는 1이었음. 1.5는 떨어질때 속도가 빨라서, 1을 좀 더 넘을때가 있어서 임시 처리.
+            //    //if (Math.Abs(position.Y - Position.Y) > 5.0)
+            //    //    return false;
+            //}
+            //else if (position.Y > Position.Y && Math.Abs(position.Y - Position.Y) > 5.0)
+            //{
+            //    if (this.JumpingLimit < position.Y)
+            //        return false;
+            //}
+            //else
+            //{
+            //    var calculatedY = (elapsed * GRAVITY_LIMIT) / 1000000.0;
+            //    if (Math.Abs(diff.Y - calculatedY) > 5.0 && diff.Y < calculatedY)
+            //        return false;
+            //}
 
             return true;
         }
