@@ -204,4 +204,14 @@ public partial class GameController : MonoBehaviour
 
         return true;
     }
+
+    [FlatBufferEvent]
+    public bool OnAttack(Attack response)
+    {
+        if (Objects.TryGetValue(response.Sequence, out var obj) == false)
+            return false;
+
+        UnityEngine.Debug.Log($"attack action : {obj.Sequence}");
+        return true;
+    }
 }

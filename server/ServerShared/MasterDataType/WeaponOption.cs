@@ -4,6 +4,7 @@ using NetworkShared.Util.Table;
 using Newtonsoft.Json;
 using NetworkShared;
 using NetworkShared.Types;
+using Newtonsoft.Json.Converters;
 
 namespace MasterData.Table
 {
@@ -11,6 +12,9 @@ namespace MasterData.Table
     {
         [Key]
         public string Id { get; set; }
+
+        [JsonConverter(typeof(StringEnumConverter))]
+        public WeaponType Type { get; set; }
 
         public int PhysicalDamage { get; set; }
 

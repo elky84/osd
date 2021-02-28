@@ -380,5 +380,51 @@ namespace TestServer.Handler
 
             return true;
         }
+
+        [FlatBufferEvent]
+        public bool OnAttack(Session<Character> session, FlatBuffers.Protocol.Request.Attack request)
+        {
+            try
+            {
+                var character = session.Data;
+                var weapon = character.Items.Weapon;
+                if (weapon == null)
+                    throw new Exception("장착한 무기가 없음.");
+
+                var option = MasterTable.From<TableWeaponOption>()[weapon.Master.Id] ??
+                    throw new Exception("무기 옵션 정보 없음");
+                var weaponRange = MasterTable.From<TableWeaponRange>()[option.Type] ??
+                    throw new Exception("무기 범위 정보 없음");
+
+                //_ = Broadcast(character, FlatBuffers.Protocol.Response.Attack.Bytes(character.Sequence.Value), exceptSelf: true, sector: character.Sector);
+                _ = Broadcast(character, FlatBuffers.Protocol.Response.Attack.Bytes(character.Sequence.Value), exceptSelf: false, sector: character.Sector);
+
+                var rangeBox = new RectF
+                {
+                    X = character.Position.X,
+                    Y = character.Position.Y - character.CollisionSize.Height / 2.0,
+                    Width = weaponRange.Width,
+                    Height = weaponRange.Height
+                };
+
+                if (character.Direction == Direction.Left)
+                    rangeBox.X -= (int)rangeBox.Width;
+
+                var mob = character.Sector.Nears.SelectMany(x => x.Objects).Where(x => x.Type == ObjectType.Mob).Select(x => x as Model.Mob).FirstOrDefault(x => rangeBox.Contains(x.CollisionBox));
+                if (mob != null)
+                    mob.Hp -= mob.BaseHP;
+
+                if (mob != null)
+                    Log.Logger.Information($"{mob.Sequence.Value}가 맞아죽음");
+                else
+                    Log.Logger.Information($"범위 안에 몹 없음");
+            }
+            catch (Exception e)
+            {
+                Log.Logger.Error(e.Message);
+            }
+
+            return true;
+        }
     }
 }

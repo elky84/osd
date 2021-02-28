@@ -62,5 +62,10 @@ namespace Assets.Scripts.InGame.OOP
         {
             NettyClient.Instance.Send(FlatBuffers.Protocol.Request.ActiveSkill.Bytes(slot));
         }
+
+        public void Attack()
+        {
+            NettyClient.Instance.Send(FlatBuffers.Protocol.Request.Attack.Bytes());
+        }
     }
 }

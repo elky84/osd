@@ -4,6 +4,7 @@ using NetworkShared.Util.Table;
 using Newtonsoft.Json;
 using NetworkShared;
 using NetworkShared.Types;
+using Newtonsoft.Json.Converters;
 
 namespace MasterData.Table
 {

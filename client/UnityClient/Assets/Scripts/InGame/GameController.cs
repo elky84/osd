@@ -336,6 +336,11 @@ public partial class GameController : MonoBehaviour
             {
                 MyCharacter.ActiveSkill(1);
             }
+
+            else if (Input.GetKeyUp(KeyCode.Z))
+            {
+                MyCharacter.Attack();
+            }
         }
     }
 

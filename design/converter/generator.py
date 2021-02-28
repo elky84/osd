@@ -23,7 +23,7 @@ def classStringify(name, pureSchemaSet, enumDict, usage):
 
         baseType = converter.remove(schema['type'])
         if baseType in enumDict:
-            properties.append(f'[JsonConverter(typeof(JsonEnumConverter<{baseType}>))]')
+            properties.append('[JsonConverter(typeof(StringEnumConverter))]')
 
         type = converter.remove(schema['type'], nullable=False, key=True)
         properties.append(f"public {type} {schema['name']} {{ get; set; }}\n")

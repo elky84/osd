@@ -5,7 +5,7 @@ using TestServer.Model;
 
 namespace TestServer.Handler
 {
-    public partial class GameHandler : Life.IListener, Character.IListener
+    public partial class GameHandler : Mob.IListener, Character.IListener
     {
         public void OnLeave(Model.Object obj)
         {
@@ -113,6 +113,8 @@ namespace TestServer.Handler
         public void OnSpawned(Mob mob)
         {
             // 이런 형식으로 쓰면 편하긴 한데 퍼포먼스 이슈가...
+            var collision = MasterData.MasterTable.From<MasterData.Table.TableCollision>()[mob.Name];
+            mob.CollisionSize = new NetworkShared.Types.SizeF { Width = collision.Width, Height = collision.Height };
             Console.WriteLine($"Spawned '{mob.Name}({mob.Sequence.Value})' in '{mob.Map.Name}' ({mob.Position.X}, {mob.Position.Y})");
         }
 
@@ -145,7 +147,7 @@ namespace TestServer.Handler
         public void OnDamaged(Life life, int damage)
         {
             Console.WriteLine($"damaged : {life.Sequence.Value}({damage})");
-            _ = Broadcast(life, FlatBuffers.Protocol.Response.Damaged.Bytes(life.Sequence.Value, damage), false, life.Sector);
+            _ = Broadcast(life, FlatBuffers.Protocol.Response.Damaged.Bytes(life.Sequence.Value, damage), exceptSelf: false, sector: life.Sector);
         }
 
         public void OnHealed(Life life, int heal)
@@ -154,7 +156,7 @@ namespace TestServer.Handler
                 return;
 
             Console.WriteLine($"heal : {life.Sequence.Value}({heal})");
-            _ = Broadcast(life, FlatBuffers.Protocol.Response.Healed.Bytes(life.Sequence.Value, heal), false, life.Sector);
+            _ = Broadcast(life, FlatBuffers.Protocol.Response.Healed.Bytes(life.Sequence.Value, heal), exceptSelf: false, sector: life.Sector);
         }
     }
 }

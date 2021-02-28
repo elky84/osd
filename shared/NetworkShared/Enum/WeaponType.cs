@@ -9,7 +9,7 @@ namespace NetworkShared
         Sword,
 
         [Description("활")]
-        Arrow,
+        Bow,
 
         [Description("지팡이")]
         Staff,

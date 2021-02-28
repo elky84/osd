@@ -120,3 +120,7 @@ table Healed {
 table Die {
 	sequence: int;
 }
+
+table Attack {
+	sequence: int;
+}

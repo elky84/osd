@@ -16,13 +16,13 @@ namespace TestServer.Model
         public new IListener Listener { get; private set; }
 
 
-        public Size CollisionSize { get; set; }
-        public Rect CollisionBox => new Rect
+        public SizeF CollisionSize { get; set; }
+        public RectF CollisionBox => new RectF
         {
-            X = (int)Position.X,
-            Y = (int)Position.Y,
-            Width = (uint)CollisionSize.Width,
-            Height = (uint)CollisionSize.Height
+            X = Position.X - CollisionSize.Width / 2.0,
+            Y = Position.Y - CollisionSize.Height / 2.0,
+            Width = CollisionSize.Width,
+            Height = CollisionSize.Height
         };
 
 

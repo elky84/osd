@@ -84,11 +84,11 @@ namespace TestServer.Handler
                     switch (direction)
                     {
                         case Direction.Left:
-                            _ = Broadcast(mob, FlatBuffers.Protocol.Response.Action.Bytes(mob.Sequence.Value, (int)ActionPattern.LeftMove), true, mob.Sector);
+                            _ = Broadcast(mob, FlatBuffers.Protocol.Response.Action.Bytes(mob.Sequence.Value, (int)ActionPattern.LeftMove), sector: mob.Sector);
                             break;
 
                         case Direction.Right:
-                            _ = Broadcast(mob, FlatBuffers.Protocol.Response.Action.Bytes(mob.Sequence.Value, (int)ActionPattern.RightMove), true, mob.Sector);
+                            _ = Broadcast(mob, FlatBuffers.Protocol.Response.Action.Bytes(mob.Sequence.Value, (int)ActionPattern.RightMove), sector: mob.Sector);
                             break;
                     }
 
@@ -169,18 +169,22 @@ namespace TestServer.Handler
             session.Data.Name = $"{Guid.NewGuid()}";
 
             // 아이템 정보를 전달
-            session.Data.Items.Inventory.Add(ItemFactory.Create("무기.검"));
+            var weapon = session.Data.Items.Inventory.Add(ItemFactory.Create("무기.검")) as Weapon; ;
             session.Data.Items.Inventory.Add(ItemFactory.Create("무기.활"));
             session.Data.Items.Inventory.Add(ItemFactory.Create("무기.지팡이"));
             session.Data.Items.Inventory.Add(ItemFactory.Create("장비.옷"));
             _ = session.Send(FlatBuffers.Protocol.Response.Items.Bytes(session.Data.Items.Inventory.SelectMany(x => x.Value).Select(x => (FlatBuffers.Protocol.Response.Item.Model)x).ToList(),
                 session.Data.Items.Equipments.Values.Where(x => x != null).Select(x => (FlatBuffers.Protocol.Response.Equipment.Model)x).ToList()));
 
-            session.Data.Position = mapFirst.ToGround(new NetworkShared.Types.Point(10, 10), new SizeF { Width = 0.6f, Height = 1.2f });
+            //session.Data.Position = mapFirst.ToGround(new NetworkShared.Types.Point(10, 10), new SizeF { Width = 0.6f, Height = 1.2f });
+            session.Data.Position = new NetworkShared.Types.Point(10, 10);
             session.Data.Map = mapFirst;
 
             var collision = MasterTable.From<TableCollision>()["캐릭터"];
-            session.Data.CollisionSize = new NetworkShared.Types.Size { Width = collision.Width, Height = collision.Height };
+            session.Data.CollisionSize = new NetworkShared.Types.SizeF { Width = collision.Width, Height = collision.Height };
+
+            // 무기를 장착
+            session.Data.Items.Equip(weapon);
         }
 
         protected override void OnDisconnected(Session<Character> session)

@@ -1,7 +1,7 @@
 {
   "몬스터1": {
     "Id": "몬스터1",
-    "AttackType": "선공",
+    "AttackType": "Preemptive",
     "HP": 100,
     "MP": 50,
     "Speed": 0.1,
@@ -13,7 +13,7 @@
   },
   "몬스터2": {
     "Id": "몬스터2",
-    "AttackType": "선공",
+    "AttackType": "Preemptive",
     "HP": 200,
     "MP": 60,
     "Speed": 0.5,
@@ -24,7 +24,7 @@
   },
   "몬스터3": {
     "Id": "몬스터3",
-    "AttackType": "후공",
+    "AttackType": "Reactive",
     "HP": 300,
     "MP": 70,
     "Speed": 1.0,

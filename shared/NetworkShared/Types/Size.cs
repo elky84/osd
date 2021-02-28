@@ -22,14 +22,14 @@ namespace NetworkShared.Types
 
     public class SizeF
     {
-        public float Width { get; set; }
-        public float Height { get; set; }
+        public double Width { get; set; }
+        public double Height { get; set; }
         public bool IsEmpty => Width < 0.001 || Height < 0.001;
 
         public SizeF()
         { }
 
-        public SizeF(float width, float height)
+        public SizeF(double width, double height)
         {
             Width = width;
             Height = height;

@@ -69,6 +69,10 @@ table ActiveSkill {
 	id: int;
 }
 
+table Attack {
+	
+}
+
 
 
 

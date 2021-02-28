@@ -17,10 +17,15 @@ def root(code):
     COMMON_FLATBUFFER_TYPES = {'StringOffset': 'string', 'VectorOffset': 'List'}
 
     groups = extract(r'public static Offset<.+> Create(?P<name>.+)\(FlatBufferBuilder builder,\s*(?P<params>[\w\s=,().<>]*)\)', code)
-    name = groups['name']
+    if groups:
+        name = groups['name']
+        pairs = re.finditer(r'(?P<type>[\w()<>]+) (?P<name>\w+)([.,]+)?', groups['params'])
+        parameters = [{'type': x['type'], 'name': x['name'], 'pure name': x['name'].replace('Offset', '')} for x in pairs]
+    else:
+        groups = extract(r'public (?P<name>.+) __assign\(int _i, ByteBuffer _bb\) { __init\(_i, _bb\); return this; }', code)
+        name = groups['name']
+        parameters = {}
 
-    pairs = re.finditer(r'(?P<type>[\w()<>]+) (?P<name>\w+)([.,]+)?', groups['params'])
-    parameters = [{'type': x['type'], 'name': x['name'], 'pure name': x['name'].replace('Offset', '')} for x in pairs]
     for parameter in parameters:
         if parameter['type'] in COMMON_FLATBUFFER_TYPES:
             parameter['type'] = COMMON_FLATBUFFER_TYPES[parameter['type']]

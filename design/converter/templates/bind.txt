@@ -1,3 +1,5 @@
+using NetworkShared;
+
 namespace MasterData.Table
 {
 {{ codeLines }}

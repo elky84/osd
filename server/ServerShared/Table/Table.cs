@@ -1,3 +1,5 @@
+using NetworkShared;
+
 namespace MasterData.Table
 {
     [Table("json/Collision.json")]
@@ -18,6 +20,10 @@ namespace MasterData.Table
 
     [Table("json/ConsumeOption.json")]
     public partial class TableConsumeOption : BaseDict<string, ConsumeOption>
+    { }
+
+    [Table("json/WeaponRange.json")]
+    public partial class TableWeaponRange : BaseDict<WeaponType, WeaponRange>
     { }
 
     [Table("json/Portal.json")]

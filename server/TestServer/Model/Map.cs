@@ -270,8 +270,9 @@ namespace TestServer.Model
                         endPoint = new Point { X = Size.Width, Y = Size.Height };
 
                     var randomPoint = new Point { X = random.Next((int)beginPoint.X, (int)endPoint.X), Y = random.Next((int)beginPoint.Y, (int)endPoint.Y) };
-                    var groundPoint = this.ToGround(randomPoint, new SizeF { Width = 0.6f, Height = 1.2f });
-                    unspawned.Spawn(this, groundPoint);
+                    //var groundPoint = this.ToGround(randomPoint, new SizeF { Width = 0.6f, Height = 1.2f });
+                    //unspawned.Spawn(this, groundPoint);
+                    unspawned.Spawn(this, randomPoint);
                 }
             }
         }
