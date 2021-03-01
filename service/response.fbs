@@ -132,3 +132,12 @@ table ItemAdd {
 table ItemRemove {
 	name: string;
 }
+
+table LevelUp {
+	sequence: int;
+	level: int;
+}
+
+table ExpChange {
+	exp: long;
+}

@@ -116,7 +116,8 @@ namespace KeraLua
             try
             {
                 var allocated = GCHandle.Alloc(luable, GCHandleType.Weak);
-                Marshal.WriteIntPtr(lua.NewUserData(IntPtr.Size), GCHandle.ToIntPtr(allocated));
+                var data = lua.NewUserData(IntPtr.Size);
+                Marshal.WriteIntPtr(data, GCHandle.ToIntPtr(allocated));
                 lua.GetMetaTable(type.Name);
                 lua.PushCFunction(BuiltinGC);
                 lua.SetField(-2, "__gc");

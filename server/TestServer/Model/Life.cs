@@ -42,7 +42,7 @@ namespace TestServer.Model
                 var damage = (value < _hp) ? _hp - value : 0;
                 var heal = (value > _hp) ? value - _hp : 0;
 
-                _hp = Math.Clamp(0, value, BaseHP);
+                _hp = Math.Clamp(value, 0, BaseHP);
                 if (damage > 0)
                     Listener?.OnDamaged(this, damage);
 
@@ -69,6 +69,17 @@ namespace TestServer.Model
         // override 
         public override bool IsActive => IsAlive;
 
+        // methods
+        public virtual void Damage(int damage, Life from = null)
+        {
+            this.Hp -= damage;
+        }
+
+        public virtual void Heal(int heal, Life from = null)
+        {
+            this.Hp += heal;
+        }
+
 
         // build-in functions
         public static int BuiltinHp(IntPtr luaState)
@@ -93,10 +104,23 @@ namespace TestServer.Model
         public static int BuiltinHpAdd(IntPtr luaState)
         {
             var lua = Lua.FromIntPtr(luaState);
+            var argc = lua.GetTop();
             var life = lua.ToLuable<Life>(1);
             var value = lua.ToNumber(2);
 
-            life.Hp += (int)value;
+            if (argc == 2)
+            {
+                life.Hp += (int)value;
+            }
+            else
+            {
+                var from = lua.ToLuable<Life>(3);
+                if (value < 0)
+                    life.Damage((int)-value, from);
+                else
+                    life.Heal((int)value, from);
+            }
+
             lua.PushInteger(life.Hp);
             return 1;
         }

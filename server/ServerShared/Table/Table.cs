@@ -2,6 +2,10 @@ using NetworkShared;
 
 namespace MasterData.Table
 {
+    [Table("json/Experience.json")]
+    public partial class TableExperience : BaseDict<int, Experience>
+    { }
+
     [Table("json/Collision.json")]
     public partial class TableCollision : BaseDict<string, Collision>
     { }

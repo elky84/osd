@@ -1,4 +1,5 @@
-﻿using NetworkShared;
+﻿using KeraLua;
+using NetworkShared;
 using NetworkShared.Types;
 using System;
 
@@ -31,6 +32,8 @@ namespace TestServer.Model
         }
 
         public MasterData.Table.Mob Master { get; private set; }
+
+        public int Exp => Master.Expereicen;
 
         public DateTime? SpawnedTime { get; private set; }
 
@@ -73,10 +76,29 @@ namespace TestServer.Model
             return true;
         }
 
+        public override void Damage(int damage, Life from)
+        {
+            base.Damage(damage, from);
+            if (IsAlive == false && from.Type == ObjectType.Character)
+            {
+                var character = from as Character;
+                character.Exp += Exp;
+            }
+        }
+
         public void BindEvent(IListener listener)
         {
             base.BindEvent(listener);
             Listener = listener;
+        }
+
+        public static int BuiltinExp(IntPtr luaState)
+        {
+            var lua = Lua.FromIntPtr(luaState);
+            var mob = lua.ToLuable<Mob>(1);
+
+            lua.PushInteger(mob.Exp);
+            return 1;
         }
     }
 }

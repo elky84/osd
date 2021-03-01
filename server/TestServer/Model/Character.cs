@@ -139,6 +139,8 @@ namespace TestServer.Model
             public void OnEquipmentChanged(Character character, EquipmentType equipmentType);
             public void OnItemAdded(Character character, Item item);
             public void OnItemRemoved(Character character, Item item);
+            public void OnLevelChanged(Character character, int before, int after);
+            public void OnExpChanged(Character character, long before, long after);
         }
 
         public new IListener Listener { get; private set; }
@@ -172,6 +174,51 @@ namespace TestServer.Model
         public override ObjectType Type => ObjectType.Character;
 
         public override int BaseHP => int.MaxValue;
+
+        private int _level = 1;
+        public int Level
+        {
+            get => _level;
+            set
+            {
+                var before = _level;
+                _level = value;
+
+                Listener?.OnLevelChanged(this, before, _level);
+            }
+        }
+
+        private long _exp;
+        public long Exp
+        {
+            get => _exp;
+            set
+            {
+                var incLevel = 0;
+                var beforeExp = _exp;
+
+                _exp = value;
+                var experienceTable = MasterData.MasterTable.From<MasterData.Table.TableExperience>();
+
+                while (true)
+                {
+                    var experienceCase = experienceTable[Level];
+                    if (experienceCase == null)
+                        break;
+
+                    if (_exp < experienceCase.Value)
+                        break;
+
+                    _exp -= experienceCase.Value;
+                    incLevel++;
+                }
+
+                Level += incLevel;
+
+                if (beforeExp != _exp)
+                    Listener?.OnExpChanged(this, beforeExp, _exp);
+            }
+        }
 
         public static implicit operator FlatBuffers.Protocol.Response.Character.Model(Character obj) =>
             obj.ToProtocol();
@@ -287,6 +334,44 @@ namespace TestServer.Model
                 lua.PushNil();
 
             return 1;
+        }
+
+        public static int BuiltinExp(IntPtr luaState)
+        {
+            var lua = Lua.FromIntPtr(luaState);
+            var argc = lua.GetTop();
+            var character = lua.ToLuable<Character>(1);
+
+            if (argc == 1)
+            {
+                lua.PushInteger(character.Exp);
+                return 1;
+            }
+            else
+            {
+                var exp = lua.ToInteger(2);
+                character.Exp = exp;
+                return 0;
+            }
+        }
+
+        public static int BuiltinLevel(IntPtr luaState)
+        {
+            var lua = Lua.FromIntPtr(luaState);
+            var argc = lua.GetTop();
+            var character = lua.ToLuable<Character>(1);
+
+            if (argc == 1)
+            {
+                lua.PushInteger(character.Exp);
+                return 1;
+            }
+            else
+            {
+                var level = lua.ToInteger(2);
+                character.Level = (int)level;
+                return 0;
+            }
         }
 
         public void BindEvent(IListener listener)

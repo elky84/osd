@@ -191,5 +191,15 @@ namespace TestServer.Handler
                     character.Hp -= damage;
             }
         }
+
+        public void OnLevelChanged(Character character, int before, int after)
+        {
+            _ = Broadcast(character, FlatBuffers.Protocol.Response.LevelUp.Bytes(character.Sequence.Value, after), exceptSelf: false, sector: character.Sector);
+        }
+
+        public void OnExpChanged(Character character, long before, long after)
+        {
+            _ = character.Send(FlatBuffers.Protocol.Response.ExpChange.Bytes(after));
+        }
     }
 }

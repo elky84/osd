@@ -8,14 +8,12 @@ using Newtonsoft.Json.Converters;
 
 namespace MasterData.Table
 {
-    public partial class Mob
+    public partial class Experience
     {
         [Key]
-        public string Id { get; set; }
+        public int Level { get; set; }
 
-        public string Sprite { get; set; }
-
-        public int Expereicen { get; set; }
+        public int Value { get; set; }
 
     }
 }

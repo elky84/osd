@@ -255,4 +255,33 @@ public partial class GameController : MonoBehaviour
 
         return true;
     }
+
+    [FlatBufferEvent]
+    public bool OnLevelUp(LevelUp response)
+    {
+        var obj = GetObject(response.Sequence);
+        if (obj == null)
+            return true;
+
+        var character = obj as Assets.Scripts.InGame.OOP.Character;
+        if (character == null)
+            return true;
+
+        UnityEngine.Debug.Log($"level up : {character.Sequence}({response.Level})");
+
+        if (MyCharacter == character)
+            MyCharacter.Level = response.Level;
+
+        return true;
+    }
+
+    [FlatBufferEvent]
+    public bool OnExperienceChanged(ExpChange response)
+    {
+        if (MyCharacter != null)
+            MyCharacter.Exp = response.Exp;
+
+        UnityEngine.Debug.Log($"experience : {response.Exp}");
+        return true;
+    }
 }

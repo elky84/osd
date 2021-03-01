@@ -26,5 +26,7 @@ namespace MasterData.Table
 
         public List<string> Rewards { get; set; }
 
+        public int Expereicen { get; set; }
+
     }
 }

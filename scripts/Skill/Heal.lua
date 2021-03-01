@@ -6,6 +6,6 @@ function func(me)
         local base_hp = mob:base_hp()
 
         -- 최대 체력의 10%만큼 체력 회복
-        mob:hp_add(base_hp * 0.1)
+        mob:hp_add(base_hp * 0.1, me)
     end
 end

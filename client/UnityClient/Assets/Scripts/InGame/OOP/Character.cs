@@ -37,6 +37,9 @@ namespace Assets.Scripts.InGame.OOP
 {
     public class Character : Assets.Scripts.InGame.OOP.Life
     {
+        public int Level { get; set; }
+        public long Exp { get; set; }
+
         public CharacterStateType State { get; set; } = CharacterStateType.Idle;
 
         public override NetworkShared.ObjectType Type => NetworkShared.ObjectType.Character;
