@@ -33,11 +33,16 @@ namespace TestServer.Model
         {
             var before = Equipments[equipment.EquipmentOption.Type];
             Equipments[equipment.EquipmentOption.Type] = equipment;
+            Owner.Listener?.OnEquipmentChanged(this.Owner, equipment.EquipmentOption.Type);
 
             Inventory.Remove(equipment);
+            Owner.Listener?.OnItemRemoved(this.Owner, equipment);
 
             if (before != null)
+            {
                 Inventory.Add(before);
+                Owner.Listener?.OnItemAdded(this.Owner, before);
+            }
 
             return before;
         }
@@ -89,11 +94,7 @@ namespace TestServer.Model
             if (found == null)
                 return null;
 
-            if (found.Master.Type == ItemType.Equipment)
-            {
-                var equipment = found as Equipment;
-                Equip(equipment);
-            }
+            found.Active(this.Owner);
 
             if (File.Exists(found.Master.ActiveScript))
             {
@@ -115,7 +116,7 @@ namespace TestServer.Model
             if (found == null)
                 return null;
 
-            Unequip(found);
+            found.Inactive(this.Owner);
             if (File.Exists(found.Master.InactiveScript))
             {
                 Owner.LuaThread = Static.Main.NewThread();
@@ -134,13 +135,35 @@ namespace TestServer.Model
     public class Character : Life
     {
         public new interface IListener : Life.IListener
-        { }
+        {
+            public void OnEquipmentChanged(Character character, EquipmentType equipmentType);
+            public void OnItemAdded(Character character, Item item);
+            public void OnItemRemoved(Character character, Item item);
+        }
 
         public new IListener Listener { get; private set; }
 
         public IChannelHandlerContext Context { get; set; }
 
         public ItemCollection Items { get; private set; }
+
+        private DateTime _lastDamagedTime = DateTime.MinValue;
+        public override int Hp
+        {
+            get => base.Hp;
+            set
+            {
+                var now = DateTime.Now;
+                var elapsed = now - this._lastDamagedTime;
+                
+                // TODO : 테이블에서 관리
+                if (elapsed.TotalMilliseconds < 1000)
+                    return;
+
+                base.Hp = value;
+                this._lastDamagedTime = now;
+            }
+        }
 
         public Lua LuaThread { get; set; }
 

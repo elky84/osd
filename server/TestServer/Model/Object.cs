@@ -16,6 +16,7 @@ namespace TestServer.Model
 
         public interface IListener
         {
+            public void OnPositionChanged(Object obj);
             public void OnLeave(Object obj);
             public void OnEnter(Object obj);
             public void OnSectorChanged(Object obj, Map.Sector sector1, Map.Sector sector2);
@@ -40,6 +41,8 @@ namespace TestServer.Model
 
                 if (this._map != null)
                     this._map.Update(this);
+
+                Listener?.OnPositionChanged(this);
             }
         }
         public Point Velocity

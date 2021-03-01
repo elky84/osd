@@ -1,42 +1,62 @@
 {
   "무기.검": {
     "Id": "무기.검",
-    "Type": "Equipment"
+    "Type": "Equipment",
+    "HPRecovery": 0,
+    "MPRecovery": 0
   },
   "무기.활": {
     "Id": "무기.활",
-    "Type": "Equipment"
+    "Type": "Equipment",
+    "HPRecovery": 0,
+    "MPRecovery": 0
   },
   "무기.지팡이": {
     "Id": "무기.지팡이",
-    "Type": "Equipment"
+    "Type": "Equipment",
+    "HPRecovery": 0,
+    "MPRecovery": 0
   },
   "장비.옷": {
     "Id": "장비.옷",
-    "Type": "Equipment"
+    "Type": "Equipment",
+    "HPRecovery": 0,
+    "MPRecovery": 0
   },
   "포션.체력회복": {
     "Id": "포션.체력회복",
-    "Type": "Equipment"
+    "Type": "Consume",
+    "HPRecovery": 100,
+    "MPRecovery": 0
   },
   "포션.마력회복": {
     "Id": "포션.마력회복",
-    "Type": "Equipment"
+    "Type": "Consume",
+    "HPRecovery": 0,
+    "MPRecovery": 100
   },
   "버프걸어주는아이템": {
     "Id": "버프걸어주는아이템",
-    "Type": "Other"
+    "Type": "Other",
+    "HPRecovery": 0,
+    "MPRecovery": 0
   },
   "다른사람을소환하는아이템": {
     "Id": "다른사람을소환하는아이템",
-    "Type": "Other"
+    "Type": "Other",
+    "HPRecovery": 0,
+    "MPRecovery": 0
   },
   "퀘스트를진행할수있는아이템": {
     "Id": "퀘스트를진행할수있는아이템",
-    "Type": "Other"
+    "Type": "Other",
+    "HPRecovery": 0,
+    "MPRecovery": 0
   },
   "NPC로변신할수있는아이템": {
     "Id": "NPC로변신할수있는아이템",
-    "Type": "Other"
+    "Type": "Other",
+    "HPRecovery": 0,
+    "MPRecovery": 0
   }
 }

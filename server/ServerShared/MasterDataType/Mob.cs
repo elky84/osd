@@ -22,6 +22,8 @@ namespace MasterData.Table
 
         public double Speed { get; set; }
 
+        public int Damage { get; set; }
+
         public List<string> Rewards { get; set; }
 
     }

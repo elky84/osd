@@ -22,6 +22,10 @@ namespace TestServer.Model
             Id = id;
             Master = master;
         }
+
+        public virtual void Active(Character owner) { }
+
+        public virtual void Inactive(Character owner) { }
     }
 
     public class Consume : Item
@@ -30,6 +34,18 @@ namespace TestServer.Model
         {
             if (Master.Type != ItemType.Consume)
                 throw new Exception($"{master.Id} is not a Consume type.");
+        }
+
+        public override void Active(Character owner)
+        {
+            var itemCase = MasterTable.From<TableItem>()[this.Master.Id] ??
+                throw new Exception("블라블라~~");
+
+            if (itemCase.HPRecovery > 0)
+                owner.Hp += itemCase.HPRecovery;
+
+            // TODO
+            // MP 회복
         }
     }
 
@@ -42,6 +58,16 @@ namespace TestServer.Model
         {
             EquipmentOption = MasterTable.From<TableEquipmentOption>()[master.Id] ??
                 throw new Exception($"{master.Id} is not defined in 'EquipmentOption' table.");
+        }
+
+        public override void Active(Character owner)
+        {
+            owner.Items.Equip(this);
+        }
+
+        public override void Inactive(Character owner)
+        {
+            owner.Items.Unequip(this);
         }
     }
 

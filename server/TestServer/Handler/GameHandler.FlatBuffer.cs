@@ -1,5 +1,9 @@
 ﻿using KeraLua;
+using MasterData;
+using MasterData.Table;
 using NetworkShared;
+using NetworkShared.Types;
+using Serilog;
 using ServerShared.Model;
 using ServerShared.NetworkHandler;
 using System;
@@ -7,10 +11,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using TestServer.Model;
-using NetworkShared.Types;
-using MasterData;
-using MasterData.Table;
-using Serilog;
 
 namespace TestServer.Handler
 {
@@ -315,13 +315,7 @@ namespace TestServer.Handler
             var character = session.Data;
             var activatedItem = character.Items.Active(request.Id);
             if (activatedItem != null)
-            {
                 Log.Logger.Error($"activated item : {activatedItem.Id}({activatedItem.Name})");
-
-                // 장비 사용하면 외형변경 브로드캐스팅
-                //if (activatedItem.Master.Type == ItemType.Equipment)
-                //    _ = Broadcast(character, FlatBuffers.Protocol.Response.ShowCharacter.Bytes(character), false);
-            }
 
             return true;
         }
@@ -396,8 +390,7 @@ namespace TestServer.Handler
                 var weaponRange = MasterTable.From<TableWeaponRange>()[option.Type] ??
                     throw new Exception("무기 범위 정보 없음");
 
-                //_ = Broadcast(character, FlatBuffers.Protocol.Response.Attack.Bytes(character.Sequence.Value), exceptSelf: true, sector: character.Sector);
-                _ = Broadcast(character, FlatBuffers.Protocol.Response.Attack.Bytes(character.Sequence.Value), exceptSelf: false, sector: character.Sector);
+                _ = Broadcast(character, FlatBuffers.Protocol.Response.Attack.Bytes(character.Sequence.Value), sector: character.Sector);
 
                 var rangeBox = new RectF
                 {

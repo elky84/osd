@@ -1,5 +1,6 @@
-﻿using ServerShared.NetworkHandler;
-using System;
+﻿using NetworkShared;
+using Serilog;
+using ServerShared.NetworkHandler;
 using System.Linq;
 using TestServer.Model;
 
@@ -115,12 +116,12 @@ namespace TestServer.Handler
             // 이런 형식으로 쓰면 편하긴 한데 퍼포먼스 이슈가...
             var collision = MasterData.MasterTable.From<MasterData.Table.TableCollision>()[mob.Name];
             mob.CollisionSize = new NetworkShared.Types.SizeF { Width = collision.Width, Height = collision.Height };
-            Console.WriteLine($"Spawned '{mob.Name}({mob.Sequence.Value})' in '{mob.Map.Name}' ({mob.Position.X}, {mob.Position.Y})");
+            Log.Logger.Information($"Spawned '{mob.Name}({mob.Sequence.Value})' in '{mob.Map.Name}' ({mob.Position.X}, {mob.Position.Y})");
         }
 
         public void OnDie(Life life)
         {
-            Console.WriteLine($"{life.Name}({life.Sequence}) is dead.");
+            Log.Logger.Information($"{life.Name}({life.Sequence}) is dead.");
             _ = Broadcast(life, FlatBuffers.Protocol.Response.Die.Bytes(life.Sequence.Value));
         }
 
@@ -146,7 +147,7 @@ namespace TestServer.Handler
 
         public void OnDamaged(Life life, int damage)
         {
-            Console.WriteLine($"damaged : {life.Sequence.Value}({damage})");
+            Log.Logger.Information($"damaged : {life.Sequence.Value}({damage})");
             _ = Broadcast(life, FlatBuffers.Protocol.Response.Damaged.Bytes(life.Sequence.Value, damage), exceptSelf: false, sector: life.Sector);
         }
 
@@ -155,8 +156,40 @@ namespace TestServer.Handler
             if (life.Sequence == null)
                 return;
 
-            Console.WriteLine($"heal : {life.Sequence.Value}({heal})");
+            Log.Logger.Information($"heal : {life.Sequence.Value}({heal})");
             _ = Broadcast(life, FlatBuffers.Protocol.Response.Healed.Bytes(life.Sequence.Value, heal), exceptSelf: false, sector: life.Sector);
+        }
+
+        public void OnEquipmentChanged(Character character, EquipmentType equipmentType)
+        {
+            _ = Broadcast(character, FlatBuffers.Protocol.Response.Character.Bytes(character.ToProtocol()), exceptSelf: false, sector: character.Sector);
+        }
+
+        public void OnItemAdded(Character character, Item item)
+        {
+            _ = character.Send(FlatBuffers.Protocol.Response.ItemAdd.Bytes(item.Name));
+        }
+
+        public void OnItemRemoved(Character character, Item item)
+        {
+            _ = character.Send(FlatBuffers.Protocol.Response.ItemRemove.Bytes(item.Name));
+        }
+
+        public void OnPositionChanged(Object obj)
+        {
+            if (obj.Type == ObjectType.Mob)
+            {
+                var mob = obj as Mob;
+                if (mob.Sector == null)
+                    return;
+
+                var mobCase = MasterData.MasterTable.From<MasterData.Table.TableMob>()[mob.Name] ??
+                    throw new System.Exception("블라잉블라잉");
+
+                var damage = mobCase.Damage;
+                foreach (var character in mob.Sector.Nears.SelectMany(x => x.Characters).Where(x => x.CollisionBox.Contains(mob.CollisionBox)))
+                    character.Hp -= damage;
+            }
         }
     }
 }

@@ -28,6 +28,23 @@ def indexKey(schemaSet):
     else:
         return id[0]
 
+def equals_schema(schema1, schema2):
+    if len(schema1) != len(schema2):
+        return False
+
+    for i in range(len(schema1)):
+        data = schema1[i]
+        for key in data:
+            if key not in schema2[i]:
+                return False
+
+            diff = set(schema1[i].items()) - set(schema2[i].items())
+            if len(diff) > 0:
+                return False
+
+    return True
+
+
 def load(path):
     schemaDict = {}
     dataDict = {}
@@ -37,6 +54,10 @@ def load(path):
         sheetName = sheet.title
         if sheetName.startswith('#'):
             continue
+
+        tableName = sheetName
+        if '.' in tableName and not tableName.startswith('.') and not tableName.endswith('.'):
+            tableName, _ = sheetName.split('.')
 
         beginIndex = 1
         while sheet[beginIndex][0].value.startswith('#'):
@@ -76,8 +97,17 @@ def load(path):
             
             data.append(dataSet)
 
-        schemaDict[sheetName] = schema
-        dataDict[sheetName] = data
+        if tableName in schemaDict:
+            if not equals_schema(schemaDict[tableName], schema):
+                raise Exception(f'{sheetName}의 스키마가 올바르지 않습니다. 합쳐질 테이블과 같은 형식의 스키마여야 합니다.')
+        else:
+            schemaDict[tableName] = schema
+
+        if tableName in dataDict:
+            dataDict[tableName] = dataDict[tableName] + data
+        else:
+            dataDict[tableName] = data
+
 
     return schemaDict, dataDict
 
