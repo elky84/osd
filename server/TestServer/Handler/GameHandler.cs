@@ -184,7 +184,7 @@ namespace TestServer.Handler
             session.Data.CollisionSize = new NetworkShared.Types.SizeF { Width = collision.Width, Height = collision.Height };
 
             // 무기를 장착
-            session.Data.Items.Equip(weapon);
+            session.Data.Items.Active(weapon.Id);
         }
 
         protected override void OnDisconnected(Session<Character> session)

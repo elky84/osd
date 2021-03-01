@@ -214,4 +214,45 @@ public partial class GameController : MonoBehaviour
         UnityEngine.Debug.Log($"attack action : {obj.Sequence}");
         return true;
     }
+
+    [FlatBufferEvent]
+    public bool OnItems(Items response)
+    {
+        for (int i = 0; i < response.InventoryLength; i++)
+        {
+            var item = response.Inventory(i);
+            UnityEngine.Debug.Log($"item {i + 1} : {item.Value.Name}");
+        }
+
+        for (int i = 0; i < response.EquipmentLength; i++)
+        {
+            var equipment = response.Equipment(i);
+            UnityEngine.Debug.Log($"equipment {(EquipmentType)equipment.Value.Type} : {equipment.Value.Name}");
+        }
+
+        return true;
+    }
+
+    [FlatBufferEvent]
+    public bool OnVisualUpdate(FlatBuffers.Protocol.Response.Character response)
+    {
+        var obj = GetObject(response.Sequence);
+        if (obj == null)
+            return true;
+
+        var character = obj as Assets.Scripts.InGame.OOP.Character;
+        if (character == null)
+            return true;
+
+        for (int i = 0; i < response.EquipmentLength; i++)
+        {
+            var equipment = response.Equipment(i);
+            var equipmentType = (EquipmentType)equipment.Value.Type;
+            var equipmentName = equipment.Value.Name;
+
+            UnityEngine.Debug.Log($"character({character.Sequence}) visual updated");
+        }
+
+        return true;
+    }
 }
