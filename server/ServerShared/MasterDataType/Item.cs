@@ -20,9 +20,5 @@ namespace MasterData.Table
 
         public string InactiveScript { get; set; }
 
-        public int HPRecovery { get; set; }
-
-        public int MPRecovery { get; set; }
-
     }
 }

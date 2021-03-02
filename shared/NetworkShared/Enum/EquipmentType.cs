@@ -20,5 +20,8 @@ namespace NetworkShared
         [Description("모자")]
         Helmet,
 
+        [Description("장신구")]
+        Accessory,
+
     }
 }

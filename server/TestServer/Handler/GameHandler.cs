@@ -173,6 +173,7 @@ namespace TestServer.Handler
             session.Data.Items.Inventory.Add(ItemFactory.Create("무기.활"));
             session.Data.Items.Inventory.Add(ItemFactory.Create("무기.지팡이"));
             session.Data.Items.Inventory.Add(ItemFactory.Create("장비.옷"));
+            session.Data.Items.Inventory.Add(ItemFactory.Create("기본신발"));
             _ = session.Send(FlatBuffers.Protocol.Response.Items.Bytes(session.Data.Items.Inventory.SelectMany(x => x.Value).Select(x => (FlatBuffers.Protocol.Response.Item.Model)x).ToList(),
                 session.Data.Items.Equipments.Values.Where(x => x != null).Select(x => (FlatBuffers.Protocol.Response.Equipment.Model)x).ToList()));
 

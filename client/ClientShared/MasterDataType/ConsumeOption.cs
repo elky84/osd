@@ -13,9 +13,9 @@ namespace MasterData.Table
         [Key]
         public string Id { get; set; }
 
-        public int HealHP { get; set; }
+        public int HPRecovery { get; set; }
 
-        public int HealMP { get; set; }
+        public int MPRecovery { get; set; }
 
     }
 }

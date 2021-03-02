@@ -3,80 +3,66 @@
     "Id": "무기.검",
     "Type": "Equipment",
     "ActiveScript": "Scripts/Item/Active/sowrd.lua",
-    "InactiveScript": "Scripts/Item/Inactive/sowrd.lua",
-    "HPRecovery": 0,
-    "MPRecovery": 0
+    "InactiveScript": "Scripts/Item/Inactive/sowrd.lua"
   },
   "무기.활": {
     "Id": "무기.활",
     "Type": "Equipment",
     "ActiveScript": null,
-    "InactiveScript": null,
-    "HPRecovery": 0,
-    "MPRecovery": 0
+    "InactiveScript": null
   },
   "무기.지팡이": {
     "Id": "무기.지팡이",
     "Type": "Equipment",
     "ActiveScript": null,
-    "InactiveScript": null,
-    "HPRecovery": 0,
-    "MPRecovery": 0
+    "InactiveScript": null
   },
   "장비.옷": {
     "Id": "장비.옷",
     "Type": "Equipment",
     "ActiveScript": null,
-    "InactiveScript": null,
-    "HPRecovery": 0,
-    "MPRecovery": 0
+    "InactiveScript": null
+  },
+  "기본신발": {
+    "Id": "기본신발",
+    "Type": "Equipment",
+    "ActiveScript": null,
+    "InactiveScript": null
   },
   "포션.체력회복": {
     "Id": "포션.체력회복",
     "Type": "Consume",
     "ActiveScript": null,
-    "InactiveScript": null,
-    "HPRecovery": 100,
-    "MPRecovery": 0
+    "InactiveScript": null
   },
   "포션.마력회복": {
     "Id": "포션.마력회복",
     "Type": "Consume",
     "ActiveScript": null,
-    "InactiveScript": null,
-    "HPRecovery": 0,
-    "MPRecovery": 100
+    "InactiveScript": null
   },
   "버프걸어주는아이템": {
     "Id": "버프걸어주는아이템",
     "Type": "Other",
     "ActiveScript": "Scripts/Item/Active/buff.lua",
-    "InactiveScript": null,
-    "HPRecovery": 0,
-    "MPRecovery": 0
+    "InactiveScript": null
   },
   "다른사람을소환하는아이템": {
     "Id": "다른사람을소환하는아이템",
     "Type": "Other",
     "ActiveScript": "Scripts/Item/Active/call.lua",
-    "InactiveScript": null,
-    "HPRecovery": 0,
-    "MPRecovery": 0
+    "InactiveScript": null
   },
   "퀘스트를진행할수있는아이템": {
     "Id": "퀘스트를진행할수있는아이템",
     "Type": "Other",
     "ActiveScript": "Script/Item/Active/quest.lua",
-    "InactiveScript": null,
-    "HPRecovery": 0,
-    "MPRecovery": 0
+    "InactiveScript": null
   },
   "NPC로변신할수있는아이템": {
     "Id": "NPC로변신할수있는아이템",
     "Type": "Other",
     "ActiveScript": "Script/Item/Active/disguise.lua",
-    "InactiveScript": null,
-    "HPRecovery": 0,
-    "MPRecovery": 0
+    "InactiveScript": null
   }
 }

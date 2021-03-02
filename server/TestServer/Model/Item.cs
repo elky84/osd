@@ -41,11 +41,14 @@ namespace TestServer.Model
             var itemCase = MasterTable.From<TableItem>()[this.Master.Id] ??
                 throw new Exception("블라블라~~");
 
-            if (itemCase.HPRecovery > 0)
-                owner.Hp += itemCase.HPRecovery;
+            var optionCase = MasterTable.From<TableConsumeOption>()[itemCase.Id] ??
+                throw new Exception("블라블라...");
 
-            // TODO
-            // MP 회복
+            if (optionCase.HPRecovery > 0)
+                owner.Hp += optionCase.HPRecovery;
+
+            if (optionCase.MPRecovery > 0)
+                owner.Mp += optionCase.MPRecovery;
         }
     }
 

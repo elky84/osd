@@ -155,17 +155,34 @@ namespace TestServer.Model
             get => base.Hp;
             set
             {
-                var now = DateTime.Now;
-                var elapsed = now - this._lastDamagedTime;
-                
-                // TODO : 테이블에서 관리
-                if (elapsed.TotalMilliseconds < 1000)
-                    return;
+                var isDamaged = (value < 0);
+                if (isDamaged)
+                {
+                    var now = DateTime.Now;
+                    var elapsed = now - this._lastDamagedTime;
+                    // TODO : 테이블에서 관리
+                    if (elapsed.TotalMilliseconds < 1000)
+                        return;
+
+                    this._lastDamagedTime = now;
+                }
 
                 base.Hp = value;
-                this._lastDamagedTime = now;
             }
         }
+
+        private int _mp;
+        public int Mp
+        {
+            get => _mp;
+            set
+            {
+                _mp = Math.Clamp(value, 0, BaseMp);
+            }
+        }
+
+
+        public int BaseMp => 100;
 
         public Lua LuaThread { get; set; }
 

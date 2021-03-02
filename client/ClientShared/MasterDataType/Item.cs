@@ -16,9 +16,5 @@ namespace MasterData.Table
         [JsonConverter(typeof(StringEnumConverter))]
         public ItemType Type { get; set; }
 
-        public int HPRecovery { get; set; }
-
-        public int MPRecovery { get; set; }
-
     }
 }
