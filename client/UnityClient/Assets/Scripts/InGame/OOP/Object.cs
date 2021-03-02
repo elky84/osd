@@ -13,7 +13,16 @@ namespace Assets.Scripts.InGame.OOP
 
         public float Speed => 1;
 
-        public Direction Direction;
+        private Direction _direction;
+        public Direction Direction
+        {
+            get => _direction;
+            set
+            {
+                _direction = value;
+                SpriteRenderer.flipX = _direction == Direction.Left;
+            }
+        }
         public abstract ObjectType Type { get; }
         public BoxCollider2D BoxCollider2D { get; private set; }
 

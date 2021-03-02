@@ -13,7 +13,6 @@ public partial class GameController : MonoBehaviour
             return false;
 
         obj.transform.localPosition = new Position((float)response.Position.Value.X, (float)response.Position.Value.Y).ToVector3();
-
         if (obj is Life)
         {
             var life = obj as Life;
