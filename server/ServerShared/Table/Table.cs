@@ -6,6 +6,10 @@ namespace MasterData.Table
     public partial class TableExperience : BaseDict<int, Experience>
     { }
 
+    [Table("json/Stat.json")]
+    public partial class TableStat : BaseDict<int, Stat>
+    { }
+
     [Table("json/Collision.json")]
     public partial class TableCollision : BaseDict<string, Collision>
     { }

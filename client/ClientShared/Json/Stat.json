@@ -1,0 +1,2002 @@
+{
+  "1": {
+    "Level": 1,
+    "Hp": 1,
+    "Mp": 1,
+    "Attack": 1,
+    "Defence": 1,
+    "Critical": 1,
+    "CriticalDamage": 1,
+    "AttackSpeed": 1
+  },
+  "2": {
+    "Level": 2,
+    "Hp": 2,
+    "Mp": 2,
+    "Attack": 2,
+    "Defence": 2,
+    "Critical": 2,
+    "CriticalDamage": 2,
+    "AttackSpeed": 2
+  },
+  "3": {
+    "Level": 3,
+    "Hp": 3,
+    "Mp": 3,
+    "Attack": 3,
+    "Defence": 3,
+    "Critical": 3,
+    "CriticalDamage": 3,
+    "AttackSpeed": 3
+  },
+  "4": {
+    "Level": 4,
+    "Hp": 4,
+    "Mp": 4,
+    "Attack": 4,
+    "Defence": 4,
+    "Critical": 4,
+    "CriticalDamage": 4,
+    "AttackSpeed": 4
+  },
+  "5": {
+    "Level": 5,
+    "Hp": 5,
+    "Mp": 5,
+    "Attack": 5,
+    "Defence": 5,
+    "Critical": 5,
+    "CriticalDamage": 5,
+    "AttackSpeed": 5
+  },
+  "6": {
+    "Level": 6,
+    "Hp": 6,
+    "Mp": 6,
+    "Attack": 6,
+    "Defence": 6,
+    "Critical": 6,
+    "CriticalDamage": 6,
+    "AttackSpeed": 6
+  },
+  "7": {
+    "Level": 7,
+    "Hp": 7,
+    "Mp": 7,
+    "Attack": 7,
+    "Defence": 7,
+    "Critical": 7,
+    "CriticalDamage": 7,
+    "AttackSpeed": 7
+  },
+  "8": {
+    "Level": 8,
+    "Hp": 8,
+    "Mp": 8,
+    "Attack": 8,
+    "Defence": 8,
+    "Critical": 8,
+    "CriticalDamage": 8,
+    "AttackSpeed": 8
+  },
+  "9": {
+    "Level": 9,
+    "Hp": 9,
+    "Mp": 9,
+    "Attack": 9,
+    "Defence": 9,
+    "Critical": 9,
+    "CriticalDamage": 9,
+    "AttackSpeed": 9
+  },
+  "10": {
+    "Level": 10,
+    "Hp": 10,
+    "Mp": 10,
+    "Attack": 10,
+    "Defence": 10,
+    "Critical": 10,
+    "CriticalDamage": 10,
+    "AttackSpeed": 10
+  },
+  "11": {
+    "Level": 11,
+    "Hp": 11,
+    "Mp": 11,
+    "Attack": 11,
+    "Defence": 11,
+    "Critical": 11,
+    "CriticalDamage": 11,
+    "AttackSpeed": 11
+  },
+  "12": {
+    "Level": 12,
+    "Hp": 12,
+    "Mp": 12,
+    "Attack": 12,
+    "Defence": 12,
+    "Critical": 12,
+    "CriticalDamage": 12,
+    "AttackSpeed": 12
+  },
+  "13": {
+    "Level": 13,
+    "Hp": 13,
+    "Mp": 13,
+    "Attack": 13,
+    "Defence": 13,
+    "Critical": 13,
+    "CriticalDamage": 13,
+    "AttackSpeed": 13
+  },
+  "14": {
+    "Level": 14,
+    "Hp": 14,
+    "Mp": 14,
+    "Attack": 14,
+    "Defence": 14,
+    "Critical": 14,
+    "CriticalDamage": 14,
+    "AttackSpeed": 14
+  },
+  "15": {
+    "Level": 15,
+    "Hp": 15,
+    "Mp": 15,
+    "Attack": 15,
+    "Defence": 15,
+    "Critical": 15,
+    "CriticalDamage": 15,
+    "AttackSpeed": 15
+  },
+  "16": {
+    "Level": 16,
+    "Hp": 16,
+    "Mp": 16,
+    "Attack": 16,
+    "Defence": 16,
+    "Critical": 16,
+    "CriticalDamage": 16,
+    "AttackSpeed": 16
+  },
+  "17": {
+    "Level": 17,
+    "Hp": 17,
+    "Mp": 17,
+    "Attack": 17,
+    "Defence": 17,
+    "Critical": 17,
+    "CriticalDamage": 17,
+    "AttackSpeed": 17
+  },
+  "18": {
+    "Level": 18,
+    "Hp": 18,
+    "Mp": 18,
+    "Attack": 18,
+    "Defence": 18,
+    "Critical": 18,
+    "CriticalDamage": 18,
+    "AttackSpeed": 18
+  },
+  "19": {
+    "Level": 19,
+    "Hp": 19,
+    "Mp": 19,
+    "Attack": 19,
+    "Defence": 19,
+    "Critical": 19,
+    "CriticalDamage": 19,
+    "AttackSpeed": 19
+  },
+  "20": {
+    "Level": 20,
+    "Hp": 20,
+    "Mp": 20,
+    "Attack": 20,
+    "Defence": 20,
+    "Critical": 20,
+    "CriticalDamage": 20,
+    "AttackSpeed": 20
+  },
+  "21": {
+    "Level": 21,
+    "Hp": 21,
+    "Mp": 21,
+    "Attack": 21,
+    "Defence": 21,
+    "Critical": 21,
+    "CriticalDamage": 21,
+    "AttackSpeed": 21
+  },
+  "22": {
+    "Level": 22,
+    "Hp": 22,
+    "Mp": 22,
+    "Attack": 22,
+    "Defence": 22,
+    "Critical": 22,
+    "CriticalDamage": 22,
+    "AttackSpeed": 22
+  },
+  "23": {
+    "Level": 23,
+    "Hp": 23,
+    "Mp": 23,
+    "Attack": 23,
+    "Defence": 23,
+    "Critical": 23,
+    "CriticalDamage": 23,
+    "AttackSpeed": 23
+  },
+  "24": {
+    "Level": 24,
+    "Hp": 24,
+    "Mp": 24,
+    "Attack": 24,
+    "Defence": 24,
+    "Critical": 24,
+    "CriticalDamage": 24,
+    "AttackSpeed": 24
+  },
+  "25": {
+    "Level": 25,
+    "Hp": 25,
+    "Mp": 25,
+    "Attack": 25,
+    "Defence": 25,
+    "Critical": 25,
+    "CriticalDamage": 25,
+    "AttackSpeed": 25
+  },
+  "26": {
+    "Level": 26,
+    "Hp": 26,
+    "Mp": 26,
+    "Attack": 26,
+    "Defence": 26,
+    "Critical": 26,
+    "CriticalDamage": 26,
+    "AttackSpeed": 26
+  },
+  "27": {
+    "Level": 27,
+    "Hp": 27,
+    "Mp": 27,
+    "Attack": 27,
+    "Defence": 27,
+    "Critical": 27,
+    "CriticalDamage": 27,
+    "AttackSpeed": 27
+  },
+  "28": {
+    "Level": 28,
+    "Hp": 28,
+    "Mp": 28,
+    "Attack": 28,
+    "Defence": 28,
+    "Critical": 28,
+    "CriticalDamage": 28,
+    "AttackSpeed": 28
+  },
+  "29": {
+    "Level": 29,
+    "Hp": 29,
+    "Mp": 29,
+    "Attack": 29,
+    "Defence": 29,
+    "Critical": 29,
+    "CriticalDamage": 29,
+    "AttackSpeed": 29
+  },
+  "30": {
+    "Level": 30,
+    "Hp": 30,
+    "Mp": 30,
+    "Attack": 30,
+    "Defence": 30,
+    "Critical": 30,
+    "CriticalDamage": 30,
+    "AttackSpeed": 30
+  },
+  "31": {
+    "Level": 31,
+    "Hp": 31,
+    "Mp": 31,
+    "Attack": 31,
+    "Defence": 31,
+    "Critical": 31,
+    "CriticalDamage": 31,
+    "AttackSpeed": 31
+  },
+  "32": {
+    "Level": 32,
+    "Hp": 32,
+    "Mp": 32,
+    "Attack": 32,
+    "Defence": 32,
+    "Critical": 32,
+    "CriticalDamage": 32,
+    "AttackSpeed": 32
+  },
+  "33": {
+    "Level": 33,
+    "Hp": 33,
+    "Mp": 33,
+    "Attack": 33,
+    "Defence": 33,
+    "Critical": 33,
+    "CriticalDamage": 33,
+    "AttackSpeed": 33
+  },
+  "34": {
+    "Level": 34,
+    "Hp": 34,
+    "Mp": 34,
+    "Attack": 34,
+    "Defence": 34,
+    "Critical": 34,
+    "CriticalDamage": 34,
+    "AttackSpeed": 34
+  },
+  "35": {
+    "Level": 35,
+    "Hp": 35,
+    "Mp": 35,
+    "Attack": 35,
+    "Defence": 35,
+    "Critical": 35,
+    "CriticalDamage": 35,
+    "AttackSpeed": 35
+  },
+  "36": {
+    "Level": 36,
+    "Hp": 36,
+    "Mp": 36,
+    "Attack": 36,
+    "Defence": 36,
+    "Critical": 36,
+    "CriticalDamage": 36,
+    "AttackSpeed": 36
+  },
+  "37": {
+    "Level": 37,
+    "Hp": 37,
+    "Mp": 37,
+    "Attack": 37,
+    "Defence": 37,
+    "Critical": 37,
+    "CriticalDamage": 37,
+    "AttackSpeed": 37
+  },
+  "38": {
+    "Level": 38,
+    "Hp": 38,
+    "Mp": 38,
+    "Attack": 38,
+    "Defence": 38,
+    "Critical": 38,
+    "CriticalDamage": 38,
+    "AttackSpeed": 38
+  },
+  "39": {
+    "Level": 39,
+    "Hp": 39,
+    "Mp": 39,
+    "Attack": 39,
+    "Defence": 39,
+    "Critical": 39,
+    "CriticalDamage": 39,
+    "AttackSpeed": 39
+  },
+  "40": {
+    "Level": 40,
+    "Hp": 40,
+    "Mp": 40,
+    "Attack": 40,
+    "Defence": 40,
+    "Critical": 40,
+    "CriticalDamage": 40,
+    "AttackSpeed": 40
+  },
+  "41": {
+    "Level": 41,
+    "Hp": 41,
+    "Mp": 41,
+    "Attack": 41,
+    "Defence": 41,
+    "Critical": 41,
+    "CriticalDamage": 41,
+    "AttackSpeed": 41
+  },
+  "42": {
+    "Level": 42,
+    "Hp": 42,
+    "Mp": 42,
+    "Attack": 42,
+    "Defence": 42,
+    "Critical": 42,
+    "CriticalDamage": 42,
+    "AttackSpeed": 42
+  },
+  "43": {
+    "Level": 43,
+    "Hp": 43,
+    "Mp": 43,
+    "Attack": 43,
+    "Defence": 43,
+    "Critical": 43,
+    "CriticalDamage": 43,
+    "AttackSpeed": 43
+  },
+  "44": {
+    "Level": 44,
+    "Hp": 44,
+    "Mp": 44,
+    "Attack": 44,
+    "Defence": 44,
+    "Critical": 44,
+    "CriticalDamage": 44,
+    "AttackSpeed": 44
+  },
+  "45": {
+    "Level": 45,
+    "Hp": 45,
+    "Mp": 45,
+    "Attack": 45,
+    "Defence": 45,
+    "Critical": 45,
+    "CriticalDamage": 45,
+    "AttackSpeed": 45
+  },
+  "46": {
+    "Level": 46,
+    "Hp": 46,
+    "Mp": 46,
+    "Attack": 46,
+    "Defence": 46,
+    "Critical": 46,
+    "CriticalDamage": 46,
+    "AttackSpeed": 46
+  },
+  "47": {
+    "Level": 47,
+    "Hp": 47,
+    "Mp": 47,
+    "Attack": 47,
+    "Defence": 47,
+    "Critical": 47,
+    "CriticalDamage": 47,
+    "AttackSpeed": 47
+  },
+  "48": {
+    "Level": 48,
+    "Hp": 48,
+    "Mp": 48,
+    "Attack": 48,
+    "Defence": 48,
+    "Critical": 48,
+    "CriticalDamage": 48,
+    "AttackSpeed": 48
+  },
+  "49": {
+    "Level": 49,
+    "Hp": 49,
+    "Mp": 49,
+    "Attack": 49,
+    "Defence": 49,
+    "Critical": 49,
+    "CriticalDamage": 49,
+    "AttackSpeed": 49
+  },
+  "50": {
+    "Level": 50,
+    "Hp": 50,
+    "Mp": 50,
+    "Attack": 50,
+    "Defence": 50,
+    "Critical": 50,
+    "CriticalDamage": 50,
+    "AttackSpeed": 50
+  },
+  "51": {
+    "Level": 51,
+    "Hp": 51,
+    "Mp": 51,
+    "Attack": 51,
+    "Defence": 51,
+    "Critical": 51,
+    "CriticalDamage": 51,
+    "AttackSpeed": 51
+  },
+  "52": {
+    "Level": 52,
+    "Hp": 52,
+    "Mp": 52,
+    "Attack": 52,
+    "Defence": 52,
+    "Critical": 52,
+    "CriticalDamage": 52,
+    "AttackSpeed": 52
+  },
+  "53": {
+    "Level": 53,
+    "Hp": 53,
+    "Mp": 53,
+    "Attack": 53,
+    "Defence": 53,
+    "Critical": 53,
+    "CriticalDamage": 53,
+    "AttackSpeed": 53
+  },
+  "54": {
+    "Level": 54,
+    "Hp": 54,
+    "Mp": 54,
+    "Attack": 54,
+    "Defence": 54,
+    "Critical": 54,
+    "CriticalDamage": 54,
+    "AttackSpeed": 54
+  },
+  "55": {
+    "Level": 55,
+    "Hp": 55,
+    "Mp": 55,
+    "Attack": 55,
+    "Defence": 55,
+    "Critical": 55,
+    "CriticalDamage": 55,
+    "AttackSpeed": 55
+  },
+  "56": {
+    "Level": 56,
+    "Hp": 56,
+    "Mp": 56,
+    "Attack": 56,
+    "Defence": 56,
+    "Critical": 56,
+    "CriticalDamage": 56,
+    "AttackSpeed": 56
+  },
+  "57": {
+    "Level": 57,
+    "Hp": 57,
+    "Mp": 57,
+    "Attack": 57,
+    "Defence": 57,
+    "Critical": 57,
+    "CriticalDamage": 57,
+    "AttackSpeed": 57
+  },
+  "58": {
+    "Level": 58,
+    "Hp": 58,
+    "Mp": 58,
+    "Attack": 58,
+    "Defence": 58,
+    "Critical": 58,
+    "CriticalDamage": 58,
+    "AttackSpeed": 58
+  },
+  "59": {
+    "Level": 59,
+    "Hp": 59,
+    "Mp": 59,
+    "Attack": 59,
+    "Defence": 59,
+    "Critical": 59,
+    "CriticalDamage": 59,
+    "AttackSpeed": 59
+  },
+  "60": {
+    "Level": 60,
+    "Hp": 60,
+    "Mp": 60,
+    "Attack": 60,
+    "Defence": 60,
+    "Critical": 60,
+    "CriticalDamage": 60,
+    "AttackSpeed": 60
+  },
+  "61": {
+    "Level": 61,
+    "Hp": 61,
+    "Mp": 61,
+    "Attack": 61,
+    "Defence": 61,
+    "Critical": 61,
+    "CriticalDamage": 61,
+    "AttackSpeed": 61
+  },
+  "62": {
+    "Level": 62,
+    "Hp": 62,
+    "Mp": 62,
+    "Attack": 62,
+    "Defence": 62,
+    "Critical": 62,
+    "CriticalDamage": 62,
+    "AttackSpeed": 62
+  },
+  "63": {
+    "Level": 63,
+    "Hp": 63,
+    "Mp": 63,
+    "Attack": 63,
+    "Defence": 63,
+    "Critical": 63,
+    "CriticalDamage": 63,
+    "AttackSpeed": 63
+  },
+  "64": {
+    "Level": 64,
+    "Hp": 64,
+    "Mp": 64,
+    "Attack": 64,
+    "Defence": 64,
+    "Critical": 64,
+    "CriticalDamage": 64,
+    "AttackSpeed": 64
+  },
+  "65": {
+    "Level": 65,
+    "Hp": 65,
+    "Mp": 65,
+    "Attack": 65,
+    "Defence": 65,
+    "Critical": 65,
+    "CriticalDamage": 65,
+    "AttackSpeed": 65
+  },
+  "66": {
+    "Level": 66,
+    "Hp": 66,
+    "Mp": 66,
+    "Attack": 66,
+    "Defence": 66,
+    "Critical": 66,
+    "CriticalDamage": 66,
+    "AttackSpeed": 66
+  },
+  "67": {
+    "Level": 67,
+    "Hp": 67,
+    "Mp": 67,
+    "Attack": 67,
+    "Defence": 67,
+    "Critical": 67,
+    "CriticalDamage": 67,
+    "AttackSpeed": 67
+  },
+  "68": {
+    "Level": 68,
+    "Hp": 68,
+    "Mp": 68,
+    "Attack": 68,
+    "Defence": 68,
+    "Critical": 68,
+    "CriticalDamage": 68,
+    "AttackSpeed": 68
+  },
+  "69": {
+    "Level": 69,
+    "Hp": 69,
+    "Mp": 69,
+    "Attack": 69,
+    "Defence": 69,
+    "Critical": 69,
+    "CriticalDamage": 69,
+    "AttackSpeed": 69
+  },
+  "70": {
+    "Level": 70,
+    "Hp": 70,
+    "Mp": 70,
+    "Attack": 70,
+    "Defence": 70,
+    "Critical": 70,
+    "CriticalDamage": 70,
+    "AttackSpeed": 70
+  },
+  "71": {
+    "Level": 71,
+    "Hp": 71,
+    "Mp": 71,
+    "Attack": 71,
+    "Defence": 71,
+    "Critical": 71,
+    "CriticalDamage": 71,
+    "AttackSpeed": 71
+  },
+  "72": {
+    "Level": 72,
+    "Hp": 72,
+    "Mp": 72,
+    "Attack": 72,
+    "Defence": 72,
+    "Critical": 72,
+    "CriticalDamage": 72,
+    "AttackSpeed": 72
+  },
+  "73": {
+    "Level": 73,
+    "Hp": 73,
+    "Mp": 73,
+    "Attack": 73,
+    "Defence": 73,
+    "Critical": 73,
+    "CriticalDamage": 73,
+    "AttackSpeed": 73
+  },
+  "74": {
+    "Level": 74,
+    "Hp": 74,
+    "Mp": 74,
+    "Attack": 74,
+    "Defence": 74,
+    "Critical": 74,
+    "CriticalDamage": 74,
+    "AttackSpeed": 74
+  },
+  "75": {
+    "Level": 75,
+    "Hp": 75,
+    "Mp": 75,
+    "Attack": 75,
+    "Defence": 75,
+    "Critical": 75,
+    "CriticalDamage": 75,
+    "AttackSpeed": 75
+  },
+  "76": {
+    "Level": 76,
+    "Hp": 76,
+    "Mp": 76,
+    "Attack": 76,
+    "Defence": 76,
+    "Critical": 76,
+    "CriticalDamage": 76,
+    "AttackSpeed": 76
+  },
+  "77": {
+    "Level": 77,
+    "Hp": 77,
+    "Mp": 77,
+    "Attack": 77,
+    "Defence": 77,
+    "Critical": 77,
+    "CriticalDamage": 77,
+    "AttackSpeed": 77
+  },
+  "78": {
+    "Level": 78,
+    "Hp": 78,
+    "Mp": 78,
+    "Attack": 78,
+    "Defence": 78,
+    "Critical": 78,
+    "CriticalDamage": 78,
+    "AttackSpeed": 78
+  },
+  "79": {
+    "Level": 79,
+    "Hp": 79,
+    "Mp": 79,
+    "Attack": 79,
+    "Defence": 79,
+    "Critical": 79,
+    "CriticalDamage": 79,
+    "AttackSpeed": 79
+  },
+  "80": {
+    "Level": 80,
+    "Hp": 80,
+    "Mp": 80,
+    "Attack": 80,
+    "Defence": 80,
+    "Critical": 80,
+    "CriticalDamage": 80,
+    "AttackSpeed": 80
+  },
+  "81": {
+    "Level": 81,
+    "Hp": 81,
+    "Mp": 81,
+    "Attack": 81,
+    "Defence": 81,
+    "Critical": 81,
+    "CriticalDamage": 81,
+    "AttackSpeed": 81
+  },
+  "82": {
+    "Level": 82,
+    "Hp": 82,
+    "Mp": 82,
+    "Attack": 82,
+    "Defence": 82,
+    "Critical": 82,
+    "CriticalDamage": 82,
+    "AttackSpeed": 82
+  },
+  "83": {
+    "Level": 83,
+    "Hp": 83,
+    "Mp": 83,
+    "Attack": 83,
+    "Defence": 83,
+    "Critical": 83,
+    "CriticalDamage": 83,
+    "AttackSpeed": 83
+  },
+  "84": {
+    "Level": 84,
+    "Hp": 84,
+    "Mp": 84,
+    "Attack": 84,
+    "Defence": 84,
+    "Critical": 84,
+    "CriticalDamage": 84,
+    "AttackSpeed": 84
+  },
+  "85": {
+    "Level": 85,
+    "Hp": 85,
+    "Mp": 85,
+    "Attack": 85,
+    "Defence": 85,
+    "Critical": 85,
+    "CriticalDamage": 85,
+    "AttackSpeed": 85
+  },
+  "86": {
+    "Level": 86,
+    "Hp": 86,
+    "Mp": 86,
+    "Attack": 86,
+    "Defence": 86,
+    "Critical": 86,
+    "CriticalDamage": 86,
+    "AttackSpeed": 86
+  },
+  "87": {
+    "Level": 87,
+    "Hp": 87,
+    "Mp": 87,
+    "Attack": 87,
+    "Defence": 87,
+    "Critical": 87,
+    "CriticalDamage": 87,
+    "AttackSpeed": 87
+  },
+  "88": {
+    "Level": 88,
+    "Hp": 88,
+    "Mp": 88,
+    "Attack": 88,
+    "Defence": 88,
+    "Critical": 88,
+    "CriticalDamage": 88,
+    "AttackSpeed": 88
+  },
+  "89": {
+    "Level": 89,
+    "Hp": 89,
+    "Mp": 89,
+    "Attack": 89,
+    "Defence": 89,
+    "Critical": 89,
+    "CriticalDamage": 89,
+    "AttackSpeed": 89
+  },
+  "90": {
+    "Level": 90,
+    "Hp": 90,
+    "Mp": 90,
+    "Attack": 90,
+    "Defence": 90,
+    "Critical": 90,
+    "CriticalDamage": 90,
+    "AttackSpeed": 90
+  },
+  "91": {
+    "Level": 91,
+    "Hp": 91,
+    "Mp": 91,
+    "Attack": 91,
+    "Defence": 91,
+    "Critical": 91,
+    "CriticalDamage": 91,
+    "AttackSpeed": 91
+  },
+  "92": {
+    "Level": 92,
+    "Hp": 92,
+    "Mp": 92,
+    "Attack": 92,
+    "Defence": 92,
+    "Critical": 92,
+    "CriticalDamage": 92,
+    "AttackSpeed": 92
+  },
+  "93": {
+    "Level": 93,
+    "Hp": 93,
+    "Mp": 93,
+    "Attack": 93,
+    "Defence": 93,
+    "Critical": 93,
+    "CriticalDamage": 93,
+    "AttackSpeed": 93
+  },
+  "94": {
+    "Level": 94,
+    "Hp": 94,
+    "Mp": 94,
+    "Attack": 94,
+    "Defence": 94,
+    "Critical": 94,
+    "CriticalDamage": 94,
+    "AttackSpeed": 94
+  },
+  "95": {
+    "Level": 95,
+    "Hp": 95,
+    "Mp": 95,
+    "Attack": 95,
+    "Defence": 95,
+    "Critical": 95,
+    "CriticalDamage": 95,
+    "AttackSpeed": 95
+  },
+  "96": {
+    "Level": 96,
+    "Hp": 96,
+    "Mp": 96,
+    "Attack": 96,
+    "Defence": 96,
+    "Critical": 96,
+    "CriticalDamage": 96,
+    "AttackSpeed": 96
+  },
+  "97": {
+    "Level": 97,
+    "Hp": 97,
+    "Mp": 97,
+    "Attack": 97,
+    "Defence": 97,
+    "Critical": 97,
+    "CriticalDamage": 97,
+    "AttackSpeed": 97
+  },
+  "98": {
+    "Level": 98,
+    "Hp": 98,
+    "Mp": 98,
+    "Attack": 98,
+    "Defence": 98,
+    "Critical": 98,
+    "CriticalDamage": 98,
+    "AttackSpeed": 98
+  },
+  "99": {
+    "Level": 99,
+    "Hp": 99,
+    "Mp": 99,
+    "Attack": 99,
+    "Defence": 99,
+    "Critical": 99,
+    "CriticalDamage": 99,
+    "AttackSpeed": 99
+  },
+  "100": {
+    "Level": 100,
+    "Hp": 100,
+    "Mp": 100,
+    "Attack": 100,
+    "Defence": 100,
+    "Critical": 100,
+    "CriticalDamage": 100,
+    "AttackSpeed": 100
+  },
+  "101": {
+    "Level": 101,
+    "Hp": 101,
+    "Mp": 101,
+    "Attack": 101,
+    "Defence": 101,
+    "Critical": 101,
+    "CriticalDamage": 101,
+    "AttackSpeed": 101
+  },
+  "102": {
+    "Level": 102,
+    "Hp": 102,
+    "Mp": 102,
+    "Attack": 102,
+    "Defence": 102,
+    "Critical": 102,
+    "CriticalDamage": 102,
+    "AttackSpeed": 102
+  },
+  "103": {
+    "Level": 103,
+    "Hp": 103,
+    "Mp": 103,
+    "Attack": 103,
+    "Defence": 103,
+    "Critical": 103,
+    "CriticalDamage": 103,
+    "AttackSpeed": 103
+  },
+  "104": {
+    "Level": 104,
+    "Hp": 104,
+    "Mp": 104,
+    "Attack": 104,
+    "Defence": 104,
+    "Critical": 104,
+    "CriticalDamage": 104,
+    "AttackSpeed": 104
+  },
+  "105": {
+    "Level": 105,
+    "Hp": 105,
+    "Mp": 105,
+    "Attack": 105,
+    "Defence": 105,
+    "Critical": 105,
+    "CriticalDamage": 105,
+    "AttackSpeed": 105
+  },
+  "106": {
+    "Level": 106,
+    "Hp": 106,
+    "Mp": 106,
+    "Attack": 106,
+    "Defence": 106,
+    "Critical": 106,
+    "CriticalDamage": 106,
+    "AttackSpeed": 106
+  },
+  "107": {
+    "Level": 107,
+    "Hp": 107,
+    "Mp": 107,
+    "Attack": 107,
+    "Defence": 107,
+    "Critical": 107,
+    "CriticalDamage": 107,
+    "AttackSpeed": 107
+  },
+  "108": {
+    "Level": 108,
+    "Hp": 108,
+    "Mp": 108,
+    "Attack": 108,
+    "Defence": 108,
+    "Critical": 108,
+    "CriticalDamage": 108,
+    "AttackSpeed": 108
+  },
+  "109": {
+    "Level": 109,
+    "Hp": 109,
+    "Mp": 109,
+    "Attack": 109,
+    "Defence": 109,
+    "Critical": 109,
+    "CriticalDamage": 109,
+    "AttackSpeed": 109
+  },
+  "110": {
+    "Level": 110,
+    "Hp": 110,
+    "Mp": 110,
+    "Attack": 110,
+    "Defence": 110,
+    "Critical": 110,
+    "CriticalDamage": 110,
+    "AttackSpeed": 110
+  },
+  "111": {
+    "Level": 111,
+    "Hp": 111,
+    "Mp": 111,
+    "Attack": 111,
+    "Defence": 111,
+    "Critical": 111,
+    "CriticalDamage": 111,
+    "AttackSpeed": 111
+  },
+  "112": {
+    "Level": 112,
+    "Hp": 112,
+    "Mp": 112,
+    "Attack": 112,
+    "Defence": 112,
+    "Critical": 112,
+    "CriticalDamage": 112,
+    "AttackSpeed": 112
+  },
+  "113": {
+    "Level": 113,
+    "Hp": 113,
+    "Mp": 113,
+    "Attack": 113,
+    "Defence": 113,
+    "Critical": 113,
+    "CriticalDamage": 113,
+    "AttackSpeed": 113
+  },
+  "114": {
+    "Level": 114,
+    "Hp": 114,
+    "Mp": 114,
+    "Attack": 114,
+    "Defence": 114,
+    "Critical": 114,
+    "CriticalDamage": 114,
+    "AttackSpeed": 114
+  },
+  "115": {
+    "Level": 115,
+    "Hp": 115,
+    "Mp": 115,
+    "Attack": 115,
+    "Defence": 115,
+    "Critical": 115,
+    "CriticalDamage": 115,
+    "AttackSpeed": 115
+  },
+  "116": {
+    "Level": 116,
+    "Hp": 116,
+    "Mp": 116,
+    "Attack": 116,
+    "Defence": 116,
+    "Critical": 116,
+    "CriticalDamage": 116,
+    "AttackSpeed": 116
+  },
+  "117": {
+    "Level": 117,
+    "Hp": 117,
+    "Mp": 117,
+    "Attack": 117,
+    "Defence": 117,
+    "Critical": 117,
+    "CriticalDamage": 117,
+    "AttackSpeed": 117
+  },
+  "118": {
+    "Level": 118,
+    "Hp": 118,
+    "Mp": 118,
+    "Attack": 118,
+    "Defence": 118,
+    "Critical": 118,
+    "CriticalDamage": 118,
+    "AttackSpeed": 118
+  },
+  "119": {
+    "Level": 119,
+    "Hp": 119,
+    "Mp": 119,
+    "Attack": 119,
+    "Defence": 119,
+    "Critical": 119,
+    "CriticalDamage": 119,
+    "AttackSpeed": 119
+  },
+  "120": {
+    "Level": 120,
+    "Hp": 120,
+    "Mp": 120,
+    "Attack": 120,
+    "Defence": 120,
+    "Critical": 120,
+    "CriticalDamage": 120,
+    "AttackSpeed": 120
+  },
+  "121": {
+    "Level": 121,
+    "Hp": 121,
+    "Mp": 121,
+    "Attack": 121,
+    "Defence": 121,
+    "Critical": 121,
+    "CriticalDamage": 121,
+    "AttackSpeed": 121
+  },
+  "122": {
+    "Level": 122,
+    "Hp": 122,
+    "Mp": 122,
+    "Attack": 122,
+    "Defence": 122,
+    "Critical": 122,
+    "CriticalDamage": 122,
+    "AttackSpeed": 122
+  },
+  "123": {
+    "Level": 123,
+    "Hp": 123,
+    "Mp": 123,
+    "Attack": 123,
+    "Defence": 123,
+    "Critical": 123,
+    "CriticalDamage": 123,
+    "AttackSpeed": 123
+  },
+  "124": {
+    "Level": 124,
+    "Hp": 124,
+    "Mp": 124,
+    "Attack": 124,
+    "Defence": 124,
+    "Critical": 124,
+    "CriticalDamage": 124,
+    "AttackSpeed": 124
+  },
+  "125": {
+    "Level": 125,
+    "Hp": 125,
+    "Mp": 125,
+    "Attack": 125,
+    "Defence": 125,
+    "Critical": 125,
+    "CriticalDamage": 125,
+    "AttackSpeed": 125
+  },
+  "126": {
+    "Level": 126,
+    "Hp": 126,
+    "Mp": 126,
+    "Attack": 126,
+    "Defence": 126,
+    "Critical": 126,
+    "CriticalDamage": 126,
+    "AttackSpeed": 126
+  },
+  "127": {
+    "Level": 127,
+    "Hp": 127,
+    "Mp": 127,
+    "Attack": 127,
+    "Defence": 127,
+    "Critical": 127,
+    "CriticalDamage": 127,
+    "AttackSpeed": 127
+  },
+  "128": {
+    "Level": 128,
+    "Hp": 128,
+    "Mp": 128,
+    "Attack": 128,
+    "Defence": 128,
+    "Critical": 128,
+    "CriticalDamage": 128,
+    "AttackSpeed": 128
+  },
+  "129": {
+    "Level": 129,
+    "Hp": 129,
+    "Mp": 129,
+    "Attack": 129,
+    "Defence": 129,
+    "Critical": 129,
+    "CriticalDamage": 129,
+    "AttackSpeed": 129
+  },
+  "130": {
+    "Level": 130,
+    "Hp": 130,
+    "Mp": 130,
+    "Attack": 130,
+    "Defence": 130,
+    "Critical": 130,
+    "CriticalDamage": 130,
+    "AttackSpeed": 130
+  },
+  "131": {
+    "Level": 131,
+    "Hp": 131,
+    "Mp": 131,
+    "Attack": 131,
+    "Defence": 131,
+    "Critical": 131,
+    "CriticalDamage": 131,
+    "AttackSpeed": 131
+  },
+  "132": {
+    "Level": 132,
+    "Hp": 132,
+    "Mp": 132,
+    "Attack": 132,
+    "Defence": 132,
+    "Critical": 132,
+    "CriticalDamage": 132,
+    "AttackSpeed": 132
+  },
+  "133": {
+    "Level": 133,
+    "Hp": 133,
+    "Mp": 133,
+    "Attack": 133,
+    "Defence": 133,
+    "Critical": 133,
+    "CriticalDamage": 133,
+    "AttackSpeed": 133
+  },
+  "134": {
+    "Level": 134,
+    "Hp": 134,
+    "Mp": 134,
+    "Attack": 134,
+    "Defence": 134,
+    "Critical": 134,
+    "CriticalDamage": 134,
+    "AttackSpeed": 134
+  },
+  "135": {
+    "Level": 135,
+    "Hp": 135,
+    "Mp": 135,
+    "Attack": 135,
+    "Defence": 135,
+    "Critical": 135,
+    "CriticalDamage": 135,
+    "AttackSpeed": 135
+  },
+  "136": {
+    "Level": 136,
+    "Hp": 136,
+    "Mp": 136,
+    "Attack": 136,
+    "Defence": 136,
+    "Critical": 136,
+    "CriticalDamage": 136,
+    "AttackSpeed": 136
+  },
+  "137": {
+    "Level": 137,
+    "Hp": 137,
+    "Mp": 137,
+    "Attack": 137,
+    "Defence": 137,
+    "Critical": 137,
+    "CriticalDamage": 137,
+    "AttackSpeed": 137
+  },
+  "138": {
+    "Level": 138,
+    "Hp": 138,
+    "Mp": 138,
+    "Attack": 138,
+    "Defence": 138,
+    "Critical": 138,
+    "CriticalDamage": 138,
+    "AttackSpeed": 138
+  },
+  "139": {
+    "Level": 139,
+    "Hp": 139,
+    "Mp": 139,
+    "Attack": 139,
+    "Defence": 139,
+    "Critical": 139,
+    "CriticalDamage": 139,
+    "AttackSpeed": 139
+  },
+  "140": {
+    "Level": 140,
+    "Hp": 140,
+    "Mp": 140,
+    "Attack": 140,
+    "Defence": 140,
+    "Critical": 140,
+    "CriticalDamage": 140,
+    "AttackSpeed": 140
+  },
+  "141": {
+    "Level": 141,
+    "Hp": 141,
+    "Mp": 141,
+    "Attack": 141,
+    "Defence": 141,
+    "Critical": 141,
+    "CriticalDamage": 141,
+    "AttackSpeed": 141
+  },
+  "142": {
+    "Level": 142,
+    "Hp": 142,
+    "Mp": 142,
+    "Attack": 142,
+    "Defence": 142,
+    "Critical": 142,
+    "CriticalDamage": 142,
+    "AttackSpeed": 142
+  },
+  "143": {
+    "Level": 143,
+    "Hp": 143,
+    "Mp": 143,
+    "Attack": 143,
+    "Defence": 143,
+    "Critical": 143,
+    "CriticalDamage": 143,
+    "AttackSpeed": 143
+  },
+  "144": {
+    "Level": 144,
+    "Hp": 144,
+    "Mp": 144,
+    "Attack": 144,
+    "Defence": 144,
+    "Critical": 144,
+    "CriticalDamage": 144,
+    "AttackSpeed": 144
+  },
+  "145": {
+    "Level": 145,
+    "Hp": 145,
+    "Mp": 145,
+    "Attack": 145,
+    "Defence": 145,
+    "Critical": 145,
+    "CriticalDamage": 145,
+    "AttackSpeed": 145
+  },
+  "146": {
+    "Level": 146,
+    "Hp": 146,
+    "Mp": 146,
+    "Attack": 146,
+    "Defence": 146,
+    "Critical": 146,
+    "CriticalDamage": 146,
+    "AttackSpeed": 146
+  },
+  "147": {
+    "Level": 147,
+    "Hp": 147,
+    "Mp": 147,
+    "Attack": 147,
+    "Defence": 147,
+    "Critical": 147,
+    "CriticalDamage": 147,
+    "AttackSpeed": 147
+  },
+  "148": {
+    "Level": 148,
+    "Hp": 148,
+    "Mp": 148,
+    "Attack": 148,
+    "Defence": 148,
+    "Critical": 148,
+    "CriticalDamage": 148,
+    "AttackSpeed": 148
+  },
+  "149": {
+    "Level": 149,
+    "Hp": 149,
+    "Mp": 149,
+    "Attack": 149,
+    "Defence": 149,
+    "Critical": 149,
+    "CriticalDamage": 149,
+    "AttackSpeed": 149
+  },
+  "150": {
+    "Level": 150,
+    "Hp": 150,
+    "Mp": 150,
+    "Attack": 150,
+    "Defence": 150,
+    "Critical": 150,
+    "CriticalDamage": 150,
+    "AttackSpeed": 150
+  },
+  "151": {
+    "Level": 151,
+    "Hp": 151,
+    "Mp": 151,
+    "Attack": 151,
+    "Defence": 151,
+    "Critical": 151,
+    "CriticalDamage": 151,
+    "AttackSpeed": 151
+  },
+  "152": {
+    "Level": 152,
+    "Hp": 152,
+    "Mp": 152,
+    "Attack": 152,
+    "Defence": 152,
+    "Critical": 152,
+    "CriticalDamage": 152,
+    "AttackSpeed": 152
+  },
+  "153": {
+    "Level": 153,
+    "Hp": 153,
+    "Mp": 153,
+    "Attack": 153,
+    "Defence": 153,
+    "Critical": 153,
+    "CriticalDamage": 153,
+    "AttackSpeed": 153
+  },
+  "154": {
+    "Level": 154,
+    "Hp": 154,
+    "Mp": 154,
+    "Attack": 154,
+    "Defence": 154,
+    "Critical": 154,
+    "CriticalDamage": 154,
+    "AttackSpeed": 154
+  },
+  "155": {
+    "Level": 155,
+    "Hp": 155,
+    "Mp": 155,
+    "Attack": 155,
+    "Defence": 155,
+    "Critical": 155,
+    "CriticalDamage": 155,
+    "AttackSpeed": 155
+  },
+  "156": {
+    "Level": 156,
+    "Hp": 156,
+    "Mp": 156,
+    "Attack": 156,
+    "Defence": 156,
+    "Critical": 156,
+    "CriticalDamage": 156,
+    "AttackSpeed": 156
+  },
+  "157": {
+    "Level": 157,
+    "Hp": 157,
+    "Mp": 157,
+    "Attack": 157,
+    "Defence": 157,
+    "Critical": 157,
+    "CriticalDamage": 157,
+    "AttackSpeed": 157
+  },
+  "158": {
+    "Level": 158,
+    "Hp": 158,
+    "Mp": 158,
+    "Attack": 158,
+    "Defence": 158,
+    "Critical": 158,
+    "CriticalDamage": 158,
+    "AttackSpeed": 158
+  },
+  "159": {
+    "Level": 159,
+    "Hp": 159,
+    "Mp": 159,
+    "Attack": 159,
+    "Defence": 159,
+    "Critical": 159,
+    "CriticalDamage": 159,
+    "AttackSpeed": 159
+  },
+  "160": {
+    "Level": 160,
+    "Hp": 160,
+    "Mp": 160,
+    "Attack": 160,
+    "Defence": 160,
+    "Critical": 160,
+    "CriticalDamage": 160,
+    "AttackSpeed": 160
+  },
+  "161": {
+    "Level": 161,
+    "Hp": 161,
+    "Mp": 161,
+    "Attack": 161,
+    "Defence": 161,
+    "Critical": 161,
+    "CriticalDamage": 161,
+    "AttackSpeed": 161
+  },
+  "162": {
+    "Level": 162,
+    "Hp": 162,
+    "Mp": 162,
+    "Attack": 162,
+    "Defence": 162,
+    "Critical": 162,
+    "CriticalDamage": 162,
+    "AttackSpeed": 162
+  },
+  "163": {
+    "Level": 163,
+    "Hp": 163,
+    "Mp": 163,
+    "Attack": 163,
+    "Defence": 163,
+    "Critical": 163,
+    "CriticalDamage": 163,
+    "AttackSpeed": 163
+  },
+  "164": {
+    "Level": 164,
+    "Hp": 164,
+    "Mp": 164,
+    "Attack": 164,
+    "Defence": 164,
+    "Critical": 164,
+    "CriticalDamage": 164,
+    "AttackSpeed": 164
+  },
+  "165": {
+    "Level": 165,
+    "Hp": 165,
+    "Mp": 165,
+    "Attack": 165,
+    "Defence": 165,
+    "Critical": 165,
+    "CriticalDamage": 165,
+    "AttackSpeed": 165
+  },
+  "166": {
+    "Level": 166,
+    "Hp": 166,
+    "Mp": 166,
+    "Attack": 166,
+    "Defence": 166,
+    "Critical": 166,
+    "CriticalDamage": 166,
+    "AttackSpeed": 166
+  },
+  "167": {
+    "Level": 167,
+    "Hp": 167,
+    "Mp": 167,
+    "Attack": 167,
+    "Defence": 167,
+    "Critical": 167,
+    "CriticalDamage": 167,
+    "AttackSpeed": 167
+  },
+  "168": {
+    "Level": 168,
+    "Hp": 168,
+    "Mp": 168,
+    "Attack": 168,
+    "Defence": 168,
+    "Critical": 168,
+    "CriticalDamage": 168,
+    "AttackSpeed": 168
+  },
+  "169": {
+    "Level": 169,
+    "Hp": 169,
+    "Mp": 169,
+    "Attack": 169,
+    "Defence": 169,
+    "Critical": 169,
+    "CriticalDamage": 169,
+    "AttackSpeed": 169
+  },
+  "170": {
+    "Level": 170,
+    "Hp": 170,
+    "Mp": 170,
+    "Attack": 170,
+    "Defence": 170,
+    "Critical": 170,
+    "CriticalDamage": 170,
+    "AttackSpeed": 170
+  },
+  "171": {
+    "Level": 171,
+    "Hp": 171,
+    "Mp": 171,
+    "Attack": 171,
+    "Defence": 171,
+    "Critical": 171,
+    "CriticalDamage": 171,
+    "AttackSpeed": 171
+  },
+  "172": {
+    "Level": 172,
+    "Hp": 172,
+    "Mp": 172,
+    "Attack": 172,
+    "Defence": 172,
+    "Critical": 172,
+    "CriticalDamage": 172,
+    "AttackSpeed": 172
+  },
+  "173": {
+    "Level": 173,
+    "Hp": 173,
+    "Mp": 173,
+    "Attack": 173,
+    "Defence": 173,
+    "Critical": 173,
+    "CriticalDamage": 173,
+    "AttackSpeed": 173
+  },
+  "174": {
+    "Level": 174,
+    "Hp": 174,
+    "Mp": 174,
+    "Attack": 174,
+    "Defence": 174,
+    "Critical": 174,
+    "CriticalDamage": 174,
+    "AttackSpeed": 174
+  },
+  "175": {
+    "Level": 175,
+    "Hp": 175,
+    "Mp": 175,
+    "Attack": 175,
+    "Defence": 175,
+    "Critical": 175,
+    "CriticalDamage": 175,
+    "AttackSpeed": 175
+  },
+  "176": {
+    "Level": 176,
+    "Hp": 176,
+    "Mp": 176,
+    "Attack": 176,
+    "Defence": 176,
+    "Critical": 176,
+    "CriticalDamage": 176,
+    "AttackSpeed": 176
+  },
+  "177": {
+    "Level": 177,
+    "Hp": 177,
+    "Mp": 177,
+    "Attack": 177,
+    "Defence": 177,
+    "Critical": 177,
+    "CriticalDamage": 177,
+    "AttackSpeed": 177
+  },
+  "178": {
+    "Level": 178,
+    "Hp": 178,
+    "Mp": 178,
+    "Attack": 178,
+    "Defence": 178,
+    "Critical": 178,
+    "CriticalDamage": 178,
+    "AttackSpeed": 178
+  },
+  "179": {
+    "Level": 179,
+    "Hp": 179,
+    "Mp": 179,
+    "Attack": 179,
+    "Defence": 179,
+    "Critical": 179,
+    "CriticalDamage": 179,
+    "AttackSpeed": 179
+  },
+  "180": {
+    "Level": 180,
+    "Hp": 180,
+    "Mp": 180,
+    "Attack": 180,
+    "Defence": 180,
+    "Critical": 180,
+    "CriticalDamage": 180,
+    "AttackSpeed": 180
+  },
+  "181": {
+    "Level": 181,
+    "Hp": 181,
+    "Mp": 181,
+    "Attack": 181,
+    "Defence": 181,
+    "Critical": 181,
+    "CriticalDamage": 181,
+    "AttackSpeed": 181
+  },
+  "182": {
+    "Level": 182,
+    "Hp": 182,
+    "Mp": 182,
+    "Attack": 182,
+    "Defence": 182,
+    "Critical": 182,
+    "CriticalDamage": 182,
+    "AttackSpeed": 182
+  },
+  "183": {
+    "Level": 183,
+    "Hp": 183,
+    "Mp": 183,
+    "Attack": 183,
+    "Defence": 183,
+    "Critical": 183,
+    "CriticalDamage": 183,
+    "AttackSpeed": 183
+  },
+  "184": {
+    "Level": 184,
+    "Hp": 184,
+    "Mp": 184,
+    "Attack": 184,
+    "Defence": 184,
+    "Critical": 184,
+    "CriticalDamage": 184,
+    "AttackSpeed": 184
+  },
+  "185": {
+    "Level": 185,
+    "Hp": 185,
+    "Mp": 185,
+    "Attack": 185,
+    "Defence": 185,
+    "Critical": 185,
+    "CriticalDamage": 185,
+    "AttackSpeed": 185
+  },
+  "186": {
+    "Level": 186,
+    "Hp": 186,
+    "Mp": 186,
+    "Attack": 186,
+    "Defence": 186,
+    "Critical": 186,
+    "CriticalDamage": 186,
+    "AttackSpeed": 186
+  },
+  "187": {
+    "Level": 187,
+    "Hp": 187,
+    "Mp": 187,
+    "Attack": 187,
+    "Defence": 187,
+    "Critical": 187,
+    "CriticalDamage": 187,
+    "AttackSpeed": 187
+  },
+  "188": {
+    "Level": 188,
+    "Hp": 188,
+    "Mp": 188,
+    "Attack": 188,
+    "Defence": 188,
+    "Critical": 188,
+    "CriticalDamage": 188,
+    "AttackSpeed": 188
+  },
+  "189": {
+    "Level": 189,
+    "Hp": 189,
+    "Mp": 189,
+    "Attack": 189,
+    "Defence": 189,
+    "Critical": 189,
+    "CriticalDamage": 189,
+    "AttackSpeed": 189
+  },
+  "190": {
+    "Level": 190,
+    "Hp": 190,
+    "Mp": 190,
+    "Attack": 190,
+    "Defence": 190,
+    "Critical": 190,
+    "CriticalDamage": 190,
+    "AttackSpeed": 190
+  },
+  "191": {
+    "Level": 191,
+    "Hp": 191,
+    "Mp": 191,
+    "Attack": 191,
+    "Defence": 191,
+    "Critical": 191,
+    "CriticalDamage": 191,
+    "AttackSpeed": 191
+  },
+  "192": {
+    "Level": 192,
+    "Hp": 192,
+    "Mp": 192,
+    "Attack": 192,
+    "Defence": 192,
+    "Critical": 192,
+    "CriticalDamage": 192,
+    "AttackSpeed": 192
+  },
+  "193": {
+    "Level": 193,
+    "Hp": 193,
+    "Mp": 193,
+    "Attack": 193,
+    "Defence": 193,
+    "Critical": 193,
+    "CriticalDamage": 193,
+    "AttackSpeed": 193
+  },
+  "194": {
+    "Level": 194,
+    "Hp": 194,
+    "Mp": 194,
+    "Attack": 194,
+    "Defence": 194,
+    "Critical": 194,
+    "CriticalDamage": 194,
+    "AttackSpeed": 194
+  },
+  "195": {
+    "Level": 195,
+    "Hp": 195,
+    "Mp": 195,
+    "Attack": 195,
+    "Defence": 195,
+    "Critical": 195,
+    "CriticalDamage": 195,
+    "AttackSpeed": 195
+  },
+  "196": {
+    "Level": 196,
+    "Hp": 196,
+    "Mp": 196,
+    "Attack": 196,
+    "Defence": 196,
+    "Critical": 196,
+    "CriticalDamage": 196,
+    "AttackSpeed": 196
+  },
+  "197": {
+    "Level": 197,
+    "Hp": 197,
+    "Mp": 197,
+    "Attack": 197,
+    "Defence": 197,
+    "Critical": 197,
+    "CriticalDamage": 197,
+    "AttackSpeed": 197
+  },
+  "198": {
+    "Level": 198,
+    "Hp": 198,
+    "Mp": 198,
+    "Attack": 198,
+    "Defence": 198,
+    "Critical": 198,
+    "CriticalDamage": 198,
+    "AttackSpeed": 198
+  },
+  "199": {
+    "Level": 199,
+    "Hp": 199,
+    "Mp": 199,
+    "Attack": 199,
+    "Defence": 199,
+    "Critical": 199,
+    "CriticalDamage": 199,
+    "AttackSpeed": 199
+  },
+  "200": {
+    "Level": 200,
+    "Hp": 200,
+    "Mp": 200,
+    "Attack": 200,
+    "Defence": 200,
+    "Critical": 200,
+    "CriticalDamage": 200,
+    "AttackSpeed": 200
+  }
+}

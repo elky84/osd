@@ -1,5 +1,7 @@
 ﻿using DotNetty.Transport.Channels;
 using KeraLua;
+using MasterData;
+using MasterData.Table;
 using NetworkShared;
 using ServerShared.NetworkHandler;
 using System;
@@ -181,8 +183,9 @@ namespace TestServer.Model
             }
         }
 
-
         public int BaseMp => 100;
+
+        public Stat BaseStat => MasterTable.From<TableStat>()[Level];
 
         public Lua LuaThread { get; set; }
 
