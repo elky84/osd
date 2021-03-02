@@ -90,6 +90,8 @@ namespace TestServer.Model
             set => Equip(value);
         }
 
+        public ulong Gold { get; set; }
+
         public Item Active(ulong id)
         {
             var found = Inventory.SelectMany(x => x.Value).FirstOrDefault(x => x.Id == id);

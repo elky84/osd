@@ -229,6 +229,8 @@ public partial class GameController : MonoBehaviour
             UnityEngine.Debug.Log($"equipment {(EquipmentType)equipment.Value.Type} : {equipment.Value.Name}");
         }
 
+        UnityEngine.Debug.Log($"gold : {response.Gold}");
+
         return true;
     }
 

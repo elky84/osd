@@ -105,6 +105,7 @@ table PositionChanged {
 table Items {
 	inventory: [Item];
 	equipment: [Equipment];
+	gold: ulong;
 }
 
 table Damaged {
