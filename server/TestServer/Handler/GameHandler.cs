@@ -2,7 +2,6 @@
 using MasterData;
 using MasterData.Table;
 using NetworkShared;
-using NetworkShared.Types;
 using ServerShared.Model;
 using ServerShared.NetworkHandler;
 using System;

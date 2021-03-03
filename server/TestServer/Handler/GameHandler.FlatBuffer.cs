@@ -3,6 +3,7 @@ using MasterData;
 using MasterData.Table;
 using NetworkShared;
 using NetworkShared.Types;
+using Newtonsoft.Json;
 using Serilog;
 using ServerShared.Model;
 using ServerShared.NetworkHandler;
@@ -280,17 +281,11 @@ namespace TestServer.Handler
         public bool OnWarp(Session<Character> session, FlatBuffers.Protocol.Request.Warp request)
         {
             var character = session.Data;
-            if (character.Position.Delta(request.Position.Value) > 1)
-                throw new Exception("invalid");
-
             var portals = character.Map.Portals;
 
-            var portal = portals.FirstOrDefault(x => x.BeforePosition.Delta(request.Position.Value) < 5.0f);
+            var portal = portals.FirstOrDefault(x => x.BeforePosition.Delta(character.Position) < 1.0f);
             if (portal != null)
-            {
-                var after = _maps[portal.AfterMap];
-                character.Map = after;
-            }
+                character.Map = _maps[portal.AfterMap];
 
             return true;
         }

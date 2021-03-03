@@ -53,10 +53,14 @@ public partial class GameController : MonoBehaviour
     [FlatBufferEvent]
     public bool OnEnter(Enter response)
     {
+        var portals = PortalGroup.GetComponentsInChildren<Assets.Scripts.InGame.Portal>();
+        foreach (var portal in portals)
+            Destroy(portal.gameObject);
+
         for (int i = 0; i < response.PortalsLength; i++)
         {
             var portal = response.Portals(i).Value;
-            Debug.Log($"Portal to {portal.Map} : {portal.Position?.X}, {portal.Position?.Y}");
+            Assets.Scripts.InGame.Portal.Create(portal.Position.Value.ToVector2(), PortalGroup);
         }
 
         CreateObject(response.Character.Value.Name, response.Character.Value.Sequence, ObjectType.Character, response.Character.Value.Position.Value);

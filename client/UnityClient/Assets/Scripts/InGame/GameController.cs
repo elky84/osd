@@ -8,7 +8,8 @@ using UnityEngine.EventSystems;
 
 public partial class GameController : MonoBehaviour
 {
-    private Transform _objectsGroup { get; set; }
+    public Transform ObjectGroup;
+    public Transform PortalGroup;
 
     private Character MyCharacter { get; set; }
 
@@ -27,7 +28,6 @@ public partial class GameController : MonoBehaviour
 
     void Awake()
     {
-        _objectsGroup = transform.Find("Objects");
         Camera = GameObject.Find("Main Camera").GetComponent<Camera>();
         TilesTransform = transform.Find("Tiles");
     }
@@ -63,7 +63,7 @@ public partial class GameController : MonoBehaviour
 
     public void Clear()
     {
-        foreach (Transform child in _objectsGroup)
+        foreach (Transform child in ObjectGroup)
         {
             GameObject.Destroy(child.gameObject);
         }
@@ -88,28 +88,28 @@ public partial class GameController : MonoBehaviour
         {
             case ObjectType.Character:
                 {
-                    var gameObj = Instantiate(Resources.Load("Prefabs/Character") as GameObject, position.ToVector3(), Quaternion.identity, _objectsGroup);
+                    var gameObj = Instantiate(Resources.Load("Prefabs/Character") as GameObject, position.ToVector3(), Quaternion.identity, ObjectGroup);
                     obj = gameObj.GetComponent<Assets.Scripts.InGame.OOP.Character>();
                 }
                 break;
 
             case ObjectType.NPC:
                 {
-                    var gameObj = Instantiate(Resources.Load("Prefabs/Character") as GameObject, position.ToVector3(), Quaternion.identity, _objectsGroup);
+                    var gameObj = Instantiate(Resources.Load("Prefabs/Character") as GameObject, position.ToVector3(), Quaternion.identity, ObjectGroup);
                     obj = gameObj.GetComponent<Assets.Scripts.InGame.OOP.Character>();
                 }
                 break;
 
             case ObjectType.Item:
                 {
-                    var gameObj = Instantiate(Resources.Load("Prefabs/Character") as GameObject, position.ToVector3(), Quaternion.identity, _objectsGroup);
+                    var gameObj = Instantiate(Resources.Load("Prefabs/Character") as GameObject, position.ToVector3(), Quaternion.identity, ObjectGroup);
                     obj = gameObj.GetComponent<Assets.Scripts.InGame.OOP.Character>();
                 }
                 break;
 
             case ObjectType.Mob:
                 {
-                    var gameObj = Instantiate(Resources.Load("Prefabs/Mob") as GameObject, position.ToVector3(), Quaternion.identity, _objectsGroup);
+                    var gameObj = Instantiate(Resources.Load("Prefabs/Mob") as GameObject, position.ToVector3(), Quaternion.identity, ObjectGroup);
                     obj = gameObj.GetComponent<Assets.Scripts.InGame.OOP.Mob>();
                 }
                 break;
@@ -286,7 +286,7 @@ public partial class GameController : MonoBehaviour
         {
             if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
             {
-                //MyCharacter.MoveDirection(Direction.Top, true);
+                MyCharacter.Warp();
             }
             else if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
             {

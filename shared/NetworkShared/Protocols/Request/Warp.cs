@@ -21,36 +21,19 @@ namespace FlatBuffers.Protocol.Request
     public void __init(int _i, ByteBuffer _bb) { __p = new Table(_i, _bb); }
     public Warp __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
   
-    public Vector2? Position { get { int o = __p.__offset(4); return o != 0 ? (Vector2?)(new Vector2()).__assign(__p.__indirect(o + __p.bb_pos), __p.bb) : null; } }
   
-    public static Offset<Warp> CreateWarp(FlatBufferBuilder builder,
-        Offset<Vector2> positionOffset = default(Offset<Vector2>)) {
-      builder.StartTable(1);
-      Warp.AddPosition(builder, positionOffset);
-      return Warp.EndWarp(builder);
-    }
-  
-    public static void StartWarp(FlatBufferBuilder builder) { builder.StartTable(1); }
-    public static void AddPosition(FlatBufferBuilder builder, Offset<Vector2> positionOffset) { builder.AddOffset(0, positionOffset.Value, 0); }
+    public static void StartWarp(FlatBufferBuilder builder) { builder.StartTable(0); }
     public static Offset<Warp> EndWarp(FlatBufferBuilder builder) {
       int o = builder.EndTable();
       return new Offset<Warp>(o);
     }
   
-    public struct Model
-    {
-      public FlatBuffers.Protocol.Request.Vector2.Model Position { get; set; }
-    
-      public Model(FlatBuffers.Protocol.Request.Vector2.Model position)
-      {
-        Position = position;
-      }
-    }
   
-    public static byte[] Bytes(FlatBuffers.Protocol.Request.Vector2.Model position) {
+  
+    public static byte[] Bytes() {
       var builder = new FlatBufferBuilder(512);
-      var positionOffset = FlatBuffers.Protocol.Request.Vector2.CreateVector2(builder, position.X, position.Y);
-      var offset = Warp.CreateWarp(builder, positionOffset);
+      StartWarp(builder);
+      var offset = EndWarp(builder);
       builder.Finish(offset.Value);
       
       var bytes = builder.DataBuffer.ToSizedArray();
@@ -66,10 +49,6 @@ namespace FlatBuffers.Protocol.Request
           return mstream.ToArray();
         }
       }
-    }
-    
-    public static byte[] Bytes(Model model) {
-      return Bytes(model.Position);
     }
   };
 }

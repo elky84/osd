@@ -15,9 +15,9 @@ namespace KeraLua
     {
         private static readonly int MAX_THREAD_POOL_SIZE = 50;
 
-        private static Dictionary<Type, LuaRegister[]> _builtinFunctions = new Dictionary<Type, LuaRegister[]>();
-        private static Dictionary<Type, Dictionary<string, LuaFunction>> _builtinGlobalFunctions = new Dictionary<Type, Dictionary<string, LuaFunction>>();
-        private static Queue<Lua> _luaThreadPool = new Queue<Lua>();
+        private static readonly Dictionary<Type, LuaRegister[]> _builtinFunctions = new Dictionary<Type, LuaRegister[]>();
+        private static readonly Dictionary<Type, Dictionary<string, LuaFunction>> _builtinGlobalFunctions = new Dictionary<Type, Dictionary<string, LuaFunction>>();
+        private static volatile Queue<IntPtr> _luaThreadPool = new Queue<IntPtr>();
 
         // 빌트인 함수 규칙
         //   1. Builtin 으로 시작
@@ -32,7 +32,7 @@ namespace KeraLua
             {
                 var thread = Main.NewThread();
                 thread.Encoding = Encoding.UTF8;
-                _luaThreadPool.Enqueue(thread);
+                _luaThreadPool.Enqueue(thread.Handle);
             }
         }
 
@@ -41,13 +41,14 @@ namespace KeraLua
             if (_luaThreadPool.Count == 0)
                 return null;
 
-            return _luaThreadPool.Dequeue();
+            var handle = _luaThreadPool.Dequeue();
+            return Lua.FromIntPtr(handle);
         }
 
         public static void Release(this Lua lua)
         {
-            if (_luaThreadPool.Contains(lua) == false)
-                _luaThreadPool.Enqueue(lua);
+            if (_luaThreadPool.Contains(lua.Handle) == false)
+                _luaThreadPool.Enqueue(lua.Handle);
         }
 
         public static LuaStatus Resume(this Lua lua, int arguments)
@@ -106,29 +107,21 @@ namespace KeraLua
             return 0;
         }
 
-        public static bool PushLuable<T>(this Lua lua, T luable) where T : ILuable
+        public static T PushLuable<T>(this Lua lua, T luable) where T : class, ILuable
         {
-            return PushLuable(lua, luable, typeof(T));
+            return PushLuable(lua, luable, typeof(T)) as T;
         }
 
-        public static bool PushLuable(this Lua lua, ILuable luable, Type type)
+        public static ILuable PushLuable(this Lua lua, ILuable luable, Type type)
         {
-            try
-            {
-                var allocated = GCHandle.Alloc(luable, GCHandleType.Weak);
-                var data = lua.NewUserData(IntPtr.Size);
-                Marshal.WriteIntPtr(data, GCHandle.ToIntPtr(allocated));
-                lua.GetMetaTable(type.Name);
-                lua.PushCFunction(BuiltinGC);
-                lua.SetField(-2, "__gc");
-                lua.SetMetaTable(-2);
-                return true;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-                return false;
-            }
+            var allocated = GCHandle.Alloc(luable, GCHandleType.Normal);
+            var data = lua.NewUserData(IntPtr.Size);
+            Marshal.WriteIntPtr(data, GCHandle.ToIntPtr(allocated));
+            lua.GetMetaTable(type.Name);
+            lua.PushCFunction(BuiltinGC);
+            lua.SetField(-2, "__gc");
+            lua.SetMetaTable(-2);
+            return luable;
         }
 
         private static void LoadBuiltinFunctions(this Lua lua, string assemblyName = null)

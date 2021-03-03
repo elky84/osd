@@ -35,11 +35,11 @@ namespace TestServer.Handler
         public void OnSectorChanged(Model.Object obj, Map.Sector sector1, Map.Sector sector2)
         {
             var befores = sector1 != null ?
-                sector1.Nears.Where(x => x != null).SelectMany(x => x.Objects) :
-                Enumerable.Empty<Model.Object>();
+                sector1.Nears.Where(x => x != null).SelectMany(x => x.Objects).ToList() :
+                new System.Collections.Generic.List<Object>();
             var afters = sector2 != null ?
-                sector2.Nears.Where(x => x != null).SelectMany(x => x.Objects) :
-                Enumerable.Empty<Model.Object>();
+                sector2.Nears.Where(x => x != null).SelectMany(x => x.Objects).ToList() :
+                new System.Collections.Generic.List<Object>();
 
             var hides = befores.Except(afters).ToList();
             _ = obj.Send(FlatBuffers.Protocol.Response.Leave.Bytes(hides.Select(x => x.Sequence.Value).ToList()));

@@ -54,7 +54,7 @@ table DialogIndexResult {
 }
 
 table Warp {
-	position: Vector2;
+	
 }
 
 table ActiveItem {

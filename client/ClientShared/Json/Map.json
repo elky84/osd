@@ -2,5 +2,9 @@
   "Dungeon": {
     "Id": "Dungeon",
     "Data": "Resources/Map/test.json"
+  },
+  "Field": {
+    "Id": "Field",
+    "Data": "Resources/Map/test.json"
   }
 }
