@@ -30,6 +30,14 @@ def supportedType(type, schemaDict, enumDict):
 
     return False
 
+def supportedTypeConst(constDict, schemaDict, enumDict):
+    for constName, constSet in constDict.items():
+        logger.currentColumnName(constName)
+        for name, x in constSet.items():
+            logger.currentColumnName(name)
+            if not supportedType(x['type'], schemaDict, enumDict):
+                raise Exception(f"{x['type']}은 지원되지 않는 타입입니다.")
+
 
 def supportedTypeDict(schemaDict, enumDict):
     for name, schemaSet in schemaDict.items():
@@ -104,6 +112,14 @@ def dataTypeDict(pureSchemaDict, dataDict, enumDict, callback=None):
 
         if callback:
             callback(name, percentage)
+
+def dataTypeConst(constDict, schemaDict, enumDict):
+    for constName, constSet in constDict.items():
+        logger.currentTableName(constName)
+
+        for name, data in constSet.items():
+            logger.currentColumnName(name)
+            converter.cast(data['type'], data['value'], schemaDict, enumDict)
 
 def isPrimaryKey(type):
     return type.startswith(config.customs['key'])

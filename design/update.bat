@@ -19,6 +19,12 @@ ROBOCOPY output\json\server ..\..\server\ServerShared\json /E /NFL /NDL /NJH /NJ
 
 RMDIR /s/q ..\..\shared\NetworkShared\Enum
 ROBOCOPY output\enum ..\..\shared\NetworkShared\Enum /E /NFL /NDL /NJH /NJS /nc /ns /np
-POPD
 
+RMDIR /s/q ..\..\client\ClientShared\Const
+ROBOCOPY output\const\client ..\..\client\ClientShared\Const /E /NFL /NDL /NJH /NJS /nc /ns /np
+
+RMDIR /s/q ..\..\client\ServerShared\Const
+ROBOCOPY output\const\server ..\..\server\ServerShared\Const /E /NFL /NDL /NJH /NJS /nc /ns /np
+
+POPD
 ROBOCOPY ..\client\UnityClient\Assets\Resources\MapFile ..\server\ServerShared\Resources\Map *.json /E /NFL /NDL /NJH /NJS /nc /ns /np

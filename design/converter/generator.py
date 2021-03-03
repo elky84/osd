@@ -76,3 +76,19 @@ def enumStringify(enumName, enumSet):
 
     codeLines = [x if x == '' else f'        {x}' for x in codeLines]
     return templates['enum'].render({'name': enumName, 'codeLines': '\n'.join(codeLines)}) + '\n'
+
+def constStringify(constName, constSet, usage):
+    codeLines = []
+    for name, data in constSet.items():
+        if not data['usage'] in ('common', usage):
+            continue
+        
+        if data['type'] == 'string':
+            value = f"\"{data['value']}\""""
+        else:
+            value = data['value']
+
+        codeLines.append(f"public static readonly {data['type']} {name} = {value};")
+
+    codeLines = [f'        {x}' for x in codeLines]
+    return templates['const'].render({'name': constName, 'code': '\n'.join(codeLines)}) + '\n'

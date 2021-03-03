@@ -130,10 +130,36 @@ def loadEnum(path):
 
     return enumSet
 
+def loadConst(path):
+    workbook = Excel.load_workbook(path, data_only=True)
+    constSet = {}
+    for sheet in workbook.worksheets:
+        if sheet.title.startswith('#'):
+            continue
+        
+        constSet[sheet.title] = {}
+
+        for row in range(sheet.max_row):
+            name = sheet.cell(row+1, 1).value
+            if not name:
+                continue
+
+            if name.startswith('#'):
+                continue
+
+            usage = sheet.cell(row+1, 2).value
+            type = sheet.cell(row+1, 3).value
+            value = sheet.cell(row+1, 4).value
+            constSet[sheet.title][name] = {'usage': usage, 'type': type, 'value': value}
+
+    return constSet
+
+
 def loads(directory, callback=None):
     schemaDict = {}
     dataDict = {}
-    files = [x for x in os.listdir(directory) if x.endswith('.xlsx') and not x.startswith('~') and not x.lower().startswith('enum.')]
+    prefixIgnores = ['enum.', 'const.']
+    files = [x for x in os.listdir(directory) if x.endswith('.xlsx') and not x.startswith('~') and all([not x.lower().startswith(prefix) for prefix in prefixIgnores])]
     size = len(files)
 
     progress = 0
@@ -162,6 +188,20 @@ def loadEnums(directory, callback=None):
             enumDict[enumName] = enumSet
 
     return enumDict
+
+
+def loadConsts(directory, callback=None):
+    files = [x for x in os.listdir(directory) if not x.startswith('~') and x.lower().startswith('const.')]
+    constDict = {}
+    for file in files:
+        path = os.path.join(directory, file)
+
+        for constName, constSet in loadConst(path).items():
+            if constName in constDict:
+                raise Exception(f'{constName}은 중복 정의되었습니다.')
+            constDict[constName] = constSet
+
+    return constDict
 
 def relationshipType(type, schemaSetDict):
     if not validator.isRelation(type):

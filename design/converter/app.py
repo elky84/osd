@@ -28,6 +28,9 @@ def execute(args):
 
     usages = ('client', 'server')
 
+    # Const 엑셀 파일 로드
+    constDict = extractor.loadConsts(args.dir)
+
     # Enum 엑셀 파일 로드
     enumDict = extractor.loadEnums(args.dir)
 
@@ -39,12 +42,14 @@ def execute(args):
 
     # 지원 타입 검증
     validator.supportedTypeDict(schemaDict, enumDict)
+    validator.supportedTypeConst(constDict, schemaDict, enumDict)
     
     # C# 타입 변환
     pureSchemaDict = converter.pureSchemaDict(schemaDict)
 
     # 데이터 타입 검증
     validator.dataTypeDict(pureSchemaDict, dataDict, enumDict)
+    validator.dataTypeConst(constDict, pureSchemaDict, enumDict)
 
     # 파이썬 타입 변환
     dataSet = {x: {} for x in usages}
@@ -72,6 +77,15 @@ def execute(args):
         for usage in usages:
             if dataSet[usage][name]:
                 dataSet[usage][name] = converter.toDictionary(schemaSet, dataSet[usage][name])
+
+    for constName, constSet in constDict.items():
+        for name, data in constSet.items():
+            # 관계타입이라면 변경
+            data['type'] = converter.pureSchema(data['type'], schemaDict)
+
+            # const 타입이 enum인 경우 변경
+            if data['type'] in enumDict:
+                data['value'] = f"{data['type']}.{data['value']}"
 
 
     # C# 마스터데이터 코드 생성
@@ -108,6 +122,24 @@ def execute(args):
         progress = progress + 1
         percentage = int((progress * 100) / size)
         print(f'[{percentage}%] {enumName}.cs 코드 생성')
+
+
+    # C# const 코드 생성
+    output = f'{args.out}/const'
+    progress = 0
+    size = len(constDict)
+
+    for constName, constSet in constDict.items():
+        for usage in usages:
+            os.makedirs(f'{output}/{usage}', exist_ok=True)
+            code = generator.constStringify(constName, constSet, usage)
+            with open(f'{output}/{usage}/{constName}.cs', 'w', encoding='utf8') as f:
+                f.write(code)
+
+        progress = progress + 1
+        percentage = int((progress * 100) / size)
+        print(f'[{percentage}%] {constName}.cs 코드 생성')
+
 
 
 

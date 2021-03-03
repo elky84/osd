@@ -1,0 +1,7 @@
+namespace Const
+{
+    public static class {{ name }}
+    {
+{{ code }}
+    }
+}
