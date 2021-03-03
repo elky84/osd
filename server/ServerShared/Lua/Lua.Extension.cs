@@ -13,11 +13,11 @@ namespace KeraLua
 
     public static class Static
     {
-        private static readonly int MAX_THREAD_POOL_SIZE = 50;
+        private static readonly int MAX_THREAD_POOL_SIZE = 10000;
 
         private static readonly Dictionary<Type, LuaRegister[]> _builtinFunctions = new Dictionary<Type, LuaRegister[]>();
         private static readonly Dictionary<Type, Dictionary<string, LuaFunction>> _builtinGlobalFunctions = new Dictionary<Type, Dictionary<string, LuaFunction>>();
-        private static volatile Queue<IntPtr> _luaThreadPool = new Queue<IntPtr>();
+        private static volatile Queue<Lua> _luaThreadPool = new Queue<Lua>();
 
         // 빌트인 함수 규칙
         //   1. Builtin 으로 시작
@@ -27,28 +27,59 @@ namespace KeraLua
 
         static Static()
         {
-            Main.LoadBuiltinFunctions();
+            LoadBuiltinFunctions();
+
             for (int i = 0; i < MAX_THREAD_POOL_SIZE; i++)
             {
-                var thread = Main.NewThread();
-                thread.Encoding = Encoding.UTF8;
-                _luaThreadPool.Enqueue(thread.Handle);
+                var lua = NewLuaState();
+                _luaThreadPool.Enqueue(lua);
             }
         }
 
-        public static Lua Get(this Lua lua)
+        private static Lua NewLuaState()
+        {
+            var lua = new Lua
+            {
+                Encoding = Encoding.UTF8
+            };
+
+            foreach (var (luableType, funcSet) in _builtinFunctions)
+            {
+                lua.NewMetaTable(luableType.Name);
+                if (luableType.BaseType != typeof(ILuable)) // 상속
+                {
+                    lua.GetMetaTable(luableType.BaseType.Name);
+                    lua.SetMetaTable(-2);
+                }
+                lua.PushCopy(-1);
+                lua.SetField(-2, "__index");
+                lua.SetFuncs(funcSet, 0);
+            }
+
+            foreach (var (type, funcSet) in _builtinGlobalFunctions)
+            {
+                foreach(var (name, func) in funcSet)
+                    lua.Register(name, func);
+            }
+            
+            return lua;
+        }
+
+        public static Lua Get()
         {
             if (_luaThreadPool.Count == 0)
-                return null;
+            {
+                var created = NewLuaState();
+                return created;
+            }
 
-            var handle = _luaThreadPool.Dequeue();
-            return Lua.FromIntPtr(handle);
+            return _luaThreadPool.Dequeue();
         }
 
         public static void Release(this Lua lua)
         {
-            if (_luaThreadPool.Contains(lua.Handle) == false)
-                _luaThreadPool.Enqueue(lua.Handle);
+            if (_luaThreadPool.Contains(lua) == false)
+                _luaThreadPool.Enqueue(lua);
         }
 
         public static LuaStatus Resume(this Lua lua, int arguments)
@@ -124,7 +155,7 @@ namespace KeraLua
             return luable;
         }
 
-        private static void LoadBuiltinFunctions(this Lua lua, string assemblyName = null)
+        private static void LoadBuiltinFunctions(string assemblyName = null)
         {
             var assembly = string.IsNullOrEmpty(assemblyName) ?
                 Assembly.GetEntryAssembly() :
@@ -140,17 +171,6 @@ namespace KeraLua
                     .BuiltinFunctions()
                     .Select(pair => new LuaRegister { name = pair.Key, function = pair.Value })
                     .Concat(new[] { new LuaRegister { name = null, function = null } }).ToArray();
-
-
-                lua.NewMetaTable(luableType.Name);
-                if (luableType.BaseType != typeof(ILuable)) // 상속
-                {
-                    lua.GetMetaTable(luableType.BaseType.Name);
-                    lua.SetMetaTable(-2);
-                }
-                lua.PushCopy(-1);
-                lua.SetField(-2, "__index");
-                lua.SetFuncs(_builtinFunctions[luableType], 0);
             }
         }
 
@@ -187,7 +207,10 @@ namespace KeraLua
             var type = typeof(T);
             var builtinFunctions = type.BuiltinFunctions();
             foreach (var (name, func) in builtinFunctions)
-                Main.Register(name, func);
+            {
+                foreach(var thread in _luaThreadPool)
+                    thread.Register(name, func);
+            }
 
             _builtinGlobalFunctions[type] = builtinFunctions;
             return builtinFunctions;

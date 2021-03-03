@@ -3,7 +3,6 @@ using MasterData;
 using MasterData.Table;
 using NetworkShared;
 using NetworkShared.Types;
-using Newtonsoft.Json;
 using Serilog;
 using ServerShared.Model;
 using ServerShared.NetworkHandler;
@@ -336,7 +335,7 @@ namespace TestServer.Handler
         {
             try
             {
-                var lua = Static.Main.Get() ??
+                var lua = Static.Get() ??
                     throw new Exception("all lua threads are used.");
 
                 var skillName = string.Empty;
