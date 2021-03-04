@@ -74,7 +74,7 @@ namespace TestServer.Handler
                 var unsetList = hides.Where(x => x.Type == NetworkShared.ObjectType.Mob).Select(x => x as Mob).Where(x => x.Owner == character).ToList();
                 _ = character.Send(FlatBuffers.Protocol.Response.UnsetOwner.Bytes(unsetList.Select(x => x.Sequence.Value).ToList()));
 
-                foreach (var (sector, mobs) in unsetList.GroupBy(x => x.Sector).ToDictionary(x => x.Key, x => x.ToList()))
+                foreach (var (sector, mobs) in unsetList.Where(x => x.Sector != null).GroupBy(x => x.Sector).ToDictionary(x => x.Key, x => x.ToList()))
                 {
                     var newOwner = sector.Nears.SelectMany(x => x.Characters).FirstOrDefault();
                     foreach (var mob in mobs)
