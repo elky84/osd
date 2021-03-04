@@ -49,16 +49,23 @@ namespace Assets.Scripts.InGame.OOP
             BoxCollider2D = GetComponent<BoxCollider2D>();
         }
 
-        protected bool IsGrounded()
+        protected MoveResult IsGrounded()
         {
             Vector2 position = transform.position;
-            Vector2 direction = Vector2.down;
-            float distance = 0.5f;
 
+            var moveResult = Map.IsGround(new Vector2 { x = position.x, y = BoxCollider2D.bounds.min.y });
+            if (moveResult != MoveResult.Ground)
+            {
+                return moveResult;
+            }
+
+            return Raycast(position, Vector2.down) ? MoveResult.Ground : MoveResult.Normal;
+        }
+
+        protected bool Raycast(Vector2 position, Vector2 direction, float distance = 0.5f)
+        {
             Debug.DrawRay(position, direction, Color.green);
-
-            return Map.IsGround(new Vector2 { x = position.x, y = BoxCollider2D.bounds.min.y }) &&
-                Physics2D.Raycast(position, direction, distance, GroundLayer).collider != null;
+            return Physics2D.Raycast(position, direction, distance, GroundLayer).collider != null;
         }
 
         public void Update()
@@ -74,7 +81,7 @@ namespace Assets.Scripts.InGame.OOP
 
                 transform.position = next;
 
-                IsGround = IsGrounded();
+                IsGround = MoveResult.Ground == IsGrounded();
             }
             else if (IsGround == false)
             {
@@ -82,7 +89,7 @@ namespace Assets.Scripts.InGame.OOP
                 next.y -= 0.05f;
                 transform.position = next;
 
-                IsGround = IsGrounded();
+                IsGround = MoveResult.Ground == IsGrounded();
 
                 if (IsGround)
                 {

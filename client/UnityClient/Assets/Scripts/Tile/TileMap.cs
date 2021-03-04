@@ -56,16 +56,16 @@ public class TileMap : MonoBehaviour
         }
     }
 
-    public bool IsGround(Vector2 position, int layer = 0)
+    public MoveResult IsGround(Vector2 position, int layer = 0)
     {
         if (position.y < 0f || position.y >= MapData.Height ||
             position.x < 0f || position.x >= MapData.Height)
         {
-            return false;
+            return MoveResult.Over;
         }
 
         var row = (int)position.y;
         var col = (int)position.x;
-        return _blocks[layer, row, col] > 0;
+        return _blocks[layer, row, col] > 0 ? MoveResult.Ground : MoveResult.Normal;
     }
 }

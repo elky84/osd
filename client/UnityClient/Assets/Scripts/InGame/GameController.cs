@@ -139,12 +139,12 @@ public partial class GameController : MonoBehaviour
     {
         if (life.Direction == Direction.Right)
         {
-            if (Map.IsGround(new Vector2 { x = life.BoxCollider2D.bounds.max.x, y = life.BoxCollider2D.bounds.min.y }) == false)
+            if (Map.IsGround(new Vector2 { x = life.BoxCollider2D.bounds.max.x, y = life.BoxCollider2D.bounds.min.y }) == MoveResult.Normal)
                 return new Vector3 { x = (float)((int)life.BoxCollider2D.bounds.max.x - life.BoxCollider2D.bounds.size.x / 2.0), y = life.transform.localPosition.y };
         }
         else
         {
-            if (Map.IsGround(new Vector2 { x = life.BoxCollider2D.bounds.min.x, y = life.BoxCollider2D.bounds.min.y }) == false)
+            if (Map.IsGround(new Vector2 { x = life.BoxCollider2D.bounds.min.x, y = life.BoxCollider2D.bounds.min.y }) == MoveResult.Normal)
                 return new Vector3 { x = (float)((int)life.BoxCollider2D.bounds.min.x + life.BoxCollider2D.bounds.size.x / 2.0), y = life.transform.localPosition.y };
         }
 

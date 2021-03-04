@@ -25,6 +25,8 @@ namespace Assets.Scripts.InGame.OOP
             Animator.SetBool("Walking", true);
             while (true)
             {
+                var originPosition = new Vector3(transform.localPosition.x, transform.localPosition.y);
+
                 var end = DateTime.Now;
                 var diff = end - _moveDelta;
                 _moveDelta = end;
@@ -41,8 +43,14 @@ namespace Assets.Scripts.InGame.OOP
                     newPosition = OnPositionChanging.Invoke(this, newPosition);
 
                 transform.localPosition = newPosition;
+                var moveResult = IsGrounded();
+                if (moveResult == MoveResult.Over || Raycast(transform.position, this.Direction == Direction.Left ? Vector2.left : Vector2.right, 0.3f))
+                {
+                    transform.localPosition = originPosition;
+                    break;
+                }
 
-                IsGround = IsGrounded();
+                IsGround = moveResult == MoveResult.Ground;
 
                 yield return new WaitForSeconds(0.01f);
             }
