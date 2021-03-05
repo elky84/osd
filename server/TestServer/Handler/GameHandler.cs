@@ -187,6 +187,11 @@ namespace TestServer.Handler
 
             // 무기를 장착
             session.Data.Items.Active(weapon.Id);
+
+
+            // 스킬을 배움
+            foreach (var (name, skill) in MasterTable.From<TableSkill>())
+                session.Data.Skills.Add(SkillFactory.Create(session.Data, name));
         }
 
         protected override void OnDisconnected(Session<Character> session)

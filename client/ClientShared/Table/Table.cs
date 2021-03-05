@@ -1,4 +1,5 @@
 using NetworkShared;
+using System.Collections.Generic;
 
 namespace MasterData.Table
 {
@@ -12,6 +13,10 @@ public partial class TableStat : BaseDict<int, Stat>
 
 [Table("json/Collision.json")]
 public partial class TableCollision : BaseDict<string, Collision>
+{ }
+
+[Table("json/Consume.json")]
+public partial class TableConsume : BaseDict<string, List<Consume>>
 { }
 
 [Table("json/Item.json")]
@@ -47,11 +52,23 @@ public partial class TableNpc : BaseDict<string, Npc>
 { }
 
 [Table("json/Reward.json")]
-public partial class TableReward : BaseDict<string, Reward>
+public partial class TableReward : BaseDict<string, List<Reward>>
 { }
 
 [Table("json/Skill.json")]
 public partial class TableSkill : BaseDict<string, Skill>
+{ }
+
+[Table("json/Buff.json")]
+public partial class TableBuff : BaseDict<string, List<Buff>>
+{ }
+
+[Table("json/Passive.json")]
+public partial class TablePassive : BaseDict<string, List<Passive>>
+{ }
+
+[Table("json/SkillProperty.json")]
+public partial class TableSkillProperty : BaseDict<string, List<SkillProperty>>
 { }
 
 }

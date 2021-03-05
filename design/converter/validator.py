@@ -15,6 +15,10 @@ def supportedType(type, schemaDict, enumDict):
         type = extractor.relationshipType(type, schemaDict)
     type = converter.pureSchema(type, schemaDict)
 
+    groupType = extractor.groupType(type)
+    if groupType:
+        return supportedType(groupType, schemaDict, enumDict)
+
     if any([type.startswith(x) for x in config.customs.values()]):
         return True
 

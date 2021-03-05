@@ -142,3 +142,12 @@ table LevelUp {
 table ExpChange {
 	exp: long;
 }
+
+table AcquireSkill {
+	id: string;
+}
+
+table SkillLevelUp {
+	id: string;
+	level: int;
+}

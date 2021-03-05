@@ -1,5 +1,6 @@
 ﻿using Assets.Scripts.InGame.OOP;
 using FlatBuffers.Protocol.Response;
+using MasterData;
 using NetworkShared;
 using UnityEngine;
 
@@ -287,6 +288,19 @@ public partial class GameController : MonoBehaviour
             MyCharacter.Exp = response.Exp;
 
         UnityEngine.Debug.Log($"experience : {response.Exp}");
+        return true;
+    }
+
+    [FlatBufferEvent]
+    public bool OnAcquireSkill(AcquireSkill response)
+    {
+        var id = response.Id;
+        return true;
+    }
+
+    [FlatBufferEvent]
+    public bool OnSkillLevelUp(SkillLevelUp response)
+    {
         return true;
     }
 }

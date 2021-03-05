@@ -5,11 +5,13 @@ using MasterData.Table;
 using NetworkShared;
 using ServerShared.NetworkHandler;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TestServer.Factory;
 
 namespace TestServer.Model
 {
@@ -136,9 +138,48 @@ namespace TestServer.Model
         }
     }
 
+    public class SkillCollection : IEnumerable<KeyValuePair<SkillType, List<Skill>>>, Skill.IListener
+    {
+        public interface IListener
+        {
+            public void OnShowSkill(Character owner, Skill skill);
+            public void OnSkillLevelUp(Character owner, Skill skill);
+        }
+
+        private Dictionary<SkillType, List<Skill>> _skills = new Dictionary<SkillType, List<Skill>>();
+        private IListener Listener;
+
+        public Character Owner { get; private set; }
+
+        public SkillCollection(Character owner)
+        {
+            foreach (var itemType in Enum.GetValues(typeof(SkillType)).Cast<SkillType>())
+                _skills.Add(itemType, new List<Skill>());
+
+            Owner = owner;
+            Listener = owner.Listener;
+        }
+
+        public IEnumerator<KeyValuePair<SkillType, List<Skill>>> GetEnumerator() => _skills.GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => _skills.GetEnumerator();
+
+        public Skill Add(Skill skill)
+        {
+            _skills[skill.Type].Add(skill);
+            skill.Listener = this;
+            return skill;
+        }
+
+        public void OnLevelUp(Skill skill)
+        {
+            Listener?.OnSkillLevelUp(Owner, skill);
+        }
+    }
+
     public class Character : Life
     {
-        public new interface IListener : Life.IListener
+        public new interface IListener : Life.IListener, SkillCollection.IListener
         {
             public void OnEquipmentChanged(Character character, EquipmentType equipmentType);
             public void OnItemAdded(Character character, Item item);
@@ -148,10 +189,10 @@ namespace TestServer.Model
         }
 
         public new IListener Listener { get; private set; }
-
         public IChannelHandlerContext Context { get; set; }
 
         public ItemCollection Items { get; private set; }
+        public SkillCollection Skills { get; private set; }
 
         private DateTime _lastDamagedTime = DateTime.MinValue;
         public override int Hp

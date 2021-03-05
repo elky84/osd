@@ -201,5 +201,15 @@ namespace TestServer.Handler
         {
             _ = character.Send(FlatBuffers.Protocol.Response.ExpChange.Bytes(after));
         }
+
+        public void OnShowSkill(Character owner, Skill skill)
+        {
+            _ = owner.Send(FlatBuffers.Protocol.Response.AcquireSkill.Bytes(skill.Master.Id));
+        }
+
+        public void OnSkillLevelUp(Character owner, Skill skill)
+        {
+            _ = owner.Send(FlatBuffers.Protocol.Response.SkillLevelUp.Bytes(skill.Master.Id, skill.Level));
+        }
     }
 }

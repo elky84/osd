@@ -18,16 +18,11 @@ namespace MasterData.Table
         }
     }
 
-    public partial class TableReward : BaseDict<string, Reward>
+    public partial class TableReward : BaseDict<string, List<Reward>>
     {
-        public IEnumerable<Reward> GroupBy(string groupName)
-        {
-            return this.Values.Where(x => x.Group == groupName);
-        }
-
         public Reward Random(string groupName)
         {
-            var candidates = GroupBy(groupName).ToList();
+            var candidates = this[groupName];
             var value = new Random().Next(0, candidates.Sum(x => x.Weight));
             var current = 0;
 

@@ -49,7 +49,7 @@ namespace TestServer.Factory
                     return Create(MasterTable.From<TableEquipmentOption>()[id]);
 
                 case NetworkShared.ItemType.Consume:
-                    return new Consume(Sequence, itemCase);
+                    return new Model.Consume(Sequence, itemCase);
 
                 default:
                     return new Model.Item(Sequence, itemCase);

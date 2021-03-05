@@ -1,10 +1,26 @@
 {
   "전체공격스킬": {
     "Id": "전체공격스킬",
-    "Script": "Scripts/Skill/Attack.lua"
+    "Name": "전체공경스킬",
+    "Type": "Active",
+    "Script": null
   },
   "전체회복스킬": {
     "Id": "전체회복스킬",
-    "Script": "Scripts/Skill/Heal.lua"
+    "Name": "전체회복스킬",
+    "Type": "Active",
+    "Script": null
+  },
+  "버프스킬": {
+    "Id": "버프스킬",
+    "Name": "버프스킬",
+    "Type": "Buff",
+    "Script": null
+  },
+  "패시브스킬": {
+    "Id": "패시브스킬",
+    "Name": "패시브스킬",
+    "Type": "Passive",
+    "Script": null
   }
 }

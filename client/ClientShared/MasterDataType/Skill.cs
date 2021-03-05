@@ -13,5 +13,12 @@ namespace MasterData.Table
         [Key]
         public string Id { get; set; }
 
+        public string Name { get; set; }
+
+        public string Icon { get; set; }
+
+        [JsonConverter(typeof(StringEnumConverter))]
+        public SkillType Type { get; set; }
+
     }
 }
