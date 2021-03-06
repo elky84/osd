@@ -27,20 +27,55 @@ namespace TestServer.Container
                 Equipments.Add(equipmentType, null);
         }
 
+        private void SetAdditionalStats(Equipment equipment)
+        {
+            Owner.Stats.Additional[StatType.HP] += equipment.EquipmentOption.HP;
+            Owner.Stats.Additional[StatType.MP] += equipment.EquipmentOption.MP;
+            Owner.Stats.Additional[StatType.Defence] += equipment.EquipmentOption.Defence;
+            if (equipment.EquipmentOption.Type == EquipmentType.Weapon)
+            {
+                var weapon = equipment as Weapon;
+                Owner.Stats.Additional[StatType.AttackSpeed] += weapon.WeaponOption.AttackSpeed;
+                Owner.Stats.Additional[StatType.PhysicalDamage] += weapon.WeaponOption.PhysicalDamage;
+                Owner.Stats.Additional[StatType.MagicalDamage] += weapon.WeaponOption.MagicalDamage;
+                Owner.Stats.Additional[StatType.Critical] += weapon.WeaponOption.Critical;
+                Owner.Stats.Additional[StatType.CriticalDamage] += weapon.WeaponOption.CriticalDamage;
+            }
+        }
+
+        private void UnsetAdditionalStats(Equipment equipment)
+        {
+            Owner.Stats.Additional[StatType.HP] -= equipment.EquipmentOption.HP;
+            Owner.Stats.Additional[StatType.MP] -= equipment.EquipmentOption.MP;
+            Owner.Stats.Additional[StatType.Defence] -= equipment.EquipmentOption.Defence;
+
+            if (equipment.EquipmentOption.Type == EquipmentType.Weapon)
+            {
+                var weapon = equipment as Weapon;
+                Owner.Stats.Additional[StatType.AttackSpeed] -= weapon.WeaponOption.AttackSpeed;
+                Owner.Stats.Additional[StatType.PhysicalDamage] -= weapon.WeaponOption.PhysicalDamage;
+                Owner.Stats.Additional[StatType.MagicalDamage] -= weapon.WeaponOption.MagicalDamage;
+                Owner.Stats.Additional[StatType.Critical] -= weapon.WeaponOption.Critical;
+                Owner.Stats.Additional[StatType.CriticalDamage] -= weapon.WeaponOption.CriticalDamage;
+            }
+        }
+
         public Equipment Equip(Equipment equipment)
         {
             var before = Equipments[equipment.EquipmentOption.Type];
             Equipments[equipment.EquipmentOption.Type] = equipment;
-            Owner.Listener?.OnEquipmentChanged(this.Owner, equipment.EquipmentOption.Type);
-
             Inventory.Remove(equipment);
-            Owner.Listener?.OnItemRemoved(this.Owner, equipment);
+            SetAdditionalStats(equipment);
 
             if (before != null)
             {
+                UnsetAdditionalStats(before);
                 Inventory.Add(before);
                 Owner.Listener?.OnItemAdded(this.Owner, before);
             }
+
+            Owner.Listener?.OnEquipmentChanged(this.Owner, equipment.EquipmentOption.Type);
+            Owner.Listener?.OnItemRemoved(this.Owner, equipment);
 
             return before;
         }
@@ -52,6 +87,7 @@ namespace TestServer.Container
                 return null;
 
             Equipments[found.EquipmentOption.Type] = null;
+            UnsetAdditionalStats(found);
             Inventory.Add(found);
             return found;
         }

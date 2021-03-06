@@ -4,23 +4,26 @@
     "Type": "Sword",
     "PhysicalDamage": 100000,
     "MagicalDamage": 0,
-    "CriticalDamage": 1.0,
-    "AttackSpeed": 5.0
+    "Critical": 0,
+    "CriticalDamage": 1,
+    "AttackSpeed": 5
   },
   "무기.활": {
     "Id": "무기.활",
     "Type": "Bow",
     "PhysicalDamage": 1000,
     "MagicalDamage": 0,
-    "CriticalDamage": 10.0,
-    "AttackSpeed": 1.0
+    "Critical": 0,
+    "CriticalDamage": 1,
+    "AttackSpeed": 1
   },
   "무기.지팡이": {
     "Id": "무기.지팡이",
     "Type": "Staff",
     "PhysicalDamage": 10,
     "MagicalDamage": 10000,
-    "CriticalDamage": 1.5,
-    "AttackSpeed": 2.0
+    "Critical": 0,
+    "CriticalDamage": 1,
+    "AttackSpeed": 2
   }
 }

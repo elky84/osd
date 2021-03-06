@@ -67,11 +67,9 @@ namespace TestServer.Model
 
         public Lua LuaThread { get; set; }
 
-        public int Damage { get; set; } = 30;
+        public new int Damage { get; set; } = 30;
 
         public override ObjectType Type => ObjectType.Character;
-
-        public override int BaseHP => int.MaxValue;
 
         private int _level = 1;
         public int Level

@@ -20,9 +20,11 @@ namespace MasterData.Table
 
         public int MagicalDamage { get; set; }
 
-        public double CriticalDamage { get; set; }
+        public int Critical { get; set; }
 
-        public double AttackSpeed { get; set; }
+        public int CriticalDamage { get; set; }
+
+        public int AttackSpeed { get; set; }
 
     }
 }

@@ -1,6 +1,7 @@
 ﻿using KeraLua;
 using NetworkShared.Types;
 using System;
+using TestServer.Container;
 
 namespace TestServer.Model
 {
@@ -39,7 +40,7 @@ namespace TestServer.Model
             get => _hp;
             protected set
             {
-                _hp = Math.Clamp(value, 0, BaseHP);
+                _hp = Math.Clamp(value, 0, Stats.Max[NetworkShared.StatType.HP]);
                 if (_hp > 0)
                 {
                     IsAlive = true;
@@ -53,7 +54,7 @@ namespace TestServer.Model
             }
         }
 
-        public abstract int BaseHP { get; }
+        public StatContainer Stats { get; private set; } = new StatContainer();
 
 
         // override 
@@ -125,7 +126,7 @@ namespace TestServer.Model
             var lua = Lua.FromIntPtr(luaState);
             var life = lua.ToLuable<Life>(1);
 
-            lua.PushInteger(life.BaseHP);
+            lua.PushInteger(life.Stats.Max[NetworkShared.StatType.HP]);
             return 1;
         }
 

@@ -399,7 +399,7 @@ namespace TestServer.Handler
 
                 var mob = character.Sector.Nears.SelectMany(x => x.Objects).Where(x => x.Type == ObjectType.Mob).Select(x => x as Model.Mob).FirstOrDefault(x => rangeBox.Contains(x.CollisionBox));
                 if (mob != null)
-                    mob.Damage(mob.BaseHP, character);
+                    mob.Damage(mob.Stats.Max[StatType.HP], character);
 
                 if (mob != null)
                     Log.Logger.Information($"{mob.Sequence.Value}가 맞아죽음");

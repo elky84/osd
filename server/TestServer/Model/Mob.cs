@@ -55,8 +55,6 @@ namespace TestServer.Model
             }
         }
 
-        public override int BaseHP => Master.HP;
-
         public Mob(MasterData.Table.Mob master)
         {
             Master = master;

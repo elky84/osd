@@ -17,7 +17,9 @@ namespace MasterData.Table
 
         public int Mp { get; set; }
 
-        public int Attack { get; set; }
+        public int PhysicalDamage { get; set; }
+
+        public int MagicalDamage { get; set; }
 
         public int Defence { get; set; }
 
