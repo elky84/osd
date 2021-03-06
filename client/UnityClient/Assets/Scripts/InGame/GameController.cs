@@ -130,12 +130,16 @@ public partial class GameController : MonoBehaviour
             Objects.Add(sequence, obj);
         }
 
-        if (obj is Mob)
+        if (obj is Character)
+            (obj as Character).OnPositionChanging = this.OnPlayerPositionChanging;
+
+        else if (obj is Mob)
             (obj as Mob).OnPositionChanging = this.OnMobPositionChanging;
+
         return obj;
     }
 
-    private Vector3 DontFallPosition(Life life, Vector3 position)
+    private Vector3? DontFallPosition(Life life, Vector3 position)
     {
         if (life.IsGround)
         {
@@ -153,12 +157,38 @@ public partial class GameController : MonoBehaviour
             }
         }
 
-        return position;
+        return null;
+    }
+
+    private Vector3? DontMoveBlock(Life life, Vector3 position)
+    {
+        if (life.Direction == Direction.Right)
+        {
+            var x = position.x + life.BoxCollider2D.size.x * life.transform.localScale.x / 2.0f;
+            if (Map.Blocked(new Vector2(x, life.BoxCollider2D.bounds.min.y)))
+                return new Vector2((int)position.x + 1 - life.BoxCollider2D.size.x * life.transform.localScale.x / 2.0f, position.y);
+        }
+        else
+        {
+            var x = position.x - life.BoxCollider2D.size.x * life.transform.localScale.x / 2.0f;
+            if (Map.Blocked(new Vector2(x, life.BoxCollider2D.bounds.min.y)))
+                return new Vector2((int)position.x + life.BoxCollider2D.size.x * life.transform.localScale.x / 2.0f, position.y);
+        }
+
+        return null;
     }
 
     private Vector3 OnMobPositionChanging(Life mob, Vector3 newPosition)
     {
-        return DontFallPosition(mob, newPosition);
+        return DontMoveBlock(mob, newPosition) ??
+            DontFallPosition(mob, newPosition) ??
+            newPosition;
+    }
+
+    private Vector3 OnPlayerPositionChanging(Life character, Vector3 newPosition)
+    {
+        return DontMoveBlock(character, newPosition) ??
+            newPosition;
     }
 
     private void RemoveObject(int sequence)
