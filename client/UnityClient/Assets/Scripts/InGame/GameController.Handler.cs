@@ -153,34 +153,6 @@ public partial class GameController : MonoBehaviour
     }
 
     [FlatBufferEvent]
-    public bool OnAction(Action response)
-    {
-        var obj = GetObject(response.Sequence);
-        if (obj == null)
-            return false;
-
-        var mob = obj as Mob;
-        if (mob == null)
-            return false;
-
-        switch ((ActionPattern)response.Pattern)
-        {
-            case ActionPattern.LeftMove:
-                mob.Move(Direction.Left);
-                break;
-
-            case ActionPattern.RightMove:
-                mob.Move(Direction.Right);
-                break;
-
-            default:
-                return false;
-        }
-
-        return true;
-    }
-
-    [FlatBufferEvent]
     public bool OnDamaged(Damaged response)
     {
         UnityEngine.Debug.Log($"damaged ({response.Sequence} > {response.Damage})");

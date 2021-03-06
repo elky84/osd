@@ -80,17 +80,8 @@ namespace TestServer.Handler
                 foreach (var mob in mobs)
                 {
                     var direction = (Direction)random.Next(2);
-                    switch (direction)
-                    {
-                        case Direction.Left:
-                            _ = Broadcast(mob, FlatBuffers.Protocol.Response.Action.Bytes(mob.Sequence.Value, (int)ActionPattern.LeftMove), sector: mob.Sector);
-                            break;
-
-                        case Direction.Right:
-                            _ = Broadcast(mob, FlatBuffers.Protocol.Response.Action.Bytes(mob.Sequence.Value, (int)ActionPattern.RightMove), sector: mob.Sector);
-                            break;
-                    }
-
+                    mob.Move(direction);
+                    _ = Broadcast(mob, FlatBuffers.Protocol.Response.State.Bytes(mob.State(false)), sector: mob.Sector);
                     mob.LastActionDateTime = now;
                 }
             }
