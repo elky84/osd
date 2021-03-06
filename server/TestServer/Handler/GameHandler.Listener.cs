@@ -2,6 +2,7 @@
 using Serilog;
 using ServerShared.NetworkHandler;
 using System.Linq;
+using TestServer.Factory;
 using TestServer.Model;
 
 namespace TestServer.Handler
@@ -119,10 +120,27 @@ namespace TestServer.Handler
             Log.Logger.Information($"Spawned '{mob.Name}({mob.Sequence.Value})' in '{mob.Map.Name}' ({mob.Position.X}, {mob.Position.Y})");
         }
 
-        public void OnDie(Life life)
+        public void OnDie(Life life, Life from)
         {
             Log.Logger.Information($"{life.Name}({life.Sequence}) is dead.");
             _ = Broadcast(life, FlatBuffers.Protocol.Response.Die.Bytes(life.Sequence.Value));
+
+            if (from != null && from.Type == ObjectType.Character && life.Type == ObjectType.Mob)
+            {
+                var mob = life as Mob;
+                var character = from as Character;
+                character.Exp += mob.Exp;
+
+                var rewards = mob.Master.Rewards.Select(x => MasterData.MasterTable.From<MasterData.Table.TableReward>().Random(x)).ToList();
+                var items = rewards.Select(x => ItemFactory.Create(x.Item)).ToList();
+
+                foreach (var item in items)
+                {
+                    item.Listener = this;
+                    item.Position = mob.Position;
+                    from.Map.Add(item);
+                }
+            }
         }
 
         public void OnSectorEntering(Model.Object obj, Map.Sector sector)
@@ -145,13 +163,13 @@ namespace TestServer.Handler
             
         }
 
-        public void OnDamaged(Life life, int damage)
+        public void OnDamaged(Life life, Life from, int damage)
         {
             Log.Logger.Information($"damaged : {life.Sequence.Value}({damage})");
             _ = Broadcast(life, FlatBuffers.Protocol.Response.Damaged.Bytes(life.Sequence.Value, damage), exceptSelf: false, sector: life.Sector);
         }
 
-        public void OnHealed(Life life, int heal)
+        public void OnHealed(Life life, Life from, int heal)
         {
             if (life.Sequence == null)
                 return;
@@ -188,7 +206,9 @@ namespace TestServer.Handler
 
                 var damage = mobCase.Damage;
                 foreach (var character in mob.Sector.Nears.SelectMany(x => x.Characters).Where(x => x.CollisionBox.Contains(mob.CollisionBox)))
-                    character.Hp -= damage;
+                {
+                    character.Damage(damage, mob);
+                }
             }
         }
 

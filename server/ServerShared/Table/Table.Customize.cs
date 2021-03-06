@@ -22,8 +22,10 @@ namespace MasterData.Table
     {
         public Reward Random(string groupName)
         {
+            var random = new Random();
             var candidates = this[groupName];
-            var value = new Random().Next(0, candidates.Sum(x => x.Weight));
+            var weights = candidates.Sum(x => x.Weight);
+            var value = random.Next(0, weights);
             var current = 0;
 
             foreach (var reward in candidates)

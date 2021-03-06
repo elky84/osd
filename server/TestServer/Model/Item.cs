@@ -45,10 +45,14 @@ namespace TestServer.Model
                 throw new Exception("블라블라...");
 
             if (optionCase.HPRecovery > 0)
-                owner.Hp += optionCase.HPRecovery;
+            {
+                owner.Heal(optionCase.HPRecovery, owner);
+            }
 
             if (optionCase.MPRecovery > 0)
+            {
                 owner.Mp += optionCase.MPRecovery;
+            }
         }
     }
 

@@ -46,6 +46,9 @@ public class SpriteObject : MonoBehaviour
     // Runs after the animation has done its work
     private void LateUpdate()
     {
+        if (string.IsNullOrEmpty(this.SpriteSheetPath))
+            return;
+
         // Check if the sprite sheet name has changed (possibly manually in the inspector)
         if (this.LoadedSpriteSheetPath != this.SpriteSheetPath)
         {

@@ -20,7 +20,7 @@ namespace TestServer.Model
         public override int Hp
         {
             get => base.Hp;
-            set
+            protected set
             {
                 base.Hp = value;
                 if (Math.Max(0, value) == 0)
@@ -74,16 +74,6 @@ namespace TestServer.Model
 
             Listener?.OnSpawned(this);
             return true;
-        }
-
-        public override void Damage(int damage, Life from)
-        {
-            base.Damage(damage, from);
-            if (IsAlive == false && from.Type == ObjectType.Character)
-            {
-                var character = from as Character;
-                character.Exp += Exp;
-            }
         }
 
         public void BindEvent(IListener listener)

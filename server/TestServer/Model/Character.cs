@@ -5,181 +5,16 @@ using MasterData.Table;
 using NetworkShared;
 using ServerShared.NetworkHandler;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using TestServer.Factory;
+using TestServer.Container;
 
 namespace TestServer.Model
 {
-    public class ItemCollection
-    {
-        public Character Owner { get; private set; }
-
-        public Dictionary<ItemType, List<Item>> Inventory { get; private set; } = new Dictionary<ItemType, List<Item>>();
-        public Dictionary<EquipmentType, Equipment> Equipments { get; private set; } = new Dictionary<EquipmentType, Equipment>();
-
-        public ItemCollection(Character owner)
-        {
-            Owner = owner;
-
-            foreach (var itemType in Enum.GetValues(typeof(ItemType)).Cast<ItemType>())
-                Inventory.Add(itemType, new List<Item>());
-
-            foreach (var equipmentType in Enum.GetValues(typeof(EquipmentType)).Cast<EquipmentType>())
-                Equipments.Add(equipmentType, null);
-        }
-
-        public Equipment Equip(Equipment equipment)
-        {
-            var before = Equipments[equipment.EquipmentOption.Type];
-            Equipments[equipment.EquipmentOption.Type] = equipment;
-            Owner.Listener?.OnEquipmentChanged(this.Owner, equipment.EquipmentOption.Type);
-
-            Inventory.Remove(equipment);
-            Owner.Listener?.OnItemRemoved(this.Owner, equipment);
-
-            if (before != null)
-            {
-                Inventory.Add(before);
-                Owner.Listener?.OnItemAdded(this.Owner, before);
-            }
-
-            return before;
-        }
-
-        public Equipment Unequip(Equipment equipment)
-        {
-            var found = Equipments.Values.FirstOrDefault(x => x == equipment);
-            if (found == null)
-                return null;
-
-            Equipments[found.EquipmentOption.Type] = null;
-            Inventory.Add(found);
-            return found;
-        }
-
-        public Weapon Weapon
-        {
-            get => Equipments[EquipmentType.Weapon] as Weapon;
-            set => Equip(value);
-        }
-
-        public Shield Shield
-        {
-            get => Equipments[EquipmentType.Shield] as Shield;
-            set => Equip(value);
-        }
-
-        public Armor Armor
-        {
-            get => Equipments[EquipmentType.Armor] as Armor;
-            set => Equip(value);
-        }
-
-        public Shoes Shoes
-        {
-            get => Equipments[EquipmentType.Shoes] as Shoes;
-            set => Equip(value);
-        }
-
-        public Helmet Helmet
-        {
-            get => Equipments[EquipmentType.Helmet] as Helmet;
-            set => Equip(value);
-        }
-
-        public ulong Gold { get; set; }
-
-        public Item Active(ulong id)
-        {
-            var found = Inventory.SelectMany(x => x.Value).FirstOrDefault(x => x.Id == id);
-            if (found == null)
-                return null;
-
-            found.Active(this.Owner);
-
-            if (File.Exists(found.Master.ActiveScript))
-            {
-                Owner.LuaThread = Static.Main.NewThread();
-                Owner.LuaThread.Encoding = Encoding.UTF8;
-                Owner.LuaThread.DoFile(found.Master.ActiveScript);
-                Owner.LuaThread.GetGlobal("func");
-
-                Owner.LuaThread.PushLuable(Owner);
-                Owner.LuaThread.PushLuable(found);
-                Owner.LuaThread.Resume(2);
-            }
-            return found;
-        }
-
-        public Item Inactive(ulong id)
-        {
-            var found = Equipments.Values.FirstOrDefault(x => x?.Id == id);
-            if (found == null)
-                return null;
-
-            found.Inactive(this.Owner);
-            if (File.Exists(found.Master.InactiveScript))
-            {
-                Owner.LuaThread = Static.Main.NewThread();
-                Owner.LuaThread.Encoding = Encoding.UTF8;
-                Owner.LuaThread.DoFile(found.Master.InactiveScript);
-                Owner.LuaThread.GetGlobal("func");
-
-                Owner.LuaThread.PushLuable(Owner);
-                Owner.LuaThread.PushLuable(found);
-                Owner.LuaThread.Resume(2);
-            }
-            return found;
-        }
-    }
-
-    public class SkillCollection : IEnumerable<KeyValuePair<SkillType, List<Skill>>>, Skill.IListener
-    {
-        public interface IListener
-        {
-            public void OnShowSkill(Character owner, Skill skill);
-            public void OnSkillLevelUp(Character owner, Skill skill);
-        }
-
-        private Dictionary<SkillType, List<Skill>> _skills = new Dictionary<SkillType, List<Skill>>();
-        private IListener Listener;
-
-        public Character Owner { get; private set; }
-
-        public SkillCollection(Character owner)
-        {
-            foreach (var itemType in Enum.GetValues(typeof(SkillType)).Cast<SkillType>())
-                _skills.Add(itemType, new List<Skill>());
-
-            Owner = owner;
-            Listener = owner.Listener;
-        }
-
-        public IEnumerator<KeyValuePair<SkillType, List<Skill>>> GetEnumerator() => _skills.GetEnumerator();
-
-        IEnumerator IEnumerable.GetEnumerator() => _skills.GetEnumerator();
-
-        public Skill Add(Skill skill)
-        {
-            _skills[skill.Type].Add(skill);
-            skill.Listener = this;
-            return skill;
-        }
-
-        public void OnLevelUp(Skill skill)
-        {
-            Listener?.OnSkillLevelUp(Owner, skill);
-        }
-    }
-
     public class Character : Life
     {
-        public new interface IListener : Life.IListener, SkillCollection.IListener
+        public new interface IListener : Life.IListener
         {
             public void OnEquipmentChanged(Character character, EquipmentType equipmentType);
             public void OnItemAdded(Character character, Item item);
@@ -191,14 +26,14 @@ namespace TestServer.Model
         public new IListener Listener { get; private set; }
         public IChannelHandlerContext Context { get; set; }
 
-        public ItemCollection Items { get; private set; }
-        public SkillCollection Skills { get; private set; }
+        public ItemContainer Items { get; private set; }
+        public SkillContainer Skills { get; private set; }
 
         private DateTime _lastDamagedTime = DateTime.MinValue;
         public override int Hp
         {
             get => base.Hp;
-            set
+            protected set
             {
                 var isDamaged = (value < 0);
                 if (isDamaged)
@@ -296,7 +131,8 @@ namespace TestServer.Model
 
         public Character()
         {
-            Items = new ItemCollection(this);
+            Items = new ItemContainer(this);
+            Skills = new SkillContainer(this);
         }
 
         public override async Task Send(byte[] bytes)

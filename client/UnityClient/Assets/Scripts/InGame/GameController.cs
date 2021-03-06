@@ -102,8 +102,8 @@ public partial class GameController : MonoBehaviour
 
             case ObjectType.Item:
                 {
-                    var gameObj = Instantiate(Resources.Load("Prefabs/Character") as GameObject, position.ToVector3(), Quaternion.identity, ObjectGroup);
-                    obj = gameObj.GetComponent<Assets.Scripts.InGame.OOP.Character>();
+                    var gameObj = Instantiate(Resources.Load("Prefabs/Item") as GameObject, position.ToVector3(), Quaternion.identity, ObjectGroup);
+                    obj = gameObj.GetComponent<Assets.Scripts.InGame.OOP.Item>();
                 }
                 break;
 

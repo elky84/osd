@@ -1,7 +1,6 @@
 ﻿using KeraLua;
 using NetworkShared.Types;
 using System;
-using System.Collections.Generic;
 
 namespace TestServer.Model
 {
@@ -10,9 +9,9 @@ namespace TestServer.Model
         // listener
         public new interface IListener : Object.IListener
         {
-            public void OnHealed(Life life, int heal);
-            public void OnDamaged(Life life, int damage);
-            public void OnDie(Life life);
+            public void OnHealed(Life life, Life from, int heal);
+            public void OnDamaged(Life life, Life from, int damage);
+            public void OnDie(Life life, Life from);
         }
         public new IListener Listener { get; private set; }
 
@@ -38,18 +37,9 @@ namespace TestServer.Model
         public virtual int Hp
         {
             get => _hp;
-            set
+            protected set
             {
-                var damage = (value < _hp) ? _hp - value : 0;
-                var heal = (value > _hp) ? value - _hp : 0;
-
                 _hp = Math.Clamp(value, 0, BaseHP);
-                if (damage > 0)
-                    Listener?.OnDamaged(this, damage);
-
-                if (heal > 0)
-                    Listener?.OnHealed(this, heal);
-
                 if (_hp > 0)
                 {
                     IsAlive = true;
@@ -59,7 +49,6 @@ namespace TestServer.Model
                 {
                     IsAlive = false;
                     DeadTime = DateTime.Now;
-                    Listener?.OnDie(this);
                 }
             }
         }
@@ -74,11 +63,16 @@ namespace TestServer.Model
         public virtual void Damage(int damage, Life from = null)
         {
             this.Hp -= damage;
+            Listener?.OnDamaged(this, from, damage);
+
+            if (this.IsAlive == false)
+                Listener?.OnDie(this, from);
         }
 
         public virtual void Heal(int heal, Life from = null)
         {
             this.Hp += heal;
+            Listener?.OnHealed(this, from, heal);
         }
 
 
