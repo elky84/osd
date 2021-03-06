@@ -39,7 +39,20 @@ namespace MasterData.Table
         }
     }
 
-    public partial class TableMob : BaseDict<string, Mob>
-    { 
+    public static class TableMobExtension
+    {
+        public static Dictionary<NetworkShared.StatType, int> BaseStat(this Mob mob)
+        {
+            return new Dictionary<NetworkShared.StatType, int>
+            {
+                { NetworkShared.StatType.HP, mob.HP },
+                { NetworkShared.StatType.MP, 0 },
+                { NetworkShared.StatType.PhysicalDamage, mob.Damage },
+                { NetworkShared.StatType.MagicalDamage, mob.Damage },
+                { NetworkShared.StatType.AttackSpeed, 0 },
+                { NetworkShared.StatType.Critical, 0 },
+                { NetworkShared.StatType.CriticalDamage, 0 }
+            };
+        }
     }
 }

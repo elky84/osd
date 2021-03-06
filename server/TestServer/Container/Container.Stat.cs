@@ -30,4 +30,15 @@ namespace TestServer.Container
             }
         }
     }
+
+    public static class StatContainerExtension
+    {
+        public static void Set(this Dictionary<StatType, int> stats, Dictionary<StatType, int> values)
+        {
+            foreach (var (statType, value) in values)
+            {
+                stats[statType] = value;
+            }
+        }
+    }
 }

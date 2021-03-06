@@ -3,7 +3,7 @@
     "Id": "몬스터1",
     "AttackType": "Preemptive",
     "HP": 100,
-    "MP": 50,
+    "Defence": 0,
     "Speed": 0.1,
     "Damage": 10,
     "Rewards": [
@@ -16,7 +16,7 @@
     "Id": "몬스터2",
     "AttackType": "Preemptive",
     "HP": 200,
-    "MP": 60,
+    "Defence": 0,
     "Speed": 0.5,
     "Damage": 10,
     "Rewards": [
@@ -28,7 +28,7 @@
     "Id": "몬스터3",
     "AttackType": "Reactive",
     "HP": 300,
-    "MP": 70,
+    "Defence": 0,
     "Speed": 1.0,
     "Damage": 10,
     "Rewards": [

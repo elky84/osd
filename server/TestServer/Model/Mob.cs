@@ -1,7 +1,9 @@
 ﻿using KeraLua;
+using MasterData.Table;
 using NetworkShared;
 using NetworkShared.Types;
 using System;
+using TestServer.Container;
 
 namespace TestServer.Model
 {
@@ -65,7 +67,8 @@ namespace TestServer.Model
             if (IsSpawned)
                 return false;
 
-            Hp = Master.HP;
+            Stats.Base.Set(Master.BaseStat());
+            Hp = Stats.Max[StatType.HP];
             SpawnedTime = DateTime.Now;
             Position = position;
             Map = map;
