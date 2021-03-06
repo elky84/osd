@@ -2,7 +2,6 @@
 using System;
 using UnityEngine;
 
-
 namespace Assets.Scripts.InGame.OOP
 {
     [RequireComponent(typeof(BoxCollider2D))]
@@ -65,7 +64,9 @@ namespace Assets.Scripts.InGame.OOP
         protected bool Raycast(Vector2 position, Vector2 direction, float distance = 0.5f)
         {
             Debug.DrawRay(position, direction, Color.green);
-            return Physics2D.Raycast(position, direction, distance, GroundLayer).collider != null;
+
+            var raycast = Physics2D.Raycast(position, direction, distance, GroundLayer);
+            return raycast.collider != null;
         }
 
         public void Update()

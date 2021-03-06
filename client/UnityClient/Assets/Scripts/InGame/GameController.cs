@@ -341,6 +341,11 @@ public partial class GameController : MonoBehaviour
             {
                 MyCharacter.Attack();
             }
+
+            else if (Input.GetKeyUp(KeyCode.X))
+            {
+                MyCharacter.Pickup();
+            }
         }
     }
 

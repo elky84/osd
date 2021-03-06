@@ -75,5 +75,10 @@ namespace Assets.Scripts.InGame.OOP
         {
             NettyClient.Instance.Send(FlatBuffers.Protocol.Request.Warp.Bytes());
         }
+
+        public void Pickup()
+        {
+            NettyClient.Instance.Send(FlatBuffers.Protocol.Request.Pickup.Bytes());
+        }
     }
 }

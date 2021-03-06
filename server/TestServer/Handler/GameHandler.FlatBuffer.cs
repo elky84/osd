@@ -413,5 +413,20 @@ namespace TestServer.Handler
 
             return true;
         }
+
+        [FlatBufferEvent]
+        public bool OnPickup(Session<Character> session, FlatBuffers.Protocol.Request.Pickup request)
+        {
+            var character = session.Data;
+            var items = character.Sector.Objects.Where(x => x.Type == ObjectType.Item).Where(x => x.Position.Delta(character.Position) < 1.0).Select(x => x as Model.Item);
+
+            foreach (var item in items)
+            {
+                item.Map.Remove(item);
+                character.Items.Inventory.Add(item);
+            }
+
+            return true;
+        }
     }
 }

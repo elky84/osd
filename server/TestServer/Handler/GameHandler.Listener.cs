@@ -138,7 +138,7 @@ namespace TestServer.Handler
                 {
                     item.Listener = this;
                     item.Position = mob.Position;
-                    from.Map.Add(item);
+                    item.Map = from.Map;
                 }
             }
         }
