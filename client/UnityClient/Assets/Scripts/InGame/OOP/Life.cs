@@ -36,22 +36,12 @@ namespace Assets.Scripts.InGame.OOP
                     velocityX *= -1;
 
                 var movedX = (velocityX * diff.Ticks) / 1000000;
-
                 var newPosition = new Position(Mathf.Clamp(transform.localPosition.x + movedX, 0, 32), Mathf.Max(0, transform.localPosition.y)).ToVector3();
 
                 if (OnPositionChanging != null)
                     newPosition = OnPositionChanging.Invoke(this, newPosition);
 
-                transform.localPosition = newPosition;
-                var moveResult = IsGrounded();
-                if (moveResult == MoveResult.Over || Raycast(transform.position, this.Direction == Direction.Left ? Vector2.left : Vector2.right, 0.3f))
-                {
-                    transform.localPosition = originPosition;
-                    break;
-                }
-
-                IsGround = moveResult == MoveResult.Ground;
-
+                transform.localPosition = Map.FixHeight(this, newPosition);
                 yield return new WaitForSeconds(0.01f);
             }
         }

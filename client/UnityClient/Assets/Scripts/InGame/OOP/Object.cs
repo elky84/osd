@@ -25,7 +25,15 @@ namespace Assets.Scripts.InGame.OOP
         public abstract ObjectType Type { get; }
         public BoxCollider2D BoxCollider2D { get; private set; }
 
-        public bool IsGround = false;
+        public bool IsGround
+        {
+            get
+            {
+                var y = BoxCollider2D.bounds.min.y - 0.1f;
+                return Map.Blocked(new Vector2(BoxCollider2D.bounds.min.x, y)) ||
+                    Map.Blocked(new Vector2(BoxCollider2D.bounds.max.x, y));
+            }
+        }
 
         public int Sequence { get; set; }
         public string Name { get; set; }
@@ -48,22 +56,9 @@ namespace Assets.Scripts.InGame.OOP
             BoxCollider2D = GetComponent<BoxCollider2D>();
         }
 
-        protected MoveResult IsGrounded()
-        {
-            Vector2 position = transform.position;
-
-            var moveResult = Map.IsGround(new Vector2 { x = position.x, y = BoxCollider2D.bounds.min.y });
-            if (moveResult != MoveResult.Ground)
-            {
-                return moveResult;
-            }
-
-            return Raycast(position, Vector2.down) ? MoveResult.Ground : MoveResult.Normal;
-        }
-
         protected bool Raycast(Vector2 position, Vector2 direction, float distance = 0.5f)
         {
-            Debug.DrawRay(position, direction, Color.green);
+            Debug.DrawRay(position, direction * distance, Color.green);
 
             var raycast = Physics2D.Raycast(position, direction, distance, GroundLayer);
             return raycast.collider != null;
@@ -77,20 +72,14 @@ namespace Assets.Scripts.InGame.OOP
                 var min = Math.Min(0.05f, JumpPower);
 
                 next.y += min;
-
                 JumpPower -= min;
-
                 transform.position = next;
-
-                IsGround = MoveResult.Ground == IsGrounded();
             }
-            else if (IsGround == false)
+            else if(IsGround == false)
             {
                 var next = new Vector3(transform.position.x, transform.position.y);
                 next.y -= 0.05f;
-                transform.position = next;
-
-                IsGround = MoveResult.Ground == IsGrounded();
+                transform.position = Map.FixHeight(this, next);
 
                 if (IsGround)
                 {

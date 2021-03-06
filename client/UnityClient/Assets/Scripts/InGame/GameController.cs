@@ -137,15 +137,20 @@ public partial class GameController : MonoBehaviour
 
     private Vector3 DontFallPosition(Life life, Vector3 position)
     {
-        if (life.Direction == Direction.Right)
+        if (life.IsGround)
         {
-            if (Map.IsGround(new Vector2 { x = life.BoxCollider2D.bounds.max.x, y = life.BoxCollider2D.bounds.min.y }) == MoveResult.Normal)
-                return new Vector3 { x = (float)((int)life.BoxCollider2D.bounds.max.x - life.BoxCollider2D.bounds.size.x / 2.0), y = life.transform.localPosition.y };
-        }
-        else
-        {
-            if (Map.IsGround(new Vector2 { x = life.BoxCollider2D.bounds.min.x, y = life.BoxCollider2D.bounds.min.y }) == MoveResult.Normal)
-                return new Vector3 { x = (float)((int)life.BoxCollider2D.bounds.min.x + life.BoxCollider2D.bounds.size.x / 2.0), y = life.transform.localPosition.y };
+            if (life.Direction == Direction.Right)
+            {
+                var x = position.x + life.BoxCollider2D.size.x * life.transform.localScale.x / 2.0f;
+                if (Map.Blocked(new Vector2(x, life.BoxCollider2D.bounds.min.y - 0.1f)) == false)
+                    return new Vector2((int)position.x + 1 - life.BoxCollider2D.size.x * life.transform.localScale.x / 2.0f, position.y);
+            }
+            else
+            {
+                var x = position.x - life.BoxCollider2D.size.x * life.transform.localScale.x / 2.0f;
+                if (Map.Blocked(new Vector2(x, life.BoxCollider2D.bounds.min.y - 0.1f)) == false)
+                    return new Vector2((int)position.x + life.BoxCollider2D.size.x * life.transform.localScale.x / 2.0f, position.y);
+            }
         }
 
         return position;

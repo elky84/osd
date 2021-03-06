@@ -56,16 +56,29 @@ public class TileMap : MonoBehaviour
         }
     }
 
-    public MoveResult IsGround(Vector2 position, int layer = 0)
+    public bool Blocked(Vector2 position, int layer = 0)
     {
         if (position.y < 0f || position.y >= MapData.Height ||
             position.x < 0f || position.x >= MapData.Height)
         {
-            return MoveResult.Over;
+            return false;
         }
 
         var row = (int)position.y;
         var col = (int)position.x;
-        return _blocks[layer, row, col] > 0 ? MoveResult.Ground : MoveResult.Normal;
+        return _blocks[layer, row, col] > 0;
+    }
+
+    public Vector2 FixHeight(Assets.Scripts.InGame.OOP.Object obj, Vector2 position, int layer = 0)
+    {
+        var colliderHeight = ((obj.BoxCollider2D.size.y * obj.transform.localScale.y) / 2.0f);
+        if (Blocked(new Vector2(position.x, position.y - colliderHeight), layer))
+        {
+            return new Vector2(position.x, (int)position.y + colliderHeight);
+        }
+        else
+        {
+            return position;
+        }
     }
 }
