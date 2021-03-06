@@ -284,7 +284,31 @@ namespace TestServer.Model
     {
         public static Item Add(this Dictionary<ItemType, List<Item>> inventory, Item item)
         {
-            inventory[item.Master.Type].Add(item);
+            if (item.Master.Stack.HasValue)
+            {
+                var exists = inventory[item.Master.Type].FirstOrDefault(x => x.Master.Id == item.Master.Id);
+                if (exists == null)
+                {
+                    inventory[item.Master.Type].Add(item);
+                }
+                else if (exists.Count + item.Count < item.Master.Stack.Value)
+                {
+                    exists.Count += item.Count;
+                }
+                else
+                {
+                    var free = item.Master.Stack.Value - exists.Count;
+                    exists.Count += free;
+                    item.Count -= free;
+
+                    inventory.Add(item);
+                }
+            }
+            else
+            {
+                inventory[item.Master.Type].Add(item);
+            }
+
             return item;
         }
 

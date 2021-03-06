@@ -17,10 +17,13 @@ namespace TestServer.Model
 
         public override string Name => Master.Id;
 
-        public Item(ulong id, MasterData.Table.Item master)
+        public int Count { get; set; }
+
+        public Item(ulong id, MasterData.Table.Item master, int count = 1)
         {
             Id = id;
             Master = master;
+            Count = count;
         }
 
         public virtual void Active(Character owner) { }
@@ -30,7 +33,7 @@ namespace TestServer.Model
 
     public class Consume : Item
     {
-        public Consume(ulong id, MasterData.Table.Item master) : base(id, master)
+        public Consume(ulong id, MasterData.Table.Item master, int count = 1) : base(id, master, count)
         {
             if (Master.Type != ItemType.Consume)
                 throw new Exception($"{master.Id} is not a Consume type.");

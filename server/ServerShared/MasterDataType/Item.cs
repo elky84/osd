@@ -16,6 +16,8 @@ namespace MasterData.Table
         [JsonConverter(typeof(StringEnumConverter))]
         public ItemType Type { get; set; }
 
+        public int? Stack { get; set; }
+
         public string ActiveScript { get; set; }
 
         public string InactiveScript { get; set; }

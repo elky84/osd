@@ -37,7 +37,7 @@ namespace TestServer.Factory
             }
         }
 
-        public static Model.Item Create(string id)
+        public static Model.Item Create(string id, int count = 1)
         {
             var itemCase = MasterTable.From<TableItem>()[id];
             if (itemCase == null)
@@ -49,10 +49,10 @@ namespace TestServer.Factory
                     return Create(MasterTable.From<TableEquipmentOption>()[id]);
 
                 case NetworkShared.ItemType.Consume:
-                    return new Model.Consume(Sequence, itemCase);
+                    return new Model.Consume(Sequence, itemCase, count);
 
                 default:
-                    return new Model.Item(Sequence, itemCase);
+                    return new Model.Item(Sequence, itemCase, count);
             }
         }
     }
