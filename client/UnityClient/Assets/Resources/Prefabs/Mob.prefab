@@ -106,7 +106,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SpriteSheetPath: BlackWizard
-  IsGround: 0
   GroundLayer:
     serializedVersion: 2
     m_Bits: 512
@@ -172,7 +171,7 @@ Animator:
   m_GameObject: {fileID: 3890015596201879303}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 7a44cc779bb025b47ae0a159a8eb4146, type: 2}
+  m_Controller: {fileID: 9100000, guid: 3fd7ed871db54704e8871f438dd01490, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0

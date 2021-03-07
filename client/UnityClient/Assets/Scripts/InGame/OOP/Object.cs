@@ -75,7 +75,7 @@ namespace Assets.Scripts.InGame.OOP
                 JumpPower -= min;
                 transform.position = next;
             }
-            else if(IsGround == false)
+            else if (IsGround == false)
             {
                 var next = new Vector3(transform.position.x, transform.position.y);
                 next.y -= 0.05f;
@@ -87,5 +87,15 @@ namespace Assets.Scripts.InGame.OOP
                 }
             }
         }
+
+
+        public abstract void OnDie();
+
+        public abstract void OnDamaged();
+
+        public abstract void OnAttack();
+
+        public abstract void OnHealed();
+
     }
 }

@@ -30,6 +30,8 @@ public partial class GameController : MonoBehaviour
     {
         Camera = GameObject.Find("Main Camera").GetComponent<Camera>();
         TilesTransform = transform.Find("Tiles");
+
+        RegisterEvent();
     }
 
     public void Start()
@@ -60,6 +62,11 @@ public partial class GameController : MonoBehaviour
         StartCoroutine(this.CoUpdate());
     }
 
+
+    private void OnDestroy()
+    {
+        UnregisterEvent();
+    }
 
     public void Clear()
     {
@@ -193,11 +200,11 @@ public partial class GameController : MonoBehaviour
 
     private void RemoveObject(int sequence)
     {
-        var character = GetObject(sequence);
-        if (character != null)
+        var obj = GetObject(sequence);
+        if (obj != null)
         {
-            UnsetControllable(character);
-            Destroy(character.gameObject);
+            UnsetControllable(obj);
+            Destroy(obj.gameObject);
             Objects.Remove(sequence);
         }
     }

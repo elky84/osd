@@ -165,7 +165,7 @@ namespace TestServer.Model
                 for (int i = 0; i < x.Count; i++)
                 {
                     var mobCase = MasterTable.From<TableMob>()[x.Mob];
-                    mobs.Add(new Mob(mobCase));
+                    mobs.Add(new Mob(mobCase, this));
                 }
 
                 return mobs;

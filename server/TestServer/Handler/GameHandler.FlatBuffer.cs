@@ -384,7 +384,7 @@ namespace TestServer.Handler
                 var weaponRange = MasterTable.From<TableWeaponRange>()[option.Type] ??
                     throw new Exception("무기 범위 정보 없음");
 
-                _ = Broadcast(character, FlatBuffers.Protocol.Response.Attack.Bytes(character.Sequence.Value), sector: character.Sector);
+                _ = Broadcast(character, FlatBuffers.Protocol.Response.Attack.Bytes(character.Sequence.Value), exceptSelf: false, sector: character.Sector);
 
                 var rangeBox = new RectF
                 {
@@ -405,7 +405,7 @@ namespace TestServer.Handler
                     Log.Logger.Information($"{mob.Sequence.Value}가 맞아죽음");
                 else
                     Log.Logger.Information($"범위 안에 몹 없음");
-            }
+           }
             catch (Exception e)
             {
                 Log.Logger.Error(e.Message);

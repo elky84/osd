@@ -28,7 +28,6 @@ namespace TestServer.Model
                 if (Math.Max(0, value) == 0)
                 {
                     SpawnedTime = null;
-                    Map = null;
                 }
             }
         }
@@ -60,6 +59,12 @@ namespace TestServer.Model
         public Mob(MasterData.Table.Mob master)
         {
             Master = master;
+        }
+
+        public Mob(MasterData.Table.Mob master, Map map)
+        {
+            Master = master;
+            Map = map;
         }
 
         public bool Spawn(Map map, Point position)

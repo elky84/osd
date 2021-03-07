@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using NetworkShared;
+using UnityEngine;
 
 public class Position
 {
@@ -35,7 +36,7 @@ public enum Direction
 
 namespace Assets.Scripts.InGame.OOP
 {
-    public class Character : Assets.Scripts.InGame.OOP.Life
+    public class Character : Life
     {
         public int Level { get; set; }
         public long Exp { get; set; }
@@ -47,18 +48,6 @@ namespace Assets.Scripts.InGame.OOP
         public void Start()
         {
             NickName.text = Name;
-        }
-
-        public void Attacking()
-        {
-        }
-
-        public void DamageEnd()
-        {
-        }
-
-        public void DeadEnd()
-        {
         }
 
         public void ActiveSkill(int slot = 0)

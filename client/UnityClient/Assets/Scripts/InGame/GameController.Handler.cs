@@ -118,7 +118,11 @@ public partial class GameController : MonoBehaviour
         for (int i = 0; i < response.SequenceLength; i++)
         {
             Debug.Log($"hide : {response.Sequence(i)}");
-            RemoveObject(response.Sequence(i));
+            if (Objects.TryGetValue(response.Sequence(i), out var obj) == false)
+                return true;
+            
+            if(obj is Assets.Scripts.InGame.OOP.Character)
+                RemoveObject(response.Sequence(i));
         }
         return true;
     }
@@ -159,6 +163,12 @@ public partial class GameController : MonoBehaviour
     public bool OnDamaged(Damaged response)
     {
         UnityEngine.Debug.Log($"damaged ({response.Sequence} > {response.Damage})");
+
+        if (Objects.TryGetValue(response.Sequence, out var obj))
+        {
+            obj.OnDamaged();
+        }
+
         return true;
     }
 
@@ -175,12 +185,13 @@ public partial class GameController : MonoBehaviour
         if (Objects.TryGetValue(response.Sequence, out var obj) == false)
             return true;
 
-        if (obj.Type == ObjectType.Mob)
+        if (obj is Mob)
         {
-            RemoveObject(obj.Sequence);
-            UnityEngine.Debug.Log($"{obj.Sequence} is dead");
+            UnityEngine.Debug.Log($"{response.Sequence} {obj.Name} is dead");
         }
 
+        obj.OnDie();
+        UnityEngine.Debug.Log($"{response.Sequence} {obj.Name} is dead");
         return true;
     }
 
@@ -189,6 +200,8 @@ public partial class GameController : MonoBehaviour
     {
         if (Objects.TryGetValue(response.Sequence, out var obj) == false)
             return false;
+
+        obj.OnAttack();
 
         UnityEngine.Debug.Log($"attack action : {obj.Sequence}");
         return true;

@@ -11,7 +11,7 @@ namespace TestServer.Handler
     {
         public void OnLeave(Model.Object obj)
         {
-            
+
         }
 
         public void OnEnter(Model.Object obj)
@@ -95,7 +95,7 @@ namespace TestServer.Handler
                 }
                 _ = character.Send(FlatBuffers.Protocol.Response.SetOwner.Bytes(setList.Select(x => x.Sequence.Value).ToList()));
             }
-            else if(obj.Type == NetworkShared.ObjectType.Mob)
+            else if (obj.Type == NetworkShared.ObjectType.Mob)
             {
                 var mob = obj as Mob;
                 var ownerBefore = mob.Owner;
@@ -141,6 +141,9 @@ namespace TestServer.Handler
                     item.Map = from.Map;
                 }
             }
+
+            if (life is Mob)
+                life.Map = null;
         }
 
         public void OnSectorEntering(Model.Object obj, Map.Sector sector)
@@ -150,17 +153,17 @@ namespace TestServer.Handler
 
         public void OnSectorLeaving(Model.Object obj, Map.Sector sector)
         {
-            
+
         }
 
         public void OnSectorEntered(Model.Object obj, Map.Sector sector)
         {
-            
+
         }
 
         public void OnSectorLeaved(Model.Object obj, Map.Sector sector)
         {
-            
+
         }
 
         public void OnDamaged(Life life, Life from, int damage)
@@ -205,10 +208,15 @@ namespace TestServer.Handler
                     throw new System.Exception("블라잉블라잉");
 
                 var damage = mobCase.Damage;
-                foreach (var character in mob.Sector.Nears.SelectMany(x => x.Characters).Where(x => x.CollisionBox.Contains(mob.CollisionBox)))
+                var targets = mob.Sector.Nears.SelectMany(x => x.Characters).Where(x => x.CollisionBox.Contains(mob.CollisionBox));
+
+                foreach (var character in targets)
                 {
                     character.Damage(damage, mob);
                 }
+
+                if (targets.Any())
+                    _ = Broadcast(mob, FlatBuffers.Protocol.Response.Attack.Bytes(mob.Sequence.Value), exceptSelf: false, sector: mob.Sector);
             }
         }
 

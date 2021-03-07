@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NetworkShared;
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
@@ -93,6 +94,43 @@ namespace Assets.Scripts.InGame.OOP
             {
                 Debug.Log(e.Message);
             }
+        }
+
+
+        public void Attacking()
+        {
+        }
+
+        public void DamageEnd()
+        {
+        }
+
+        public void DeadEnd()
+        {
+            if (Type == ObjectType.Mob)
+            {
+                EventAggregator.Instance.Publish(new GameEvent.DeadEnd { Sequence = Sequence });
+            }
+        }
+
+        public override void OnDie()
+        {
+            Animator.Play("Dying");
+        }
+
+        public override void OnDamaged()
+        {
+            Animator.Play("Hurt");
+        }
+        public override void OnAttack()
+        {
+            //TODO 이거 엑셀에서 불러와야함. 임시 하드 코딩.
+            Animator.Play(Type == NetworkShared.ObjectType.Character ? "Slashing" : "Throwing");
+        }
+
+        public override void OnHealed()
+        {
+
         }
     }
 }
