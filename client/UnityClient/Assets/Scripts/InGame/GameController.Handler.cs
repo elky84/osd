@@ -120,8 +120,9 @@ public partial class GameController : MonoBehaviour
             Debug.Log($"hide : {response.Sequence(i)}");
             if (Objects.TryGetValue(response.Sequence(i), out var obj) == false)
                 return true;
-            
-            if(obj is Assets.Scripts.InGame.OOP.Character)
+
+            //TODO 몬스터가 죽는 도중에 사라져서 임시 처리. 현재 코드론 몬스터가 범위 벗어 났을 때 안지워짐. 삭제 필요.
+            if (obj is Assets.Scripts.InGame.OOP.Character)
                 RemoveObject(response.Sequence(i));
         }
         return true;
