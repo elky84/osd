@@ -72,6 +72,9 @@ public partial class GameController : MonoBehaviour
         Debug.Log($"After position : {response.Position.Value.X}, {response.Position.Value.Y}");
         Debug.Log($"After map name : {response.Map?.Name}");
 
+        //var window = UIPool.Show<UIWindow>();
+        //window.Contents = "안녕하세요??";
+
         return true;
     }
 
