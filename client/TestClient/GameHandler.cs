@@ -19,7 +19,7 @@ namespace TestClient
         [FlatBufferEvent]
         public bool OnState(FlatBuffers.Protocol.Response.State response)
         {
-            Log.Logger.Information($"OnState() {response.Sequence} {response.Position} {response.Jumping} {response.Velocity}");
+            Log.Logger.Information($"OnState() {response.Sequence} {response.Position} {response.Jump} {response.Velocity}");
             return true;
         }
 
@@ -54,7 +54,9 @@ namespace TestClient
                 Console.WriteLine($"Portal to {portal.Map} : {portal.Position?.X}, {portal.Position?.Y}");
             }
 
-            Console.WriteLine($"My sequence : {response.Sequence}");
+            Console.WriteLine($"My sequence : {response.Character.Value.Sequence}");
+            Character.Sequence = response.Character.Value.Sequence;
+
             Console.WriteLine($"After position : {response.Position?.X}, {response.Position?.Y}");
             Console.WriteLine($"After map name : {response.Map?.Name}");
 
@@ -74,25 +76,18 @@ namespace TestClient
             for (int i = 0; i < response.CharactersLength; i++)
             {
                 var character = response.Characters(i).Value;
-                Console.WriteLine($"Object {i} : {character.Name}({character.Sequence}) => {(ObjectType)character.Type}");
+                Console.WriteLine($"Object {i} : {character.Name}({character.Sequence}) => {(ObjectType)character.Sequence}");
             }
 
 
             return true;
         }
 
-
-        [FlatBufferEvent]
-        public bool OnShowCharacter(ShowCharacter response)
-        {
-            Console.WriteLine($"{response.Name}({response.Sequence}) is entered in current map.");
-            return true;
-        }
-
         [FlatBufferEvent]
         public bool OnLeave(FlatBuffers.Protocol.Response.Leave response)
         {
-            Console.WriteLine($"{response.Sequence} is leave from current map.");
+            for (int n = 0; n < response.SequenceLength; ++n)
+                Console.WriteLine($"{response.Sequence(n)} is leave from current map.");
             return true;
         }
 

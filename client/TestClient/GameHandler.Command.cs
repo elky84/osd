@@ -44,7 +44,7 @@ namespace TestClient
 
             var method = _commandMethodDict[name];
             var methodParameters = method.GetParameters();
-            var convertedList = parameters.Select((x, i) => 
+            var convertedList = parameters.Select((x, i) =>
             {
                 if (methodParameters[i].ParameterType.IsEnum)
                     return Enum.Parse(methodParameters[i].ParameterType, parameters[i] as string);
@@ -74,7 +74,7 @@ namespace TestClient
                 default:
                     return;
             }
-            Send(Move.Bytes(new Vector2.Model(Character.Position.X, Character.Position.Y), (int)Character.Direction));
+            Send(Move.Bytes(Character.Sequence, new Vector2.Model(Character.Position.X, Character.Position.Y), (int)Character.Direction));
         }
 
         [CommandEvent("stop")]
@@ -87,18 +87,18 @@ namespace TestClient
             var diff = elapsed / 1000000 * Character.Velocity.X;
             Character.Position = new System.Numerics.Vector2(Character.Position.X + diff, 0);
             Character.Velocity = new System.Numerics.Vector2(0, 0);
-            Send(Stop.Bytes(new Vector2.Model(Character.Position.X, Character.Position.Y)));
+            Send(Stop.Bytes(Character.Sequence, new Vector2.Model(Character.Position.X, Character.Position.Y)));
         }
 
         [CommandEvent("warp")]
         public void OnWarp()
         {
-            Send(Warp.Bytes(new Vector2.Model(Character.Position.X, Character.Position.Y)));
+            Send(Warp.Bytes());
         }
 
         [CommandEvent("cheat/position")]
         public void Cheat_OnPosition()
-        { 
+        {
             Send(CheatPosition.Bytes(new Vector2.Model(Character.Position.X, Character.Position.Y)));
         }
 

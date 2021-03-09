@@ -10,6 +10,8 @@ namespace TestClient.Model
     {
         public IChannelHandlerContext Context { get; set; }
 
+        public int Sequence { get; set; }
+
         public Direction Direction { get; set; }
         public Vector2 Position { get; set; }
         public DateTime? BeginMoveTime { get; set; }
