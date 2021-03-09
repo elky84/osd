@@ -57,6 +57,16 @@ namespace TestServer.Model
 
         public Dictionary<MobSpawn, List<Mob>> MobSpawns { get; private set; }
 
+        public List<Object> Nears(Point pivot, double distance)
+        {
+            return Objects.Values
+                .Select(x => new { Distance = pivot.Distance(x.Position), Object = x })
+                .OrderBy(x => x.Distance)
+                .Where(x => x.Distance < distance)
+                .Select(x => x.Object)
+                .ToList();
+        }
+
         public static int BuiltinName(IntPtr luaState)
         {
             var lua = Lua.FromIntPtr(luaState);
@@ -86,17 +96,14 @@ namespace TestServer.Model
             var bounds = (pivot == null || argc < 3) ? null : new long?(lua.ToInteger(4));
 
             lua.NewTable();
-            foreach (var (obj, i) in map.Objects.Select((x, i) => (x.Value, i)))
+            var nears = (pivot != null && bounds != null) ?
+                map.Nears(pivot.Position, bounds.Value) :
+                map.Objects.Values.ToList();
+
+            foreach (var (obj, i) in nears.Select((x, i) => (x, i)))
             {
                 if (type != null && obj.Type != (NetworkShared.ObjectType)type.Value)
                     continue;
-
-                if (pivot != null && bounds != null)
-                {
-                    var distance = obj.Position.Distance(pivot.Position);
-                    if (distance > bounds)
-                        continue;
-                }
 
                 switch (obj.Type)
                 {

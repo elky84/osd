@@ -56,6 +56,8 @@ namespace TestServer.Model
 
         public StatContainer Stats { get; private set; } = new StatContainer();
 
+        public BuffCollection Buffs { get; private set; } = new BuffCollection();
+
 
         // override 
         public override bool IsActive => IsAlive;

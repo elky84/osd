@@ -1,13 +1,11 @@
 ﻿using MasterData;
 using MasterData.Table;
-using System;
-using TestServer.Model;
 
 namespace TestServer.Factory
 {
     public class SkillFactory
     {
-        public static Model.Skill Create(Character owner, string id, int level = 1)
+        public static Model.Skill Create(string id, int level = 1)
         {
             var master = MasterTable.From<TableSkill>()[id];
             if (master == null)
@@ -16,13 +14,13 @@ namespace TestServer.Factory
             switch (master.Type)
             {
                 case NetworkShared.SkillType.Passive:
-                    return new Model.Passive(owner, id, level);
+                    return new Model.Passive(id, level);
 
                 case NetworkShared.SkillType.Buff:
-                    return new Model.Buff(owner, id, level);
+                    return new Model.Buff(id, level);
 
                 default:
-                    return new Model.Active(owner, id, level);
+                    return new Model.Skill(id, level);
             }
         }
     }

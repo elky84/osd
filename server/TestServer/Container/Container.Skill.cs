@@ -1,99 +1,61 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TestServer.Model;
 
 namespace TestServer.Container
 {
-    public class ActiveContainer
+    public class SkillCollection : IEnumerable<Skill>
     {
-        private Dictionary<int, Model.Skill> _skills = new Dictionary<int, Model.Skill>();
-
-        public Life Owner { get; private set; }
-
-        public ActiveContainer(Life owner)
-        {
-            Owner = owner;
-        }
-
-        public Model.Skill Set(int slot, Model.Skill skill)
-        {
-            if (_skills.TryGetValue(slot, out var exists))
-                _skills.Remove(slot);
-
-            skill.Owner = Owner;
-            _skills.Add(slot, skill);
-            return exists;
-        }
-    }
-
-    public class BuffContainer
-    {
-        private Dictionary<string, Model.Buff> _buffs = new Dictionary<string, Model.Buff>();
-
-        public Life Owner { get; private set; }
-
-        public BuffContainer(Character owner)
-        {
-            Owner = owner;
-        }
-
-        public Model.Buff Stack(Model.Buff buff)
-        {
-            var newBuff = new Model.Buff(buff.Owner, buff.Case, buff.Level)
-            {
-                ActiveTime = DateTime.Now
-            };
-
-            if (_buffs.TryGetValue(buff.Case, out var exists))
-            {
-                newBuff.Stack = exists.Stack + 1;
-            }
-
-            return newBuff;
-        }
-    }
-
-    public class PassiveContainer
-    {
-        private Dictionary<string, Model.Passive> _passives = new Dictionary<string, Model.Passive>();
+        private List<Skill> _skill = new List<Skill>();
 
         public Character Owner { get; private set; }
 
-        public PassiveContainer(Character owner)
+        public IEnumerator<Skill> GetEnumerator() => _skill.GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => _skill.GetEnumerator();
+
+        public SkillCollection(Character owner)
         {
             Owner = owner;
         }
 
-        public Model.Passive Set(Model.Passive passive)
+        public void Set(Skill skill, Skill.IListener listener)
         {
-            if (_passives.TryGetValue(passive.Case, out var exists))
-            {
-                if (exists.Level > passive.Level)
-                    return exists;
-            }
+            var exists = _skill.FirstOrDefault(x => x.Case == skill.Case);
+            if (exists.Level < skill.Level)
+                _skill.Remove(exists);
 
-            _passives[passive.Case] = passive;
-            return passive;
+            _skill.Add(new Skill(Owner, skill.Case, skill.Level, listener));
+        }
+
+        public void Set(string skillId, Skill.IListener listener)
+        {
+            _skill.Add(new Skill(Owner, skillId, listener: listener));
         }
     }
 
-    public class SkillContainer
+    public class BuffCollection : IEnumerable<Buff>
     {
-        public Life Owner { get; private set; }
+        private List<Buff> _buffs;
 
-        public ActiveContainer Actives { get; private set; }
+        public IEnumerator<Buff> GetEnumerator() => _buffs.GetEnumerator();
 
-        public BuffContainer Buffs { get; private set; }
+        IEnumerator IEnumerable.GetEnumerator() => _buffs.GetEnumerator();
 
-        public PassiveContainer Passives { get; private set; }
-
-
-        public SkillContainer(Character owner)
+        public void Add(Buff buff, Buff.IListener listener)
         {
-            Owner = owner;
-            Actives = new ActiveContainer(owner);
-            Buffs = new BuffContainer(owner);
-            Passives = new PassiveContainer(owner);
+            var exists = _buffs.FirstOrDefault(x => x.Case == buff.Case) ??
+                new Buff(buff.Owner, buff.Case, buff.Level, listener);
+
+            if (exists.Level < buff.Level)
+            {
+                exists.Owner = buff.Owner;
+                exists.Level = buff.Level;
+            }
+
+            exists.Stack++;
         }
     }
 }
