@@ -3,7 +3,7 @@
     "Id": "전체공격스킬",
     "Name": "전체공경스킬",
     "Type": "Active",
-    "Script": null
+    "Script": "scripts/Skill/Attack.lua"
   },
   "전체회복스킬": {
     "Id": "전체회복스킬",

@@ -1,4 +1,4 @@
-function func(me)
+function on_init(me)
     local map = me:map()
     local mobs = me:nears(1)
 
@@ -15,4 +15,8 @@ function func(me)
 
         mob:hp_add(-damage, me)
     end
+end
+
+function on_finish(me)
+    print('finish')
 end

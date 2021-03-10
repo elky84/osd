@@ -12,7 +12,7 @@ using TestServer.Container;
 
 namespace TestServer.Model
 {
-    public class Character : Life, Skill.IListener, Buff.IListener
+    public class Character : Life
     {
         public new interface IListener : Life.IListener
         {
@@ -21,15 +21,13 @@ namespace TestServer.Model
             public void OnItemRemoved(Character character, Item item);
             public void OnLevelChanged(Character character, int before, int after);
             public void OnExpChanged(Character character, long before, long after);
-            public void OnSkillLevelUp(Character character, Skill skill, int level);
-            public void OnSkillStacked(Character character, Buff buff, int count);
         }
 
         public new IListener Listener { get; private set; }
         public IChannelHandlerContext Context { get; set; }
 
         public ItemContainer Items { get; private set; }
-        public SkillCollection Availables { get; private set; } = new SkillCollection();
+        public SkillCollection Skills { get; private set; }
 
         private DateTime _lastDamagedTime = DateTime.MinValue;
         public override int Hp
@@ -132,7 +130,7 @@ namespace TestServer.Model
         public Character()
         {
             Items = new ItemContainer(this);
-            Skills = new SkillContainer(this);
+            Skills = new SkillCollection(this);
         }
 
         public override async Task Send(byte[] bytes)
@@ -277,16 +275,6 @@ namespace TestServer.Model
         {
             base.BindEvent(listener);
             Listener = listener;
-        }
-
-        public void OnLevelUp(Skill skill)
-        {
-            Listener?.OnSkillLevelUp(this, skill, skill.Level);
-        }
-
-        public void OnStackChanged(Buff buff)
-        {
-            Listener?.OnSkillStacked(this, buff, buff.Stack);
         }
     }
 

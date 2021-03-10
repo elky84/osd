@@ -1,6 +1,5 @@
 ﻿using Assets.Scripts.InGame.OOP;
 using FlatBuffers.Protocol.Response;
-using MasterData;
 using NetworkShared;
 using UnityEngine;
 

@@ -2,6 +2,7 @@
 using MasterData;
 using MasterData.Table;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -27,7 +28,7 @@ namespace TestServer.Model
             }
         }
 
-        public Life Owner { get; private set; }
+        public Life Owner { get; set; }
         public IListener Listener { get; private set; }
 
         public virtual MasterData.Table.Skill Master => MasterTable.From<TableSkill>()[Case];
@@ -41,16 +42,98 @@ namespace TestServer.Model
             Listener = listener;
         }
 
-        private void ExecuteActive()
+        private List<Object> Targets
         {
-            if (Master.Type != NetworkShared.SkillType.Active)
-                return;
+            get
+            {
+                var targets = new List<Object>();
+                switch (Property.Target)
+                {
+                    case NetworkShared.Target.Ally:
+                        {
+                            targets = Owner.Map.Nears(Owner.Position, Property.Bound).Where(x => x.Type == Owner.Type).ToList();
+                        }
+                        break;
 
+                    case NetworkShared.Target.Enemy:
+                        {
+                            var type = Owner.Type == NetworkShared.ObjectType.Character ?
+                                NetworkShared.ObjectType.Mob : NetworkShared.ObjectType.Character;
+                            targets = Owner.Map.Nears(Owner.Position, Property.Bound).Where(x => x.Type == type).ToList();
+                        }
+                        break;
+
+                    case NetworkShared.Target.Self:
+                        targets.Add(Owner);
+                        break;
+                }
+
+                if (Property.TargetCount != null)
+                    targets = targets.Take(Property.TargetCount.Value).ToList();
+
+                return targets;
+            }
+        }
+
+        private List<Object> ExecuteActive()
+        {
             if (Owner.Map == null)
+                return new List<Object>();
+
+            var targets = Targets;
+            if (Property.HPRecovery != null)
+            {
+                targets.ForEach(x =>
+                {
+                    switch (x.Type)
+                    {
+                        case NetworkShared.ObjectType.Character:
+                            (x as Character).Heal(Property.HPRecovery.Value);
+                            break;
+
+                        case NetworkShared.ObjectType.Mob:
+                            (x as Mob).Heal(Property.HPRecovery.Value);
+                            break;
+                    }
+                });
+            }
+
+            if (Property.MPRecovery != null)
+            {
+                targets.ForEach(x =>
+                {
+                    switch (x.Type)
+                    {
+                        case NetworkShared.ObjectType.Character:
+                            (x as Character).Mp += Property.MPRecovery.Value;
+                            break;
+                    }
+                });
+            }
+
+            return targets;
+        }
+
+        private void ExecuteBuff()
+        {
+            if (Master.Type != NetworkShared.SkillType.Buff)
                 return;
 
+            var targets = ExecuteActive();
+            targets.ForEach(x =>
+            {
+                var life = x as Life;
+                if (life == null)
+                    return;
+
+                life.Buffs.Add(new Buff(Owner, Case, Level, life));
+            });
+        }
+
+        public void Execute()
+        {
             var lua = string.IsNullOrEmpty(Master.Script) ? null : Static.Get();
-            if(lua != null)
+            if (lua != null)
             {
                 if (File.Exists(Master.Script) == false)
                     throw new Exception($"{Master.Script} : script not found");
@@ -59,39 +142,18 @@ namespace TestServer.Model
             }
 
             lua?.GetGlobal("on_init");
-            lua?.Resume(0);
-
-            var targets = Owner.Map.Nears(Owner.Position, Property.Bound);
-
-            switch (Property.Target)
+            switch (Owner.Type)
             {
-                case NetworkShared.Target.Ally:
-                    {
-                        targets = targets.Where(x => x.Type == Owner.Type).ToList();
-                    }
+                case NetworkShared.ObjectType.Character:
+                    lua?.PushLuable(Owner as Character);
                     break;
 
-                case NetworkShared.Target.Enemy:
-                    {
-                        var type = Owner.Type == NetworkShared.ObjectType.Character ?
-                            NetworkShared.ObjectType.Mob : NetworkShared.ObjectType.Character;
-                        targets = targets.Where(x => x.Type == type).ToList();
-                    }
+                case NetworkShared.ObjectType.Mob:
+                    lua?.PushLuable(Owner as Mob);
                     break;
             }
+            lua?.Resume(1);
 
-            if (Property.TargetCount != null)
-                targets = targets.Take(Property.TargetCount.Value).ToList();
-        }
-
-        private void ExecuteBuff()
-        {
-            if (Master.Type != NetworkShared.SkillType.Buff)
-                return;
-        }
-
-        public void Execute()
-        {
             switch (Master.Type)
             {
                 case NetworkShared.SkillType.Active:
@@ -105,6 +167,19 @@ namespace TestServer.Model
                 default:
                     break;
             }
+
+            lua?.GetGlobal("on_finish");
+            switch (Owner.Type)
+            {
+                case NetworkShared.ObjectType.Character:
+                    lua?.PushLuable(Owner as Character);
+                    break;
+
+                case NetworkShared.ObjectType.Mob:
+                    lua?.PushLuable(Owner as Mob);
+                    break;
+            }
+            lua?.Resume(1);
         }
     }
 

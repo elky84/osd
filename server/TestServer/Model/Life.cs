@@ -5,7 +5,7 @@ using TestServer.Container;
 
 namespace TestServer.Model
 {
-    public abstract class Life : Object
+    public abstract class Life : Object, Buff.IListener
     {
         // listener
         public new interface IListener : Object.IListener
@@ -13,6 +13,8 @@ namespace TestServer.Model
             public void OnHealed(Life life, Life from, int heal);
             public void OnDamaged(Life life, Life from, int damage);
             public void OnDie(Life life, Life from);
+            public void OnSkillLevelUp(Life life, Skill skill);
+            public void OnBuffStackChanged(Life life, Buff buff);
         }
         public new IListener Listener { get; private set; }
 
@@ -66,7 +68,11 @@ namespace TestServer.Model
         public virtual void Damage(int damage, Life from = null)
         {
             this.Hp -= damage;
-            Listener?.OnDamaged(this, from, damage);
+
+            if (damage > 0)
+                Listener?.OnDamaged(this, from, damage);
+            else
+                Listener?.OnHealed(this, from, -damage);
 
             if (this.IsAlive == false)
                 Listener?.OnDie(this, from);
@@ -75,7 +81,10 @@ namespace TestServer.Model
         public virtual void Heal(int heal, Life from = null)
         {
             this.Hp += heal;
-            Listener?.OnHealed(this, from, heal);
+            if (heal > 0)
+                Listener?.OnHealed(this, from, heal);
+            else
+                Listener?.OnDamaged(this, from, -heal);
         }
 
 
@@ -114,7 +123,7 @@ namespace TestServer.Model
             {
                 var from = lua.ToLuable<Life>(3);
                 if (value < 0)
-                    life.Damage((int)-value, from);
+                    life.Damage((int)value, from);
                 else
                     life.Heal((int)value, from);
             }
@@ -138,6 +147,16 @@ namespace TestServer.Model
         {
             base.BindEvent(listener);
             Listener = listener;
+        }
+
+        public void OnStackChanged(Buff buff)
+        {
+            Listener?.OnBuffStackChanged(this, buff);
+        }
+
+        public void OnLevelUp(Skill skill)
+        {
+            Listener?.OnSkillLevelUp(this, skill);
         }
     }
 }

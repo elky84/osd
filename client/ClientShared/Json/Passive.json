@@ -3,122 +3,102 @@
     {
       "Id": "패시브스킬",
       "Level": 1,
-      "Interval": 1000,
-      "Stack": null
+      "Interval": 1000
     },
     {
       "Id": "패시브스킬",
       "Level": 2,
-      "Interval": 1000,
-      "Stack": null
+      "Interval": 1000
     },
     {
       "Id": "패시브스킬",
       "Level": 3,
-      "Interval": 1000,
-      "Stack": null
+      "Interval": 1000
     },
     {
       "Id": "패시브스킬",
       "Level": 4,
-      "Interval": 1000,
-      "Stack": null
+      "Interval": 1000
     },
     {
       "Id": "패시브스킬",
       "Level": 5,
-      "Interval": 1000,
-      "Stack": null
+      "Interval": 1000
     },
     {
       "Id": "패시브스킬",
       "Level": 6,
-      "Interval": 1000,
-      "Stack": null
+      "Interval": 1000
     },
     {
       "Id": "패시브스킬",
       "Level": 7,
-      "Interval": 1000,
-      "Stack": null
+      "Interval": 1000
     },
     {
       "Id": "패시브스킬",
       "Level": 8,
-      "Interval": 1000,
-      "Stack": null
+      "Interval": 1000
     },
     {
       "Id": "패시브스킬",
       "Level": 9,
-      "Interval": 1000,
-      "Stack": null
+      "Interval": 1000
     },
     {
       "Id": "패시브스킬",
       "Level": 10,
-      "Interval": 1000,
-      "Stack": null
+      "Interval": 1000
     },
     {
       "Id": "패시브스킬",
       "Level": 11,
-      "Interval": 1000,
-      "Stack": null
+      "Interval": 1000
     },
     {
       "Id": "패시브스킬",
       "Level": 12,
-      "Interval": 1000,
-      "Stack": null
+      "Interval": 1000
     },
     {
       "Id": "패시브스킬",
       "Level": 13,
-      "Interval": 1000,
-      "Stack": null
+      "Interval": 1000
     },
     {
       "Id": "패시브스킬",
       "Level": 14,
-      "Interval": 1000,
-      "Stack": null
+      "Interval": 1000
     },
     {
       "Id": "패시브스킬",
       "Level": 15,
-      "Interval": 1000,
-      "Stack": null
+      "Interval": 1000
     },
     {
       "Id": "패시브스킬",
       "Level": 16,
-      "Interval": 1000,
-      "Stack": null
+      "Interval": 1000
     },
     {
       "Id": "패시브스킬",
       "Level": 17,
-      "Interval": 1000,
-      "Stack": null
+      "Interval": 1000
     },
     {
       "Id": "패시브스킬",
       "Level": 18,
-      "Interval": 1000,
-      "Stack": null
+      "Interval": 1000
     },
     {
       "Id": "패시브스킬",
       "Level": 19,
-      "Interval": 1000,
-      "Stack": null
+      "Interval": 1000
     },
     {
       "Id": "패시브스킬",
       "Level": 20,
-      "Interval": 1000,
-      "Stack": null
+      "Interval": 1000
     }
   ]
 }

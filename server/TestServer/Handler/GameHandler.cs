@@ -181,10 +181,9 @@ namespace TestServer.Handler
 
 
             // 스킬을 배움
-            var index = 0;
             foreach (var (name, skill) in MasterTable.From<TableSkill>())
             {
-                session.Data.Skills.Actives.Set(index++, SkillFactory.Create(session.Data, skill.Id));
+                session.Data.Skills.Set(name, session.Data);
             }
         }
 

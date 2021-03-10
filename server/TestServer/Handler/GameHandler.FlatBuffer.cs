@@ -335,31 +335,7 @@ namespace TestServer.Handler
         {
             try
             {
-                var lua = Static.Get() ??
-                    throw new Exception("all lua threads are used.");
-
-                var skillName = string.Empty;
-                switch (request.Id)
-                {
-                    case 0:
-                        skillName = "전체공격스킬";
-                        break;
-
-                    case 1:
-                        skillName = "전체회복스킬";
-                        break;
-                }
-
-                var path = MasterTable.From<TableSkill>()[skillName].Script;
-                if (File.Exists(path) == false)
-                    throw new Exception($"{path} : script not found");
-
-                lua.DoFile(path);
-                lua.GetGlobal("func");
-
-                lua.PushLuable(session.Data);
-                if (lua.Resume(1) == LuaStatus.ErrRun)
-                    throw new Exception($"{path} : lua script error");
+                session.Data.Skills[0].Execute();
             }
             catch (Exception e)
             {

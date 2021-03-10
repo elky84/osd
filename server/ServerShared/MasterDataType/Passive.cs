@@ -17,7 +17,5 @@ namespace MasterData.Table
 
         public int? Interval { get; set; }
 
-        public int? Stack { get; set; }
-
     }
 }

@@ -16,6 +16,21 @@ namespace TestServer.Container
 
         IEnumerator IEnumerable.GetEnumerator() => _skill.GetEnumerator();
 
+        public Skill this[int index]
+        {
+            get
+            {
+                try
+                {
+                    return _skill[index];
+                }
+                catch (IndexOutOfRangeException)
+                {
+                    return null;
+                }
+            }
+        }
+
         public SkillCollection(Character owner)
         {
             Owner = owner;
@@ -38,16 +53,19 @@ namespace TestServer.Container
 
     public class BuffCollection : IEnumerable<Buff>
     {
-        private List<Buff> _buffs;
+        private Dictionary<string, Buff> _buffs = new Dictionary<string, Buff>();
 
-        public IEnumerator<Buff> GetEnumerator() => _buffs.GetEnumerator();
+        public IEnumerator<Buff> GetEnumerator() => _buffs.Values.GetEnumerator();
 
-        IEnumerator IEnumerable.GetEnumerator() => _buffs.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => _buffs.Values.GetEnumerator();
 
-        public void Add(Buff buff, Buff.IListener listener)
+        public void Add(Buff buff)
         {
-            var exists = _buffs.FirstOrDefault(x => x.Case == buff.Case) ??
-                new Buff(buff.Owner, buff.Case, buff.Level, listener);
+            if (_buffs.TryGetValue(buff.Case, out var exists) == false)
+            {
+                exists = new Buff(buff.Owner, buff.Case, buff.Level, buff.Listener);
+                _buffs.Add(buff.Case, buff);
+            }
 
             if (exists.Level < buff.Level)
             {

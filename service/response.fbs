@@ -146,3 +146,8 @@ table SkillLevelUp {
 	id: string;
 	level: int;
 }
+
+table BuffStackChanged {
+	id: string;
+	stack: int;
+}
