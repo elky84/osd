@@ -75,5 +75,10 @@ namespace TestServer.Container
 
             exists.Stack++;
         }
+
+        public void Remove(Buff buff)
+        {
+            _buffs.Remove(buff.Case);
+        }
     }
 }

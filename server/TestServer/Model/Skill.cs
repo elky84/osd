@@ -193,6 +193,7 @@ namespace TestServer.Model
         public Life Caster { get; set; }
 
         public DateTime ActiveTime { get; set; }
+        public DateTime LastIntervalTime { get; set; }
 
         public new IListener Listener => base.Listener as IListener;
 
@@ -203,7 +204,7 @@ namespace TestServer.Model
             set
             {
                 _stack = value;
-                ActiveTime = DateTime.Now;
+                ActiveTime = LastIntervalTime = DateTime.Now;
                 Listener?.OnStackChanged(this);
             }
         }
@@ -213,6 +214,17 @@ namespace TestServer.Model
         public Buff(Life owner, string id, int level = 1, IListener listener = null) : base(owner, id, level, listener)
         {
             
+        }
+
+        public void ExecuteTick()
+        {
+            var now = DateTime.Now;
+            var elapsed = (now - LastIntervalTime).TotalMilliseconds;
+            if (elapsed < BuffProperty.Interval)
+                return;
+
+            // 여기서 틱마다 효과 발생
+            LastIntervalTime = now;
         }
     }
 

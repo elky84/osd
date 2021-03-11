@@ -60,7 +60,33 @@ namespace TestServer.Handler
 
             SetTimer(1000, OnRezen);
             SetTimer(100, OnMobAction);
+            SetTimer(1000, OnBuff);
             ExecuteScheduler();
+        }
+
+        private void OnBuff(long ms)
+        {
+            var lives = _maps.Where(x => x.Value.IsActivated)
+                .SelectMany(x => x.Value.Objects.Values)
+                .Where(x => x.Type == ObjectType.Character || x.Type == ObjectType.Mob)
+                .Select(x => x as Life).ToList();
+
+            var now = DateTime.Now;
+            foreach (var life in lives)
+            {
+                foreach (var buff in life.Buffs)
+                {
+                    var elapsed = (now - buff.ActiveTime).TotalMilliseconds;
+                    if (buff.BuffProperty.Duration < elapsed)
+                    {
+                        life.Buffs.Remove(buff);
+                    }
+                    else
+                    {
+                        buff.ExecuteTick();
+                    }
+                }
+            }
         }
 
         private void OnMobAction(long ms)
