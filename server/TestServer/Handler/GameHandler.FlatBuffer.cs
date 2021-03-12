@@ -335,7 +335,7 @@ namespace TestServer.Handler
         {
             try
             {
-                session.Data.Skills[0].Execute();
+                session.Data.Skills[2].Execute();
             }
             catch (Exception e)
             {

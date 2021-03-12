@@ -187,7 +187,9 @@ namespace TestServer.Model
     {
         public new interface IListener : Skill.IListener
         {
+            public void OnBuffStart(Buff buff);
             public void OnStackChanged(Buff buff);
+            public void OnBuffFinish(Buff buff);
         }
 
         public Life Caster { get; set; }
@@ -203,9 +205,14 @@ namespace TestServer.Model
             get => _stack;
             set
             {
+                var before = _stack;
                 _stack = value;
                 ActiveTime = LastIntervalTime = DateTime.Now;
-                Listener?.OnStackChanged(this);
+
+                if (before == 0)
+                    Listener?.OnBuffStart(this);
+                else
+                    Listener?.OnStackChanged(this);
             }
         }
 
@@ -223,7 +230,27 @@ namespace TestServer.Model
             if (elapsed < BuffProperty.Interval)
                 return;
 
-            // 여기서 틱마다 효과 발생
+            var lua = string.IsNullOrEmpty(Master.Script) ? null : Static.Get();
+            if (lua != null)
+            {
+                if (File.Exists(Master.Script) == false)
+                    throw new Exception($"{Master.Script} : script not found");
+
+                lua.DoFile(Master.Script);
+            }
+
+            lua?.GetGlobal("on_tick");
+            switch (Owner.Type)
+            {
+                case NetworkShared.ObjectType.Character:
+                    lua?.PushLuable(Owner as Character);
+                    break;
+
+                case NetworkShared.ObjectType.Mob:
+                    lua?.PushLuable(Owner as Mob);
+                    break;
+            }
+            lua?.Resume(1);
             LastIntervalTime = now;
         }
     }

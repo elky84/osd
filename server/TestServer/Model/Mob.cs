@@ -3,7 +3,7 @@ using MasterData.Table;
 using NetworkShared;
 using NetworkShared.Types;
 using System;
-using TestServer.Container;
+using NetworkShared.Common;
 
 namespace TestServer.Model
 {

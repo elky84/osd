@@ -1,4 +1,5 @@
 ﻿using KeraLua;
+using NetworkShared.Common;
 using NetworkShared.Types;
 using System;
 using TestServer.Container;
@@ -14,7 +15,9 @@ namespace TestServer.Model
             public void OnDamaged(Life life, Life from, int damage);
             public void OnDie(Life life, Life from);
             public void OnSkillLevelUp(Life life, Skill skill);
+            public void OnBuffStart(Life life, Buff buff);
             public void OnBuffStackChanged(Life life, Buff buff);
+            public void OnBuffFinish(Life life, Buff buff);
         }
         public new IListener Listener { get; private set; }
 
@@ -157,6 +160,16 @@ namespace TestServer.Model
         public void OnLevelUp(Skill skill)
         {
             Listener?.OnSkillLevelUp(this, skill);
+        }
+
+        public void OnBuffStart(Buff buff)
+        {
+            Listener?.OnBuffStart(this, buff);
+        }
+
+        public void OnBuffFinish(Buff buff)
+        {
+            Listener?.OnBuffFinish(this, buff);
         }
     }
 }

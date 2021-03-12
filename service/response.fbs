@@ -151,3 +151,11 @@ table BuffStackChanged {
 	id: string;
 	stack: int;
 }
+
+table BuffStart {
+	id: string;
+}
+
+table BuffFinish {
+	id: string;
+}

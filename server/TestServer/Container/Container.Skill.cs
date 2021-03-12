@@ -64,7 +64,7 @@ namespace TestServer.Container
             if (_buffs.TryGetValue(buff.Case, out var exists) == false)
             {
                 exists = new Buff(buff.Owner, buff.Case, buff.Level, buff.Listener);
-                _buffs.Add(buff.Case, buff);
+                _buffs.Add(buff.Case, exists);
             }
 
             if (exists.Level < buff.Level)
@@ -79,6 +79,7 @@ namespace TestServer.Container
         public void Remove(Buff buff)
         {
             _buffs.Remove(buff.Case);
+            buff.Listener?.OnBuffFinish(buff);
         }
     }
 }

@@ -291,4 +291,22 @@ public partial class GameController : MonoBehaviour
     {
         return true;
     }
+
+    [FlatBufferEvent]
+    public bool OnBuffStart(BuffStart response)
+    {
+        return true;
+    }
+
+    [FlatBufferEvent]
+    public bool OnBuffFinish(BuffFinish response)
+    {
+        return true;
+    }
+
+    [FlatBufferEvent]
+    public bool OnBuffStackChanged(BuffStackChanged response)
+    {
+        return true;
+    }
 }

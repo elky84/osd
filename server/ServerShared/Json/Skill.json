@@ -15,7 +15,7 @@
     "Id": "버프스킬",
     "Name": "버프스킬",
     "Type": "Buff",
-    "Script": null
+    "Script": "scripts/Skill/Buff.lua"
   },
   "패시브스킬": {
     "Id": "패시브스킬",

@@ -239,5 +239,15 @@ namespace TestServer.Handler
         {
             _ = life.Send(FlatBuffers.Protocol.Response.SkillLevelUp.Bytes(skill.Case, skill.Level));
         }
+
+        public void OnBuffStart(Life life, Buff buff)
+        {
+            _ = life.Send(FlatBuffers.Protocol.Response.BuffStart.Bytes(buff.Case));
+        }
+
+        public void OnBuffFinish(Life life, Buff buff)
+        {
+            _ = life.Send(FlatBuffers.Protocol.Response.BuffFinish.Bytes(buff.Case));
+        }
     }
 }
