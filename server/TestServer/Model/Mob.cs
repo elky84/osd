@@ -72,7 +72,7 @@ namespace TestServer.Model
             if (IsSpawned)
                 return false;
 
-            Stats.Base.Set(Master.BaseStat());
+            Stats.Init.Set(MasterData.MasterTable.From<TableStat>()[Master.Stat].ToStat());
             Hp = Stats.Max[StatType.HP];
             SpawnedTime = DateTime.Now;
             Position = position;

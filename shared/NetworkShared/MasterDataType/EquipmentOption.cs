@@ -15,11 +15,7 @@ namespace MasterData.Common
 
         public EquipmentType Type { get; set; }
 
-        public int HP { get; set; }
-
-        public int MP { get; set; }
-
-        public int Defence { get; set; }
+        public string Stat { get; set; }
 
     }
 }

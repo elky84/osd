@@ -11,7 +11,7 @@ namespace MasterData.Common
     public partial class Stat
     {
         [NetworkShared.Util.Table.Key]
-        public int Level { get; set; }
+        public string Id { get; set; }
 
         public int Hp { get; set; }
 

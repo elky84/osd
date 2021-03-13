@@ -12,9 +12,7 @@ namespace MasterData.Server
     {
         public AttackType AttackType { get; set; }
 
-        public int HP { get; set; }
-
-        public int Defence { get; set; }
+        public string Stat { get; set; }
 
         public double Speed { get; set; }
 

@@ -8,12 +8,12 @@ using System.Collections.Generic;
 
 namespace MasterData.Common
 {
-    public partial class WeaponOption
+    public partial class LevelStat
     {
         [NetworkShared.Util.Table.Key]
-        public string Id { get; set; }
+        public int Level { get; set; }
 
-        public WeaponType Type { get; set; }
+        public string Stat { get; set; }
 
     }
 }

@@ -202,6 +202,9 @@ namespace TestServer.Handler
             var collision = MasterTable.From<TableCollision>()["캐릭터"];
             session.Data.CollisionSize = new NetworkShared.Types.SizeF { Width = collision.Width, Height = collision.Height };
 
+            // 레벨 설정
+            session.Data.Level = 1;
+
             // 무기를 장착
             session.Data.Items.Active(weapon.Id);
 

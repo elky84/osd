@@ -63,8 +63,6 @@ namespace TestServer.Model
 
         public int BaseMp => 100;
 
-        public MasterData.Common.Stat BaseStat => MasterTable.From<TableStat>()[Level];
-
         public Lua LuaThread { get; set; }
 
         public new int Damage { get; set; } = 30;
@@ -79,6 +77,9 @@ namespace TestServer.Model
             {
                 var before = _level;
                 _level = value;
+
+                var levelStatName = MasterTable.From<TableLevelStat>()[value].Stat;
+                Stats.Level.Set(MasterTable.From<TableStat>()[levelStatName].ToStat());
 
                 Listener?.OnLevelChanged(this, before, _level);
             }
@@ -131,6 +132,8 @@ namespace TestServer.Model
         {
             Items = new ItemContainer(this);
             Skills = new SkillCollection(this);
+
+            Stats.Init.Set(MasterTable.From<TableStat>()[Const.Character.InitStat].ToStat());
         }
 
         public override async Task Send(byte[] bytes)

@@ -29,35 +29,14 @@ namespace TestServer.Container
 
         private void SetAdditionalStats(Equipment equipment)
         {
-            Owner.Stats.Additional[StatType.HP] += equipment.EquipmentOption.HP;
-            Owner.Stats.Additional[StatType.MP] += equipment.EquipmentOption.MP;
-            Owner.Stats.Additional[StatType.Defence] += equipment.EquipmentOption.Defence;
-            if (equipment.EquipmentOption.Type == EquipmentType.Weapon)
-            {
-                var weapon = equipment as Weapon;
-                Owner.Stats.Additional[StatType.AttackSpeed] += weapon.WeaponOption.AttackSpeed;
-                Owner.Stats.Additional[StatType.PhysicalDamage] += weapon.WeaponOption.PhysicalDamage;
-                Owner.Stats.Additional[StatType.MagicalDamage] += weapon.WeaponOption.MagicalDamage;
-                Owner.Stats.Additional[StatType.Critical] += weapon.WeaponOption.Critical;
-                Owner.Stats.Additional[StatType.CriticalDamage] += weapon.WeaponOption.CriticalDamage;
-            }
+            var equipmentStat = MasterData.MasterTable.From<MasterData.Server.TableStat>()[equipment.EquipmentOption.Stat].ToStat();
+            Owner.Stats.Equipment.Set(Owner.Stats.Equipment + equipmentStat);
         }
 
         private void UnsetAdditionalStats(Equipment equipment)
         {
-            Owner.Stats.Additional[StatType.HP] -= equipment.EquipmentOption.HP;
-            Owner.Stats.Additional[StatType.MP] -= equipment.EquipmentOption.MP;
-            Owner.Stats.Additional[StatType.Defence] -= equipment.EquipmentOption.Defence;
-
-            if (equipment.EquipmentOption.Type == EquipmentType.Weapon)
-            {
-                var weapon = equipment as Weapon;
-                Owner.Stats.Additional[StatType.AttackSpeed] -= weapon.WeaponOption.AttackSpeed;
-                Owner.Stats.Additional[StatType.PhysicalDamage] -= weapon.WeaponOption.PhysicalDamage;
-                Owner.Stats.Additional[StatType.MagicalDamage] -= weapon.WeaponOption.MagicalDamage;
-                Owner.Stats.Additional[StatType.Critical] -= weapon.WeaponOption.Critical;
-                Owner.Stats.Additional[StatType.CriticalDamage] -= weapon.WeaponOption.CriticalDamage;
-            }
+            var equipmentStat = MasterData.MasterTable.From<MasterData.Server.TableStat>()[equipment.EquipmentOption.Stat].ToStat();
+            Owner.Stats.Equipment.Set(Owner.Stats.Equipment - equipmentStat);
         }
 
         public Equipment Equip(Equipment equipment)

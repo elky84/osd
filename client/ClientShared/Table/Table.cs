@@ -6,10 +6,6 @@ using System.Collections.Generic;
 public partial class TableExperience : BaseDict<int, Experience>
 { }
 
-[Table("json/Stat.json")]
-public partial class TableStat : BaseDict<int, Stat>
-{ }
-
 [Table("json/Collision.json")]
 public partial class TableCollision : BaseDict<string, Collision>
 { }
@@ -68,5 +64,13 @@ public partial class TablePassive : BaseDict<string, List<Passive>>
 
 [Table("json/SkillProperty.json")]
 public partial class TableSkillProperty : BaseDict<string, List<SkillProperty>>
+{ }
+
+[Table("json/Stat.json")]
+public partial class TableStat : BaseDict<string, Stat>
+{ }
+
+[Table("json/LevelStat.json")]
+public partial class TableLevelStat : BaseDict<int, LevelStat>
 { }
 
