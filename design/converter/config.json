@@ -1,21 +1,31 @@
 {
-    "primitive": 
+    "primitive_types": 
     [
-        "int", "double", "float", "string", "bool", "DateTime", "TimeSpan", "Point"
+        "int", "long", "double", "float", "string", "bool", "DateTime", "TimeSpan", "Dsl", "Point"
     ],
-    "custom":
-    {
-        "key": "*",
-        "nullable": "?",
-        "relation": "$",
-        "percentage": "%",
-        "unknown": "~"
-    },
     "regex":
     {
         "group": "^\\((?P<type>.+)\\)$",
         "list": "^List<(?P<type>.+)>$",
         "array": "^\\[(?P<type>.*)\\]$",
+        "const": "Const:(?P<table>[a-zA-Z]+):(?P<name>[a-zA-Z]+)",
+        "dsl": "^(?P<header>\\w+)\\((?P<parameters>.+)\\)$",
         "point": "^\\((?P<x>\\d),\\s?(?P<y>\\d)\\)$"
+    },
+    "file":
+    {
+        "enum":
+        {
+            "prefix": "enum.",
+            "suffix": null
+        },
+        "const":
+        {
+            "prefix": "const.",
+            "suffix": null
+        }
+    },
+    "dsl": 
+    {
     }
 }

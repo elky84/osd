@@ -1,7 +1,7 @@
 using NetworkShared;
 using System.Collections.Generic;
 
-namespace MasterData.Table
+namespace MasterData.Server
 {
     [Table("json/Experience.json")]
     public partial class TableExperience : BaseDict<int, Experience>

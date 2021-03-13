@@ -1,23 +1,15 @@
-using System;
-using System.Collections.Generic;
-using NetworkShared.Util.Table;
-using Newtonsoft.Json;
+// Generated code. DO NOT MODIFY DIRECTLY
+
 using NetworkShared;
 using NetworkShared.Types;
-using Newtonsoft.Json.Converters;
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
 
-namespace MasterData.Table
+namespace MasterData.Server
 {
-    public partial class Item
+    public partial class Item : MasterData.Common.Item
     {
-        [Key]
-        public string Id { get; set; }
-
-        [JsonConverter(typeof(StringEnumConverter))]
-        public ItemType Type { get; set; }
-
-        public int? Stack { get; set; }
-
         public string ActiveScript { get; set; }
 
         public string InactiveScript { get; set; }

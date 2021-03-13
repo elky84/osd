@@ -1,6 +1,6 @@
 ﻿using KeraLua;
 using MasterData;
-using MasterData.Table;
+using MasterData.Server;
 using NetworkShared;
 using ServerShared.Model;
 using ServerShared.NetworkHandler;

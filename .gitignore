@@ -8,3 +8,12 @@ __pycache__
 
 *.tiled-project
 *.tiled-session
+
+client/ClientShared/Json/*.json
+client/ClientShared/Json/Crc.txt
+server/ServerShared/Json/*.json
+server/ServerShared/Json/Crc.txt
+client/ClientShared/Json/*.json
+client/ClientShared/Json/Crc.txt
+server/ServerShared/Json/*.json
+server/ServerShared/Json/Crc.txt

@@ -1,6 +1,9 @@
 PUSHD converter
 CALL app.exe --dir=.. --out=output
 
+RMDIR /s/q ..\..\shared\NetworkShared\MasterDataType
+ROBOCOPY output\class\common ..\..\shared\NetworkShared\MasterDataType /E /NFL /NDL /NJH /NJS /nc /ns /np
+
 RMDIR /s/q ..\..\client\ClientShared\MasterDataType
 ROBOCOPY output\class\client ..\..\client\ClientShared\MasterDataType /E /NFL /NDL /NJH /NJS /nc /ns /np
 RMDIR /s/q ..\..\server\ServerShared\MasterDataType

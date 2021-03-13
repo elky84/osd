@@ -5,13 +5,13 @@ namespace NetworkShared
     [DescriptiveEnumEnforcement(DescriptiveEnumEnforcementAttribute.EnforcementTypeEnum.ThrowException)]
     public enum Target
     {
-        [Description("아군")]
+        [Description("")]
         Ally,
 
-        [Description("적군")]
+        [Description("")]
         Enemy,
 
-        [Description("자신")]
+        [Description("")]
         Self,
 
     }

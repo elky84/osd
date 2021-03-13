@@ -5,22 +5,22 @@ namespace NetworkShared
     [DescriptiveEnumEnforcement(DescriptiveEnumEnforcementAttribute.EnforcementTypeEnum.ThrowException)]
     public enum EquipmentType
     {
-        [Description("무기")]
+        [Description("")]
         Weapon,
 
-        [Description("방패")]
+        [Description("")]
         Shield,
 
-        [Description("갑옷")]
+        [Description("")]
         Armor,
 
-        [Description("신발")]
+        [Description("")]
         Shoes,
 
-        [Description("모자")]
+        [Description("")]
         Helmet,
 
-        [Description("장신구")]
+        [Description("")]
         Accessory,
 
     }

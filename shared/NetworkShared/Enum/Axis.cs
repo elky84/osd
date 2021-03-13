@@ -5,10 +5,10 @@ namespace NetworkShared
     [DescriptiveEnumEnforcement(DescriptiveEnumEnforcementAttribute.EnforcementTypeEnum.ThrowException)]
     public enum Axis
     {
-        [Description("X축")]
+        [Description("")]
         X,
 
-        [Description("Y축")]
+        [Description("")]
         Y,
 
     }

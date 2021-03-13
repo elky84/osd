@@ -5,13 +5,13 @@ namespace NetworkShared
     [DescriptiveEnumEnforcement(DescriptiveEnumEnforcementAttribute.EnforcementTypeEnum.ThrowException)]
     public enum ItemType
     {
-        [Description("장비")]
+        [Description("")]
         Equipment,
 
-        [Description("소비")]
+        [Description("")]
         Consume,
 
-        [Description("기타")]
+        [Description("")]
         Other,
 
     }

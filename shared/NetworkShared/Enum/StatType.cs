@@ -5,28 +5,28 @@ namespace NetworkShared
     [DescriptiveEnumEnforcement(DescriptiveEnumEnforcementAttribute.EnforcementTypeEnum.ThrowException)]
     public enum StatType
     {
-        [Description("체력")]
+        [Description("")]
         HP,
 
-        [Description("마력")]
+        [Description("")]
         MP,
 
-        [Description("방어력")]
+        [Description("")]
         Defence,
 
-        [Description("크리티컬")]
+        [Description("")]
         Critical,
 
-        [Description("크리티컬 데미지")]
+        [Description("")]
         CriticalDamage,
 
-        [Description("물리공격력")]
+        [Description("")]
         PhysicalDamage,
 
-        [Description("마법공격력")]
+        [Description("")]
         MagicalDamage,
 
-        [Description("공격 속도")]
+        [Description("")]
         AttackSpeed,
 
     }

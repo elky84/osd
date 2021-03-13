@@ -1,0 +1,6 @@
+using MasterData.{{ usage }};
+using MasterData.Types;
+using System.Collections.Generic;
+
+{{ codeLines }}
+

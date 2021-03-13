@@ -1,24 +1,16 @@
-using System;
-using System.Collections.Generic;
-using NetworkShared.Util.Table;
-using Newtonsoft.Json;
+// Generated code. DO NOT MODIFY DIRECTLY
+
 using NetworkShared;
 using NetworkShared.Types;
-using Newtonsoft.Json.Converters;
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
 
-namespace MasterData.Table
+namespace MasterData.Client
 {
-    public partial class Skill
+    public partial class Skill : MasterData.Common.Skill
     {
-        [Key]
-        public string Id { get; set; }
-
-        public string Name { get; set; }
-
         public string Icon { get; set; }
-
-        [JsonConverter(typeof(StringEnumConverter))]
-        public SkillType Type { get; set; }
 
     }
 }

@@ -5,10 +5,10 @@ namespace NetworkShared
     [DescriptiveEnumEnforcement(DescriptiveEnumEnforcementAttribute.EnforcementTypeEnum.ThrowException)]
     public enum ActionPattern
     {
-        [Description("왼쪽이동")]
+        [Description("")]
         LeftMove,
 
-        [Description("오른쪽이동")]
+        [Description("")]
         RightMove,
 
     }

@@ -1,0 +1,13 @@
+using System.Collections.Generic;
+
+namespace MasterData.Types.Dsl.Parameter
+{
+    public class {{ name }}
+    {
+{{ properties }}
+
+{{ static_constructor }}
+
+{{ dsl_constructor }}
+    }
+}

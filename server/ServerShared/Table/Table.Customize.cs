@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace MasterData.Table
+namespace MasterData.Server
 {
     public partial class Portal
     {

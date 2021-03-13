@@ -1,14 +1,14 @@
-using System;
-using System.Collections.Generic;
-using NetworkShared.Util.Table;
-using Newtonsoft.Json;
+// Generated code. DO NOT MODIFY DIRECTLY
+
 using NetworkShared;
 using NetworkShared.Types;
-using Newtonsoft.Json.Converters;
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
 
-namespace MasterData.Table
+namespace MasterData.Server
 {
-    public partial class MobSpawn
+    public partial class MobSpawn : MasterData.Common.MobSpawn
     {
         public string Mob { get; set; }
 

@@ -1,23 +1,16 @@
-using System;
-using System.Collections.Generic;
-using NetworkShared.Util.Table;
-using Newtonsoft.Json;
+// Generated code. DO NOT MODIFY DIRECTLY
+
 using NetworkShared;
 using NetworkShared.Types;
-using Newtonsoft.Json.Converters;
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
 
-namespace MasterData.Table
+namespace MasterData.Server
 {
-    public partial class Npc
+    public partial class Npc : MasterData.Common.Npc
     {
-        [Key]
-        public string Id { get; set; }
-
-        public string Sprite { get; set; }
-
         public string Map { get; set; }
-
-        public Point Position { get; set; }
 
         public string Script { get; set; }
 

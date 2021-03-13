@@ -1,25 +1,15 @@
-using System;
-using System.Collections.Generic;
-using NetworkShared.Util.Table;
-using Newtonsoft.Json;
+// Generated code. DO NOT MODIFY DIRECTLY
+
 using NetworkShared;
 using NetworkShared.Types;
-using Newtonsoft.Json.Converters;
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
 
-namespace MasterData.Table
+namespace MasterData.Server
 {
-    public partial class Buff
+    public partial class Buff : MasterData.Common.Buff
     {
-        [Key]
-        public string Id { get; set; }
-
-        public int Level { get; set; }
-
-        public int Duration { get; set; }
-
-        public int? Interval { get; set; }
-
-        public int? Stack { get; set; }
 
     }
 }

@@ -5,16 +5,16 @@ namespace NetworkShared
     [DescriptiveEnumEnforcement(DescriptiveEnumEnforcementAttribute.EnforcementTypeEnum.ThrowException)]
     public enum Direction
     {
-        [Description("왼쪽")]
+        [Description("")]
         Left,
 
-        [Description("오른쪽")]
+        [Description("")]
         Right,
 
-        [Description("위")]
+        [Description("")]
         Top,
 
-        [Description("아래")]
+        [Description("")]
         Bottom,
 
     }

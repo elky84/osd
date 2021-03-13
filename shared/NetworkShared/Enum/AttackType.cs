@@ -5,10 +5,10 @@ namespace NetworkShared
     [DescriptiveEnumEnforcement(DescriptiveEnumEnforcementAttribute.EnforcementTypeEnum.ThrowException)]
     public enum AttackType
     {
-        [Description("선공")]
+        [Description("")]
         Preemptive,
 
-        [Description("후공")]
+        [Description("")]
         Reactive,
 
     }

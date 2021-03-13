@@ -1,5 +1,5 @@
 ﻿using KeraLua;
-using MasterData.Table;
+using MasterData.Server;
 using NetworkShared;
 using NetworkShared.Types;
 using System;
@@ -32,7 +32,7 @@ namespace TestServer.Model
             }
         }
 
-        public MasterData.Table.Mob Master { get; private set; }
+        public MasterData.Server.Mob Master { get; private set; }
 
         public int Exp => Master.Expereicen;
 
@@ -56,12 +56,12 @@ namespace TestServer.Model
             }
         }
 
-        public Mob(MasterData.Table.Mob master)
+        public Mob(MasterData.Server.Mob master)
         {
             Master = master;
         }
 
-        public Mob(MasterData.Table.Mob master, Map map)
+        public Mob(MasterData.Server.Mob master, Map map)
         {
             Master = master;
             Map = map;

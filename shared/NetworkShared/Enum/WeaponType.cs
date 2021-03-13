@@ -5,13 +5,13 @@ namespace NetworkShared
     [DescriptiveEnumEnforcement(DescriptiveEnumEnforcementAttribute.EnforcementTypeEnum.ThrowException)]
     public enum WeaponType
     {
-        [Description("검")]
+        [Description("")]
         Sword,
 
-        [Description("활")]
+        [Description("")]
         Bow,
 
-        [Description("지팡이")]
+        [Description("")]
         Staff,
 
     }

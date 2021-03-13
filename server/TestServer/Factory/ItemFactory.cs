@@ -1,5 +1,5 @@
 ﻿using MasterData;
-using MasterData.Table;
+using MasterData.Server;
 using TestServer.Model;
 
 namespace TestServer.Factory
@@ -9,7 +9,7 @@ namespace TestServer.Factory
         private static ulong _sequence = 0;
         private static ulong Sequence => _sequence++;
 
-        private static Model.Item Create(MasterData.Table.EquipmentOption equipmentOption)
+        private static Model.Item Create(EquipmentOption equipmentOption)
         {
             var itemCase = MasterTable.From<TableItem>()[equipmentOption.Id];
             if (itemCase == null)

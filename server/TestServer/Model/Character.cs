@@ -1,7 +1,7 @@
 ﻿using DotNetty.Transport.Channels;
 using KeraLua;
 using MasterData;
-using MasterData.Table;
+using MasterData.Server;
 using NetworkShared;
 using ServerShared.NetworkHandler;
 using System;
@@ -63,7 +63,7 @@ namespace TestServer.Model
 
         public int BaseMp => 100;
 
-        public Stat BaseStat => MasterTable.From<TableStat>()[Level];
+        public MasterData.Common.Stat BaseStat => MasterTable.From<TableStat>()[Level];
 
         public Lua LuaThread { get; set; }
 
@@ -94,7 +94,7 @@ namespace TestServer.Model
                 var beforeExp = _exp;
 
                 _exp = value;
-                var experienceTable = MasterData.MasterTable.From<MasterData.Table.TableExperience>();
+                var experienceTable = MasterData.MasterTable.From<TableExperience>();
 
                 while (true)
                 {

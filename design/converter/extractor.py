@@ -5,6 +5,7 @@ import re
 import converter
 import config
 import validator
+from resources import resources
 
 def primaryKey(schemaSet):
     id = [x for x in schemaSet if x['type'].startswith('*')]
@@ -28,7 +29,7 @@ def indexKey(schemaSet):
     else:
         return id[0]
 
-def equals_schema(schema1, schema2):
+def equalsSchema(schema1, schema2):
     if len(schema1) != len(schema2):
         return False
 
@@ -43,7 +44,6 @@ def equals_schema(schema1, schema2):
                 return False
 
     return True
-
 
 def load(path):
     schemaDict = {}
@@ -91,6 +91,8 @@ def load(path):
 
                 columnName = schema[column]['name']
                 dataSet[columnName] = sheet.cell(row+beginIndex+3, column+1+additionalColumn).value
+                if type(dataSet[columnName]) is str:
+                    dataSet[columnName] = dataSet[columnName].replace('_x000D_', '').replace('\xa0', '')
 
             if all([x is None for x in dataSet.values()]):
                 break
@@ -98,7 +100,7 @@ def load(path):
             data.append(dataSet)
 
         if tableName in schemaDict:
-            if not equals_schema(schemaDict[tableName], schema):
+            if not equalsSchema(schemaDict[tableName], schema):
                 raise Exception(f'{sheetName}의 스키마가 올바르지 않습니다. 합쳐질 테이블과 같은 형식의 스키마여야 합니다.')
         else:
             schemaDict[tableName] = schema
@@ -107,7 +109,6 @@ def load(path):
             dataDict[tableName] = dataDict[tableName] + data
         else:
             dataDict[tableName] = data
-
 
     return schemaDict, dataDict
 
@@ -120,12 +121,12 @@ def loadEnum(path):
         
         enumSet[sheet.title] = {}
 
-        for row in range(sheet.max_row):
-            name = sheet.cell(row+1, 1).value
+        for row in range(sheet.max_row - 1):
+            name = sheet.cell(row+2, 1).value
             if not name:
                 continue
-
-            desc = sheet.cell(row+1, 2).value
+            
+            desc = sheet.cell(row+2, 2).value
             enumSet[sheet.title][name] = desc
 
     return enumSet
@@ -136,7 +137,7 @@ def loadConst(path):
     for sheet in workbook.worksheets:
         if sheet.title.startswith('#'):
             continue
-        
+
         constSet[sheet.title] = {}
 
         for row in range(sheet.max_row):
@@ -154,12 +155,19 @@ def loadConst(path):
 
     return constSet
 
-
 def loads(directory, callback=None):
     schemaDict = {}
     dataDict = {}
-    prefixIgnores = ['enum.', 'const.']
-    files = [x for x in os.listdir(directory) if x.endswith('.xlsx') and not x.startswith('~') and all([not x.lower().startswith(prefix) for prefix in prefixIgnores])]
+    files = [x for x in os.listdir(directory) if x.endswith('.xlsx') and not x.startswith('~')]
+
+    prefixs = [config.file[x]['prefix'] for x in config.file if config.file[x]['prefix'] is not None]
+    for prefix in prefixs:
+        files = [x for x in files if not x.lower().startswith(prefix)]
+
+    suffixs = [config.file[x]['suffix'] for x in config.file if config.file[x]['suffix'] is not None]
+    for suffix in suffixs:
+        files = [x for x in files if not x.lower().endswith(suffix)]
+
     size = len(files)
 
     progress = 0
@@ -177,7 +185,13 @@ def loads(directory, callback=None):
     return schemaDict, dataDict
 
 def loadEnums(directory, callback=None):
-    files = [x for x in os.listdir(directory) if not x.startswith('~') and x.lower().startswith('enum.')]
+    files = [x for x in os.listdir(directory) if not x.startswith('~')]
+    if config.file['enum']['prefix'] is not None:
+        files = [x for x in files if x.lower().startswith(config.file['enum']['prefix'])]
+    
+    if config.file['enum']['suffix'] is not None:
+        files = [x for x in files if x.lower().endswith(config.file['enum']['suffix'])]
+
     enumDict = {}
     for file in files:
         path = os.path.join(directory, file)
@@ -189,9 +203,14 @@ def loadEnums(directory, callback=None):
 
     return enumDict
 
-
 def loadConsts(directory, callback=None):
-    files = [x for x in os.listdir(directory) if not x.startswith('~') and x.lower().startswith('const.')]
+    files = [x for x in os.listdir(directory) if not x.startswith('~')]
+    if config.file['const']['prefix'] is not None:
+        files = [x for x in files if x.lower().startswith(config.file['const']['prefix'])]
+    
+    if config.file['const']['suffix'] is not None:
+        files = [x for x in files if x.lower().endswith(config.file['const']['suffix'])]
+        
     constDict = {}
     for file in files:
         path = os.path.join(directory, file)
@@ -203,35 +222,42 @@ def loadConsts(directory, callback=None):
 
     return constDict
 
-def relationshipType(type, schemaSetDict):
+def relationshipType(type):
     if not validator.isRelation(type):
         return None
 
-    schemaSetDict = {name: schemaSet for name, schemaSet in schemaSetDict.items()}
+    resources.schemaDict = {name: schemaSet for name, schemaSet in resources.schemaDict.items()}
     type = converter.remove(type)
     splitted = type.split('.')
     if len(splitted) == 1:
-        if type not in schemaSetDict:
+        if type not in resources.schemaDict:
             raise Exception(f'{type}은 정의되지 않은 테이블입니다.')
 
-        id = primaryKey(schemaSetDict[type]) or indexKey(schemaSetDict[type])
+        id = primaryKey(resources.schemaDict[type]) or indexKey(resources.schemaDict[type])
         if not id:
             raise Exception(f'{type}은 기본키가 정의되지 않은 타입입니다.')
 
-        relation = relationshipType(id['type'], schemaSetDict)
-        return relation if relation is not None else id['type']
+        id = converter.remove(id['type'], relation=False)
+        if validator.isRelation(id):
+            return relationshipType(id)
+        else:
+            return id
+
     elif len(splitted) == 2:
         namespace, member = splitted
-        if namespace not in schemaSetDict:
+        if namespace not in resources.schemaDict:
             raise Exception(f'{namespace}은 정의되지 않은 테이블입니다.')
 
-        found = [x for x in schemaSetDict[namespace] if x['name'] == member]
+        found = [x for x in resources.schemaDict[namespace] if x['name'] == member]
         if not found:
             raise Exception(f"{member}은 {namespace}에 존재하지 않는 컬럼입니다.")
 
         member = found[0]
-        relation = relationshipType(member['type'], schemaSetDict)
-        return relation if relation is not None else member['type']
+        id = converter.remove(member['type'], relation=False)
+        if validator.isRelation(id):
+            return relationshipType(id)
+        else:
+            return id
     else:
         raise Exception(f'{type}는 올바른 관계형식이 아닙니다.')
 
@@ -258,3 +284,24 @@ def arrayType(type):
         return match.groupdict()['type']
 
     return None
+
+def constValue(value):
+    return re.findall(config.regex['const'], str(value))
+
+def dsl(value):
+    matched = re.match(config.regex['dsl'], value)
+    if not matched:
+        return None
+
+    groups = matched.groupdict()
+    header, parameters = groups['header'], groups['parameters']
+    parameters = parameters.replace(' ', '').replace('\xa0', '').split(',')
+
+    values = []
+    for i in range(len(parameters)):
+        parameter = parameters[i]
+        argument = config.dsl[header][i]
+
+        values.append(converter.cast(argument['type'], parameter))
+
+    return header, values

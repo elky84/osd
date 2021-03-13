@@ -1,8 +1,7 @@
-using NetworkShared;
+using MasterData.Client;
+using MasterData.Types;
 using System.Collections.Generic;
 
-namespace MasterData.Table
-{
 [Table("json/Experience.json")]
 public partial class TableExperience : BaseDict<int, Experience>
 { }
@@ -71,4 +70,3 @@ public partial class TablePassive : BaseDict<string, List<Passive>>
 public partial class TableSkillProperty : BaseDict<string, List<SkillProperty>>
 { }
 
-}

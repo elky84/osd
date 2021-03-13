@@ -1,6 +1,6 @@
 ﻿using KeraLua;
 using MasterData;
-using MasterData.Table;
+using MasterData.Server;
 using NetworkShared.Common;
 using NetworkShared.Types;
 using Newtonsoft.Json;
@@ -53,9 +53,9 @@ namespace TestServer.Model
 
         public bool IsActivated { get; private set; }
 
-        public List<Portal> Portals => MasterTable.From<TablePortal>().Nears(Name);
+        public List<MasterData.Server.Portal> Portals => MasterTable.From<MasterData.Server.TablePortal>().Nears(Name);
 
-        public Dictionary<MobSpawn, List<Mob>> MobSpawns { get; private set; }
+        public Dictionary<MasterData.Server.MobSpawn, List<Mob>> MobSpawns { get; private set; }
 
         public List<Object> Nears(Point pivot, double distance)
         {
@@ -133,7 +133,7 @@ namespace TestServer.Model
             return 1;
         }
 
-        public Map(MasterData.Table.Map master, IEnumerable<MobSpawn> mobSpawns)
+        public Map(MasterData.Server.Map master, IEnumerable<MasterData.Server.MobSpawn> mobSpawns)
         {
             if (File.Exists(master.Data) == false)
                 throw new Exception($"cannot find map file : {master.Data}");

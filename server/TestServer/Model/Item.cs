@@ -1,5 +1,5 @@
 ﻿using MasterData;
-using MasterData.Table;
+using MasterData.Server;
 using NetworkShared;
 using System;
 
@@ -9,7 +9,7 @@ namespace TestServer.Model
     {
         public ulong Id { get; set; } // DB 키로 쓰일 예정
 
-        public MasterData.Table.Item Master { get; private set; }
+        public MasterData.Server.Item Master { get; private set; }
 
         public override ObjectType Type => ObjectType.Item;
 
@@ -19,7 +19,7 @@ namespace TestServer.Model
 
         public int Count { get; set; }
 
-        public Item(ulong id, MasterData.Table.Item master, int count = 1)
+        public Item(ulong id, MasterData.Server.Item master, int count = 1)
         {
             Id = id;
             Master = master;
@@ -33,7 +33,7 @@ namespace TestServer.Model
 
     public class Consume : Item
     {
-        public Consume(ulong id, MasterData.Table.Item master, int count = 1) : base(id, master, count)
+        public Consume(ulong id, MasterData.Server.Item master, int count = 1) : base(id, master, count)
         {
             if (Master.Type != ItemType.Consume)
                 throw new Exception($"{master.Id} is not a Consume type.");
@@ -62,9 +62,9 @@ namespace TestServer.Model
     public class Equipment : Item
     {
         public static implicit operator FlatBuffers.Protocol.Response.Equipment.Model(Equipment e) => new FlatBuffers.Protocol.Response.Equipment.Model(e.Id, e.Name, (int)e.EquipmentOption.Type);
-        public MasterData.Table.EquipmentOption EquipmentOption { get; private set; }
+        public EquipmentOption EquipmentOption { get; private set; }
 
-        public Equipment(ulong id, MasterData.Table.Item master) : base(id, master)
+        public Equipment(ulong id, MasterData.Server.Item master) : base(id, master)
         {
             EquipmentOption = MasterTable.From<TableEquipmentOption>()[master.Id] ??
                 throw new Exception($"{master.Id} is not defined in 'EquipmentOption' table.");
@@ -83,9 +83,9 @@ namespace TestServer.Model
 
     public class Weapon : Equipment
     {
-        public MasterData.Table.WeaponOption WeaponOption { get; private set; }
+        public WeaponOption WeaponOption { get; private set; }
 
-        public Weapon(ulong id, MasterData.Table.Item master) : base(id, master)
+        public Weapon(ulong id, MasterData.Server.Item master) : base(id, master)
         {
             WeaponOption = MasterTable.From<TableWeaponOption>()[master.Id] ??
                 throw new Exception($"{master.Id} is not defined in 'WeaponOption' table.");
@@ -97,7 +97,7 @@ namespace TestServer.Model
 
     public class Shield : Equipment
     {
-        public Shield(ulong id, MasterData.Table.Item master) : base(id, master)
+        public Shield(ulong id, MasterData.Server.Item master) : base(id, master)
         {
             if(EquipmentOption.Type != EquipmentType.Shield)
                 throw new Exception($"{master.Id} is not a Shield type.");
@@ -106,7 +106,7 @@ namespace TestServer.Model
 
     public class Armor : Equipment
     {
-        public Armor(ulong id, MasterData.Table.Item master) : base(id, master)
+        public Armor(ulong id, MasterData.Server.Item master) : base(id, master)
         {
             if(EquipmentOption.Type != EquipmentType.Armor)
                 throw new Exception($"{master.Id} is not a Armor type.");
@@ -115,7 +115,7 @@ namespace TestServer.Model
 
     public class Shoes : Equipment
     {
-        public Shoes(ulong id, MasterData.Table.Item master) : base(id, master)
+        public Shoes(ulong id, MasterData.Server.Item master) : base(id, master)
         {
             if(EquipmentOption.Type != EquipmentType.Shoes)
                 throw new Exception($"{master.Id} is not a Shoes type.");
@@ -124,7 +124,7 @@ namespace TestServer.Model
 
     public class Helmet : Equipment
     {
-        public Helmet(ulong id, MasterData.Table.Item master) : base(id, master)
+        public Helmet(ulong id, MasterData.Server.Item master) : base(id, master)
         {
             if(EquipmentOption.Type != EquipmentType.Helmet)
                 throw new Exception($"{master.Id} is not a Helmet type.");

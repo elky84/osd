@@ -1,6 +1,6 @@
 ﻿using KeraLua;
 using MasterData;
-using MasterData.Table;
+using MasterData.Server;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -31,8 +31,8 @@ namespace TestServer.Model
         public Life Owner { get; set; }
         public IListener Listener { get; private set; }
 
-        public virtual MasterData.Table.Skill Master => MasterTable.From<TableSkill>()[Case];
-        public virtual MasterData.Table.SkillProperty Property => MasterTable.From<TableSkillProperty>()[Case].FirstOrDefault(x => x.Level == Level);
+        public virtual MasterData.Server.Skill Master => MasterTable.From<TableSkill>()[Case];
+        public virtual MasterData.Server.SkillProperty Property => MasterTable.From<TableSkillProperty>()[Case].FirstOrDefault(x => x.Level == Level);
 
         public Skill(Life owner, string id, int level = 1, IListener listener = null)
         {
@@ -216,7 +216,7 @@ namespace TestServer.Model
             }
         }
 
-        public MasterData.Table.Buff BuffProperty => MasterTable.From<TableBuff>()[Case].FirstOrDefault(x => x.Level == Level);
+        public MasterData.Server.Buff BuffProperty => MasterTable.From<TableBuff>()[Case].FirstOrDefault(x => x.Level == Level);
 
         public Buff(Life owner, string id, int level = 1, IListener listener = null) : base(owner, id, level, listener)
         {
@@ -257,7 +257,7 @@ namespace TestServer.Model
 
     public class Passive : Skill
     {
-        public MasterData.Table.Passive PassiveProperty => MasterTable.From<TablePassive>()[Case].FirstOrDefault(x => x.Level == Level);
+        public MasterData.Server.Passive PassiveProperty => MasterTable.From<TablePassive>()[Case].FirstOrDefault(x => x.Level == Level);
 
         public Passive(Life owner, string id, int level = 1) : base(owner, id, level)
         {

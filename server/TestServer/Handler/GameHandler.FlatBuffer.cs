@@ -1,6 +1,6 @@
 ﻿using KeraLua;
 using MasterData;
-using MasterData.Table;
+using MasterData.Server;
 using NetworkShared;
 using NetworkShared.Types;
 using Serilog;

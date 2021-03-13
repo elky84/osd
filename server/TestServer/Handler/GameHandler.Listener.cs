@@ -115,7 +115,7 @@ namespace TestServer.Handler
         public void OnSpawned(Mob mob)
         {
             // 이런 형식으로 쓰면 편하긴 한데 퍼포먼스 이슈가...
-            var collision = MasterData.MasterTable.From<MasterData.Table.TableCollision>()[mob.Name];
+            var collision = MasterData.MasterTable.From<MasterData.Server.TableCollision>()[mob.Name];
             mob.CollisionSize = new NetworkShared.Types.SizeF { Width = collision.Width, Height = collision.Height };
             Log.Logger.Information($"Spawned '{mob.Name}({mob.Sequence.Value})' in '{mob.Map.Name}' ({mob.Position.X}, {mob.Position.Y})");
         }
@@ -131,7 +131,7 @@ namespace TestServer.Handler
                 var character = from as Character;
                 character.Exp += mob.Exp;
 
-                var rewards = mob.Master.Rewards.Select(x => MasterData.MasterTable.From<MasterData.Table.TableReward>().Random(x)).ToList();
+                var rewards = mob.Master.Rewards.Select(x => MasterData.MasterTable.From<MasterData.Server.TableReward>().Random(x)).ToList();
                 var items = rewards.Select(x => ItemFactory.Create(x.Item)).ToList();
 
                 foreach (var item in items)
@@ -204,7 +204,7 @@ namespace TestServer.Handler
                 if (mob.Sector == null)
                     return;
 
-                var mobCase = MasterData.MasterTable.From<MasterData.Table.TableMob>()[mob.Name] ??
+                var mobCase = MasterData.MasterTable.From<MasterData.Server.TableMob>()[mob.Name] ??
                     throw new System.Exception("블라잉블라잉");
 
                 var damage = mobCase.Damage;

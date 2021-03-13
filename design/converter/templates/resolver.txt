@@ -1,0 +1,6 @@
+
+[MessagePackObject]
+public partial class CustomMessagePackResolver
+{
+{{ properties }}
+}
