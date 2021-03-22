@@ -60,10 +60,10 @@ namespace NetworkShared.Types
 
         public bool Contains(Point point)
         {
-            return point.X > Left &&
-                point.X < Right &&
-                point.Y > Top &&
-                point.Y < Bottom;
+            return point.X >= Left &&
+                point.X <= Right &&
+                point.Y >= Top &&
+                point.Y <= Bottom;
         }
 
         public bool Contains(RectF area)
@@ -72,6 +72,12 @@ namespace NetworkShared.Types
                 return true;
 
             if (area.Points.Any(X => Contains(X)))
+                return true;
+
+            if (Left < area.Left && Right > area.Right && Top < area.Top && Bottom > area.Bottom)
+                return true;
+
+            if (area.Left < Left && area.Right > Right && area.Top < Top && area.Bottom > Bottom)
                 return true;
 
             return false;

@@ -74,7 +74,7 @@ public class TileMap : MonoBehaviour
         var colliderHeight = ((obj.BoxCollider2D.size.y * obj.transform.localScale.y) / 2.0f);
         if (Blocked(new Vector2(position.x, position.y - colliderHeight), layer))
         {
-            return new Vector2(position.x, (int)position.y + colliderHeight);
+            return new Vector2(position.x, (int)position.y + colliderHeight - 0.001f);
         }
         else
         {

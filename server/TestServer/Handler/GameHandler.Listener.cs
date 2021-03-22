@@ -131,7 +131,7 @@ namespace TestServer.Handler
                 var character = from as Character;
                 character.Exp += mob.Exp;
 
-                var rewards = mob.Master.Rewards.Select(x => MasterData.MasterTable.From<MasterData.Server.TableReward>().Random(x)).ToList();
+                var rewards = mob.Master.Rewards.Select(x => MasterData.MasterTable.From<MasterData.Server.TableReward>().Random(x)).Where(x => x != null).ToList();
                 var items = rewards.Select(x => ItemFactory.Create(x.Item)).ToList();
 
                 foreach (var item in items)

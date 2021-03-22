@@ -120,9 +120,8 @@ public partial class GameController : MonoBehaviour
             if (Objects.TryGetValue(response.Sequence(i), out var obj) == false)
                 return true;
 
-            //TODO 몬스터가 죽는 도중에 사라져서 임시 처리. 현재 코드론 몬스터가 범위 벗어 났을 때 안지워짐. 삭제 필요.
-            if (obj is Assets.Scripts.InGame.OOP.Character)
-                RemoveObject(response.Sequence(i));
+            RemoveObject(response.Sequence(i));
+            UnsetControllable(obj);
         }
         return true;
     }

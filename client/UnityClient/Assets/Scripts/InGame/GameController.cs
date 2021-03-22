@@ -169,16 +169,19 @@ public partial class GameController : MonoBehaviour
 
     private Vector3? DontMoveBlock(Life life, Vector3 position)
     {
+        if (life.IsGround == false)
+            return null;
+
         if (life.Direction == Direction.Right)
         {
             var x = position.x + life.BoxCollider2D.size.x * life.transform.localScale.x / 2.0f;
-            if (Map.Blocked(new Vector2(x, life.BoxCollider2D.bounds.min.y)))
+            if (Map.Blocked(new Vector2(x, life.BoxCollider2D.bounds.min.y)) == false)
                 return new Vector2((int)position.x + 1 - life.BoxCollider2D.size.x * life.transform.localScale.x / 2.0f, position.y);
         }
         else
         {
             var x = position.x - life.BoxCollider2D.size.x * life.transform.localScale.x / 2.0f;
-            if (Map.Blocked(new Vector2(x, life.BoxCollider2D.bounds.min.y)))
+            if (Map.Blocked(new Vector2(x, life.BoxCollider2D.bounds.min.y)) == false)
                 return new Vector2((int)position.x + life.BoxCollider2D.size.x * life.transform.localScale.x / 2.0f, position.y);
         }
 
@@ -194,8 +197,7 @@ public partial class GameController : MonoBehaviour
 
     private Vector3 OnPlayerPositionChanging(Life character, Vector3 newPosition)
     {
-        return DontMoveBlock(character, newPosition) ??
-            newPosition;
+        return newPosition;
     }
 
     private void RemoveObject(int sequence)
@@ -219,12 +221,12 @@ public partial class GameController : MonoBehaviour
         if (Controllables.ContainsKey(obj.Sequence))
             return;
 
-        obj.OnJumpEnd = this.OnJumpEnd;
-        obj.OnJumpStart = this.OnJumpStart;
+        obj.OnCollision = this.OnCollision;
+        obj.OnFall = this.OnFall;
 
         if (obj.IsGround == false)
         {
-            obj.OnJumpStart(obj);
+            obj.OnFall(obj);
             Debug.Log($"{obj.Sequence} is falling.", obj.gameObject);
         }
         else
@@ -258,8 +260,8 @@ public partial class GameController : MonoBehaviour
 
     private void UnsetControllable(Assets.Scripts.InGame.OOP.Object obj)
     {
-        obj.OnJumpStart = null;
-        obj.OnJumpEnd = null;
+        obj.OnFall = null;
+        obj.OnCollision = null;
 
         Controllables.Remove(obj.Sequence);
     }
@@ -291,23 +293,23 @@ public partial class GameController : MonoBehaviour
         NettyClient.Instance.Send(FlatBuffers.Protocol.Request.Jump.Bytes(me.Sequence, new FlatBuffers.Protocol.Request.Vector2.Model { X = me.transform.localPosition.x, Y = me.transform.localPosition.y }));
     }
 
-    private void OnJumpEnd(Assets.Scripts.InGame.OOP.Object me)
+    private void OnCollision(Assets.Scripts.InGame.OOP.Object me)
     {
         // 낙하될 때 서버에 알림
-        NettyClient.Instance.Send(FlatBuffers.Protocol.Request.Fall.Bytes(me.Sequence, new FlatBuffers.Protocol.Request.Vector2.Model { X = me.transform.localPosition.x, Y = me.transform.localPosition.y }));
+        NettyClient.Instance.Send(FlatBuffers.Protocol.Request.Collision.Bytes(me.Sequence, new FlatBuffers.Protocol.Request.Vector2.Model { X = me.transform.localPosition.x, Y = me.transform.localPosition.y }, (int)Axis.Y));
     }
 
-    private void OnJumpStart(Assets.Scripts.InGame.OOP.Object me)
+    private void OnFall(Assets.Scripts.InGame.OOP.Object me)
     {
         // 착지인지, 측면 충돌인지
         //var normal = obj.contacts[0].normal;
-        Axis axis = Axis.Y;
+        //Axis axis = Axis.Y;
         //if (normal.x > normal.y) // axis : x
         //    axis = Axis.X;
         //else
         //    axis = Axis.Y;
 
-        NettyClient.Instance.Send(FlatBuffers.Protocol.Request.Collision.Bytes(me.Sequence, new FlatBuffers.Protocol.Request.Vector2.Model { X = me.transform.localPosition.x, Y = me.transform.localPosition.y }, (int)axis));
+        NettyClient.Instance.Send(FlatBuffers.Protocol.Request.Fall.Bytes(me.Sequence, new FlatBuffers.Protocol.Request.Vector2.Model { X = me.transform.localPosition.x, Y = me.transform.localPosition.y }));
         UnityEngine.Debug.Log($"{me.Sequence} is enter collision");
     }
 

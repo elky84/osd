@@ -69,9 +69,6 @@ namespace Assets.Scripts.InGame.OOP
             if (IsGround)
             {
                 JumpPower = JUMPING_POWER;
-
-                this.OnJumpStart?.Invoke(this);
-
                 OnJump?.Invoke(this);
             }
         }

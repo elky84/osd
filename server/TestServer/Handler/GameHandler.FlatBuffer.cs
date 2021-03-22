@@ -166,6 +166,7 @@ namespace TestServer.Handler
                         throw new Exception("잘못된 요청");
                 }
 
+                obj.Position = position;
                 _ = Broadcast(obj, FlatBuffers.Protocol.Response.State.Bytes(obj.State(false)));
                 return true;
             }

@@ -55,7 +55,10 @@ namespace MasterData
 
         protected override void Load()
         {
-            _values = JsonConvert.DeserializeObject<List<T>>(File.ReadAllText(Path));
+            if (File.Exists(Path) == false)
+                _values = new List<T>();
+            else
+                _values = JsonConvert.DeserializeObject<List<T>>(File.ReadAllText(Path));
         }
 
         IEnumerator IEnumerable.GetEnumerator() => _values.GetEnumerator();
@@ -91,7 +94,10 @@ namespace MasterData
         protected override void Load()
         {
             var property = typeof(T).GetProperties().FirstOrDefault(x => x.GetCustomAttribute<KeyAttribute>() != null);
-            _dictionary = JsonConvert.DeserializeObject<Dictionary<K, T>>(File.ReadAllText(Path));
+            if (File.Exists(Path) == false)
+                _dictionary = new Dictionary<K, T>();
+            else
+                _dictionary = JsonConvert.DeserializeObject<Dictionary<K, T>>(File.ReadAllText(Path));
         }
 
         IEnumerator IEnumerable.GetEnumerator() => _dictionary.GetEnumerator();

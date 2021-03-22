@@ -29,7 +29,7 @@ namespace Assets.Scripts.InGame.OOP
         {
             get
             {
-                var y = BoxCollider2D.bounds.min.y - 0.1f;
+                var y = transform.position.y - (BoxCollider2D.size.y * transform.localScale.y / 2.0f);
                 return Map.Blocked(new Vector2(BoxCollider2D.bounds.min.x, y)) ||
                     Map.Blocked(new Vector2(BoxCollider2D.bounds.max.x, y));
             }
@@ -40,8 +40,8 @@ namespace Assets.Scripts.InGame.OOP
 
         public virtual bool Moving { get; } = false;
 
-        public Action<Object> OnJumpEnd { get; set; }
-        public Action<Object> OnJumpStart { get; set; }
+        public Action<Object> OnCollision { get; set; }
+        public Action<Object> OnFall { get; set; }
 
         public LayerMask GroundLayer;
 
@@ -74,6 +74,12 @@ namespace Assets.Scripts.InGame.OOP
                 next.y += min;
                 JumpPower -= min;
                 transform.position = next;
+
+                if (JumpPower <= 0.0f)
+                {
+                    if (IsGround)
+                        this.OnCollision?.Invoke(this);
+                }
             }
             else if (IsGround == false)
             {
@@ -82,9 +88,7 @@ namespace Assets.Scripts.InGame.OOP
                 transform.position = Map.FixHeight(this, next);
 
                 if (IsGround)
-                {
-                    this.OnJumpEnd?.Invoke(this);
-                }
+                    this.OnCollision?.Invoke(this);
             }
         }
 

@@ -24,6 +24,9 @@ namespace MasterData.Server
         {
             var random = new Random();
             var candidates = this[groupName];
+            if (candidates == null)
+                return null;
+
             var weights = candidates.Sum(x => x.Weight);
             var value = random.Next(0, weights);
             var current = 0;
