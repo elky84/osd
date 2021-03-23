@@ -50,7 +50,7 @@ namespace NetworkShared.Types
         public double Left => X;
         public double Top => Y;
         public double Right => X + Width;
-        public double Bottom => Y + Height;
+        public double Bottom => Y - Height;
 
         public Point LeftTop => new Point { X = Left, Y = Top };
         public Point LeftBottom => new Point { X = Left, Y = Bottom };
@@ -62,8 +62,8 @@ namespace NetworkShared.Types
         {
             return point.X >= Left &&
                 point.X <= Right &&
-                point.Y >= Top &&
-                point.Y <= Bottom;
+                point.Y <= Top &&
+                point.Y >= Bottom;
         }
 
         public bool Contains(RectF area)

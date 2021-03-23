@@ -1,6 +1,8 @@
 ﻿using NetworkShared;
 using Serilog;
 using ServerShared.NetworkHandler;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using TestServer.Factory;
 using TestServer.Model;
@@ -33,28 +35,11 @@ namespace TestServer.Handler
             }
         }
 
-        public void OnSectorChanged(Model.Object obj, Map.Sector sector1, Map.Sector sector2)
+        private void OnShowObjects(Model.Object obj, IEnumerable<Model.Object> shows)
         {
-            var befores = sector1 != null ?
-                sector1.Nears.Where(x => x != null).SelectMany(x => x.Objects).ToList() :
-                new System.Collections.Generic.List<Object>();
-            var afters = sector2 != null ?
-                sector2.Nears.Where(x => x != null).SelectMany(x => x.Objects).ToList() :
-                new System.Collections.Generic.List<Object>();
-
-            var hides = befores.Except(afters).ToList();
-            _ = obj.Send(FlatBuffers.Protocol.Response.Leave.Bytes(hides.Select(x => x.Sequence.Value).ToList()));
-
-            var hideBytes = FlatBuffers.Protocol.Response.Leave.Bytes(new System.Collections.Generic.List<int> { obj.Sequence.Value });
-            foreach (var ch in hides.Where(x => x.Type == NetworkShared.ObjectType.Character).Select(x => x as Character))
-            {
-                _ = ch.Send(hideBytes);
-            }
-
-            var shows = afters.Except(befores).ToList();
             _ = obj.Send(FlatBuffers.Protocol.Response.Show.Bytes(
-                shows.Where(x => x.Type != NetworkShared.ObjectType.Character).Select(x => x.ToProtocol()).ToList(),
-                shows.Where(x => x.Type == NetworkShared.ObjectType.Character).Select(x => (x as Character).ToProtocol()).ToList()));
+                    shows.Where(x => x.Type != NetworkShared.ObjectType.Character).Select(x => x.ToProtocol()).ToList(),
+                    shows.Where(x => x.Type == NetworkShared.ObjectType.Character).Select(x => (x as Character).ToProtocol()).ToList()));
 
 
             var showBytes = obj is Character ?
@@ -68,47 +53,94 @@ namespace TestServer.Handler
             {
                 _ = ch.Send(showBytes);
             }
+        }
 
-            if (obj.Type == NetworkShared.ObjectType.Character)
+        private void OnHideObjects(Model.Object obj, IEnumerable<Model.Object> hides)
+        {
+            _ = obj.Send(FlatBuffers.Protocol.Response.Leave.Bytes(hides.Select(x => x.Sequence.Value).ToList()));
+
+            var hideBytes = FlatBuffers.Protocol.Response.Leave.Bytes(new System.Collections.Generic.List<int> { obj.Sequence.Value });
+            foreach (var ch in hides.Where(x => x.Type == NetworkShared.ObjectType.Character).Select(x => x as Character))
             {
-                var character = obj as Character;
-                var unsetList = hides.Where(x => x.Type == NetworkShared.ObjectType.Mob).Select(x => x as Mob).Where(x => x.Owner == character).ToList();
-                _ = character.Send(FlatBuffers.Protocol.Response.UnsetOwner.Bytes(unsetList.Select(x => x.Sequence.Value).ToList()));
-
-                foreach (var (sector, mobs) in unsetList.Where(x => x.Sector != null).GroupBy(x => x.Sector).ToDictionary(x => x.Key, x => x.ToList()))
-                {
-                    var newOwner = sector.Nears.SelectMany(x => x.Characters).FirstOrDefault();
-                    foreach (var mob in mobs)
-                        mob.Owner = newOwner;
-
-                    if (newOwner != null)
-                    {
-                        var sequences = mobs.Select(x => x.Sequence.Value).ToList();
-                        _ = newOwner.Context.Send(FlatBuffers.Protocol.Response.SetOwner.Bytes(sequences));
-                    }
-                }
-
-                var setList = shows.Where(x => x.Type == NetworkShared.ObjectType.Mob).Select(x => x as Mob).Where(x => x.Owner == null).ToList();
-                foreach (var mob in setList)
-                {
-                    mob.Owner = character;
-                }
-                _ = character.Send(FlatBuffers.Protocol.Response.SetOwner.Bytes(setList.Select(x => x.Sequence.Value).ToList()));
+                _ = ch.Send(hideBytes);
             }
-            else if (obj.Type == NetworkShared.ObjectType.Mob)
+        }
+
+        private void OnSectorChanged(Model.Character character, IEnumerable<Model.Object> shows, IEnumerable<Model.Object> hides)
+        {
+            OnHideObjects(character, hides);
+            OnShowObjects(character, shows);
+
+            var unsetList = hides.Where(x => x.Type == NetworkShared.ObjectType.Mob).Select(x => x as Mob).Where(x => x.Owner == character).ToList();
+            _ = character.Send(FlatBuffers.Protocol.Response.UnsetOwner.Bytes(unsetList.Select(x => x.Sequence.Value).ToList()));
+
+            foreach (var (sector, mobs) in unsetList.Where(x => x.Sector != null).GroupBy(x => x.Sector).ToDictionary(x => x.Key, x => x.ToList()))
             {
-                var mob = obj as Mob;
-                var ownerBefore = mob.Owner;
+                var newOwner = sector.Nears.SelectMany(x => x.Characters).FirstOrDefault();
+                foreach (var mob in mobs)
+                    mob.Owner = newOwner;
 
-                mob.Owner = mob.Sector != null ?
-                    mob.Sector.Nears.SelectMany(x => x.Characters).FirstOrDefault() :
-                    null;
-
-                if (ownerBefore != mob.Owner)
+                if (newOwner != null)
                 {
-                    _ = ownerBefore?.Send(FlatBuffers.Protocol.Response.UnsetOwner.Bytes(new System.Collections.Generic.List<int> { obj.Sequence.Value }));
-                    _ = mob.Owner?.Send(FlatBuffers.Protocol.Response.SetOwner.Bytes(new System.Collections.Generic.List<int> { obj.Sequence.Value }));
+                    var sequences = mobs.Select(x => x.Sequence.Value).ToList();
+                    _ = newOwner.Context.Send(FlatBuffers.Protocol.Response.SetOwner.Bytes(sequences));
                 }
+            }
+
+            var setList = shows.Where(x => x.Type == NetworkShared.ObjectType.Mob).Select(x => x as Mob).Where(x => x.Owner == null).ToList();
+            foreach (var mob in setList)
+            {
+                mob.Owner = character;
+            }
+            _ = character.Send(FlatBuffers.Protocol.Response.SetOwner.Bytes(setList.Select(x => x.Sequence.Value).ToList()));
+        }
+
+        private void OnSectorChanged(Model.Mob mob, IEnumerable<Model.Object> shows, IEnumerable<Model.Object> hides)
+        {
+            if (mob.IsAlive)
+            {
+                OnHideObjects(mob, hides);
+                OnShowObjects(mob, shows);
+            }
+
+            var ownerBefore = mob.Owner;
+            mob.Owner = mob.Sector != null ?
+                mob.Sector.Nears.SelectMany(x => x.Characters).FirstOrDefault() :
+                null;
+
+            if (ownerBefore != mob.Owner)
+            {
+                _ = ownerBefore?.Send(FlatBuffers.Protocol.Response.UnsetOwner.Bytes(new System.Collections.Generic.List<int> { mob.Sequence.Value }));
+                _ = mob.Owner?.Send(FlatBuffers.Protocol.Response.SetOwner.Bytes(new System.Collections.Generic.List<int> { mob.Sequence.Value }));
+            }
+        }
+
+        public void OnSectorChanged(Model.Object obj, Map.Sector sector1, Map.Sector sector2)
+        {
+            var befores = sector1 != null ?
+                sector1.Nears.Where(x => x != null).SelectMany(x => x.Objects).ToList() :
+                new System.Collections.Generic.List<Object>();
+            var afters = sector2 != null ?
+                sector2.Nears.Where(x => x != null).SelectMany(x => x.Objects).ToList() :
+                new System.Collections.Generic.List<Object>();
+
+            var hides = befores.Except(afters).ToList();
+            var shows = afters.Except(befores).ToList();
+
+            switch (obj.Type)
+            {
+                case ObjectType.Character:
+                    OnSectorChanged(obj as Character, shows, hides);
+                    break;
+
+                case ObjectType.Mob:
+                    OnSectorChanged(obj as Mob, shows, hides);
+                    break;
+
+                default:
+                    OnHideObjects(obj, hides);
+                    OnShowObjects(obj, shows);
+                    break;
             }
         }
 

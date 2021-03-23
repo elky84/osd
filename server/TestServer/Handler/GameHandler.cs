@@ -59,7 +59,7 @@ namespace TestServer.Handler
             }
 
             SetTimer(1000, OnRezen);
-            SetTimer(100, OnMobAction);
+            //SetTimer(100, OnMobAction);
             SetTimer(100, OnBuff);
             ExecuteScheduler();
         }

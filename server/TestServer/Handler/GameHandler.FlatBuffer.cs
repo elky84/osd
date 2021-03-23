@@ -374,7 +374,10 @@ namespace TestServer.Handler
                 if (character.Direction == Direction.Left)
                     rangeBox.X -= (int)rangeBox.Width;
 
-                var mob = character.Sector.Nears.SelectMany(x => x.Objects).Where(x => x.Type == ObjectType.Mob).Select(x => x as Model.Mob).FirstOrDefault(x => rangeBox.Contains(x.CollisionBox));
+                var mob = character.Sector.Nears.SelectMany(x => x.Objects)
+                    .Where(x => x.Type == ObjectType.Mob).Select(x => x as Model.Mob)
+                    .Where(x => rangeBox.Contains(x.CollisionBox)) // 가까운 적 순서
+                    .OrderBy(x => x.Position.DistanceSqrt(character.Position)).FirstOrDefault();
                 if (mob != null)
                 {
                     var damage = character.Stats.PhysicalDamage(mob.Stats.Max);
