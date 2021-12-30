@@ -1,11 +1,11 @@
 ﻿using UnityEditor;
-using UnityEditor.Experimental.AssetImporters;
+
 using UnityEngine;
 
 namespace SuperTiled2Unity.Editor
 {
     [CustomEditor(typeof(SuperSettingsImporter))]
-    public class SuperSettingsImporterEditor : ScriptedImporterEditor
+    public class SuperSettingsImporterEditor : UnityEditor.AssetImporters.ScriptedImporterEditor
     {
         public override bool showImportedObject { get { return false; } }
 

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEditor.Experimental.AssetImporters;
+
 using System;
 
 namespace SuperTiled2Unity.Editor
@@ -10,10 +10,10 @@ namespace SuperTiled2Unity.Editor
     {
         private static Vector2 NegateY = new Vector2(1, -1);
 
-        private AssetImportContext m_Context;
+        private UnityEditor.AssetImporters.AssetImportContext m_Context;
         private bool? m_IsTriggerOverride;
 
-        public SuperImportContext(AssetImportContext context, ST2USettings settings)
+        public SuperImportContext(UnityEditor.AssetImporters.AssetImportContext context, ST2USettings settings)
         {
             m_Context = context;
             Settings = settings;
