@@ -201,7 +201,7 @@ namespace TestServer.Model
             if (enable)
             {
                 if (this.Jumping)
-                    throw new Exception("점프중");
+                    return;
 
                 var time = -this.JumpingPower / GRAVITY;
                 var top = (this.JumpingPower * time) + (GRAVITY * Math.Pow(time, 2) / 2);
