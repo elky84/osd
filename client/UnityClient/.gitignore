@@ -57,3 +57,5 @@ sysinfo.txt
 *.unitypackage
 *.main.obb
 *.symbols.zip
+
+/Recordings
