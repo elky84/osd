@@ -14,6 +14,8 @@
 
 ## introduce
 
+[![Youtube](https://img.youtube.com/vi/NjaW4AE28ik/0.jpg)](https://www.youtube.com/watch?v=NjaW4AE28ik)
+
 ### English
 
 It is a 2D side view MMORPG game.
@@ -28,7 +30,7 @@ It is a state in which only basic movement, jumping, and attack are implemented.
 C# .NET 6, Unity3D, DotNetty, FlatBuffers를 이용해 구현되어있습니다.
 기본적인 이동, 점프, 공격만 구현되어있는 상태입니다.
 
-## 주요 사용법
+## Usage
 
 ### English
 
