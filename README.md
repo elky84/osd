@@ -27,7 +27,9 @@ It is a state in which only basic movement, jumping, and attack are implemented.
 ### Korean
 
 2D 사이드 뷰 MMORPG 게임입니다.
+
 C# .NET 6, Unity3D, DotNetty, FlatBuffers를 이용해 구현되어있습니다.
+
 기본적인 이동, 점프, 공격만 구현되어있는 상태입니다.
 
 ## Usage
